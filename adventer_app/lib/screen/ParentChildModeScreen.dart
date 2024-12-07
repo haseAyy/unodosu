@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:adventer_app/screen/MissionSettingsScreen.dart';
+import 'package:adventer_app/screen/ImageUploadScreen.dart';
 
 //四角のボタンを定義
 class RectangularButton extends StatelessWidget {
@@ -98,7 +99,7 @@ class ParentChildModeScreen extends StatelessWidget {
           ),
           //ミッション設定ボタン
           Align(
-          alignment: Alignment(0.0, -0.5), // 横方向中央、縦方向は-0.5（上寄り）
+          alignment: const Alignment(0.0, -0.5), // 横方向中央、縦方向は-0.5（上寄り）
           child: RectangularButton(
             text: 'ミッション設定',
            width: screenSize.width * 0.7, // 幅を画面幅の50%に設定
@@ -115,7 +116,7 @@ class ParentChildModeScreen extends StatelessWidget {
         ),
         //アップロードボタン
         Align(
-          alignment: Alignment(0.0, 0.5), // 横方向中央、縦方向は-0.5（上寄り）
+          alignment: const Alignment(0.0, 0.5), // 横方向中央、縦方向は-0.5（上寄り）
           child: RectangularButton(
             text: 'アップロード',
            width: screenSize.width * 0.7, // 幅を画面幅の50%に設定

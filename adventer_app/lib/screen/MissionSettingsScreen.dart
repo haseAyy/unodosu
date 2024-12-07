@@ -95,7 +95,7 @@ class MissionSettingsScreen extends StatelessWidget {
           ),
           //ミッション設定適応ボタン
           Align(
-          alignment: Alignment(0.0, 0.5), // 横方向中央、縦方向は-0.5（上寄り）
+          alignment: const Alignment(0.0, 0.5), // 横方向中央、縦方向は-0.5（上寄り）
           child: RectangularButton(
             text: '適用',
            width: screenSize.width * 0.7, // 幅を画面幅の57%に設定
