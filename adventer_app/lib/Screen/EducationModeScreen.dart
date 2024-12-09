@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'ShapeEducationModeScreen.dart';
 
 // 丸いボタンを定義
 class CircularButton extends StatelessWidget {
@@ -96,7 +97,7 @@ class EducationModeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const EducationModeScreen()),
+                  MaterialPageRoute(builder: (context) => const ShapeEducationModeScreen()),
                 );
               },
             ),
