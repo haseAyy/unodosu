@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'ImageUploadScreen.dart';
+import 'MissionSettingsScreen.dart';
+import '../MeneScreen/HomeScreen.dart';
 
 //四角のボタンを定義
 class RectangularButton extends StatelessWidget {
@@ -52,12 +55,17 @@ class RectangularButton extends StatelessWidget {
   }
 }
 
-//お手伝い問題一覧画面(お手伝いモード)
-class HelpModeScreen extends StatelessWidget {
-  const HelpModeScreen({super.key});
+//ミッション画面(親子モード)
+class ParentChildModeScreen extends StatelessWidget {
+  final String displayText;//表示する文字列
+  const ParentChildModeScreen({
+    super.key,
+    required this.displayText, // コンストラクタで受け取る
+  });
 
   @override
   Widget build(BuildContext context) {
+    
     final screenSize = MediaQuery.of(context).size; // MediaQueryキャッシュ
     return Scaffold(
       body: Stack(
@@ -84,46 +92,67 @@ class HelpModeScreen extends StatelessWidget {
             left: 10,
             child: FloatingActionButton(
               onPressed: () {
-                Navigator.pop(context); // 前の画面に戻る
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomeScreen(),
+                  ),
+                );
               },
               backgroundColor: Colors.grey[350],
               child: const Icon(Icons.arrow_back),
             ),
           ),
-          // おうちボタン
+          //ミッション設定ボタン
           Align(
-          alignment: const Alignment(0.0, -0.3), // 横方向中央、縦方向は-0.5（上寄り）
+          alignment: const Alignment(0.0, -0.5), // 横方向中央、縦方向は-0.5（上寄り）
           child: RectangularButton(
-            text: 'おうち',
-            width: screenSize.width * 0.7, // 幅を画面幅の50%に設定
-            height: screenSize.height * 0.15, // 高さを画面高さの10%に設定
-            buttonColor: const Color.fromARGB(255, 255, 212, 193),
-            textColor: Colors.black,
-             onPressed: () {
-               Navigator.push(
-                  context,
-                 MaterialPageRoute(builder: (context) => const HelpModeScreen()),
-                );
-              },
-            ),
-        ),
-        // おかねボタン
-        Align(
-          alignment: const Alignment(0.0, 0.3), // 横方向中央、縦方向は-0.5（上寄り）
-          child: RectangularButton(
-          text: 'おかね',
-          width: screenSize.width * 0.7, // 幅を画面幅の50%に設定
-          height: screenSize.height * 0.15, // 高さを画面高さの10%に設定
-          buttonColor: const Color.fromARGB(255, 245, 255, 187),
-          textColor: Colors.black,
-          onPressed: () {
-           Navigator.push(
-             context,
-              MaterialPageRoute(builder: (context) => const HelpModeScreen()),
-            );
+            text: 'ミッション設定',
+           width: screenSize.width * 0.7, // 幅を画面幅の50%に設定
+           height: screenSize.height * 0.07, // 高さを画面高さの10%に設定,
+           textColor: Colors.white,
+           buttonColor: const Color.fromARGB(255, 215, 167, 167),
+           onPressed: () {
+              Navigator.push(
+                context,
+               MaterialPageRoute(builder: (context) => const MissionSettingsScreen()),
+             );
            },
-          ),
          ),
+        ),
+        //アップロードボタン
+        Align(
+          alignment: const Alignment(0.0, 0.5), // 横方向中央、縦方向は-0.5（上寄り）
+          child: RectangularButton(
+            text: 'アップロード',
+           width: screenSize.width * 0.7, // 幅を画面幅の50%に設定
+           height: screenSize.height * 0.07, // 高さを画面高さの10%に設定,
+           textColor: Colors.white,
+           buttonColor: const Color.fromARGB(255, 215, 167, 167),
+           onPressed: () {
+              Navigator.push(
+                context,
+               MaterialPageRoute(builder: (context) => const ImageUploadScreen()),
+             );
+           },
+         ),
+        ),
+        // 表示する文字
+          Align(
+              alignment: const Alignment(0.0, -0.0), // 画面の上部中央に配置
+              child: Container(
+                padding: const EdgeInsets.all(10.0), // 文字の周りにパディングを追加
+                color: Colors.white, // 背景色を設定
+                 child: Text(
+              displayText, // 渡された文字列を表示
+                    style: const TextStyle(
+                      fontSize: 24, // 文字サイズ
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+             ),
+          )
         ],
       ),
     );

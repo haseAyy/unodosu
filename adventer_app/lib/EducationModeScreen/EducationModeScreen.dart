@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'EducationModeScreen.dart';
-import 'HelpModeScreen.dart';
-import 'ParentChildModeScreen.dart';
+import 'ShapeEducationModeScreen.dart';
+import '../MeneScreen/HomeScreen.dart';
 
 // 丸いボタンを定義
 class CircularButton extends StatelessWidget {
@@ -50,9 +49,9 @@ class CircularButton extends StatelessWidget {
   }
 }
 
-// ホーム画面
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+//教育問題一覧画面(教育モード)
+class EducationModeScreen extends StatelessWidget {
+  const EducationModeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -82,19 +81,40 @@ class HomeScreen extends StatelessWidget {
             left: 10,
             child: FloatingActionButton(
               onPressed: () {
-                Navigator.pop(context); // 前の画面に戻る
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomeScreen(),
+                  ),
+                );
               },
               backgroundColor: Colors.grey[350],
               child: const Icon(Icons.arrow_back),
             ),
           ),
           // メインコンテンツ（丸いボタン）
+          //形
           Positioned(
-            top: screenSize.height * 0.35, // 画面上部から35%下に配置
+            bottom: screenSize.height * 0.6, // 画面下部から60%下に配置
             left: screenSize.width * 0.3, // ボタンを水平中央に配置
             child: CircularButton(
-              text: 'おべんきょう',
-              buttonColor: Colors.green.shade100,
+              text: 'かたち',
+              buttonColor: Colors.orange.shade100, // かたちボタンの色
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ShapeEducationModeScreen()),
+                );
+              },
+            ),
+          ),
+          //色
+          Positioned(
+            bottom: screenSize.height * 0.4, // 画面下部から40%下に配置
+            left: screenSize.width * 0.3, // ボタンを水平中央に配置
+            child: CircularButton(
+              text: 'いろ',
+              buttonColor: Colors.blue.shade100,
               onPressed: () {
                 Navigator.push(
                   context,
@@ -103,30 +123,32 @@ class HomeScreen extends StatelessWidget {
               },
             ),
           ),
+          //文字
           Positioned(
-            bottom: screenSize.width * 0.1,
-            left: screenSize.width * 0.05,
+            bottom: screenSize.height * 0.2,
+            right: screenSize.width * 0.3,
             child: CircularButton(
-              text: 'おてつだい',
-              buttonColor: Colors.yellow.shade100,
+              text: 'もじ',
+              buttonColor: Colors.red.shade100,
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HelpModeScreen()),
+                  MaterialPageRoute(builder: (context) => const EducationModeScreen()),
                 );
               },
             ),
           ),
+          //計算
           Positioned(
-            bottom: screenSize.width * 0.1,
-            right: screenSize.width * 0.05,
+            bottom: screenSize.width * 0.0,
+            left: screenSize.width * 0.3,
             child: CircularButton(
-              text: 'おやこ',
-              buttonColor: Colors.pink.shade50,
+              text: 'けいさん',
+              buttonColor: Colors.orangeAccent,
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ParentChildModeScreen(displayText: '星空を観察しよう!', )),
+                  MaterialPageRoute(builder: (context) => const EducationModeScreen()),
                 );
               },
             ),
