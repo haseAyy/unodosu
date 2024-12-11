@@ -1,4 +1,4 @@
-import 'package:adventer_app/EducationModeScreen/demo/ShapeEducationModeScreen2.dart';
+import 'package:adventer_app/EducationModeScreen/ShapeEducationModeScreen.dart';
 import 'package:flutter/material.dart';
 
 // 四角いボタンを定義
@@ -112,7 +112,7 @@ class EducationIncorrectScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ShapeEducationModeScreen2(),
+                        builder: (context) => const ShapeEducationModeScreen(),
                       ),
                     );
                   },

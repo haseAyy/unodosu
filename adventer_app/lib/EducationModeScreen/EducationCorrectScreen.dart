@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'demo/ShapeEducationModeScreen2.dart';
+import 'ShapeEducationModeScreen.dart';
 
 // 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
@@ -112,7 +112,7 @@ class EducationCorrectScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ShapeEducationModeScreen2(),
+                        builder: (context) => const ShapeEducationModeScreen(),
                       ),
                     );
                   },
