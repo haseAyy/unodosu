@@ -2,11 +2,12 @@ package com.example.spring_Demo.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import java.util.List;
+
+
 
 @Entity
-@Table(name = "question")
-public class unodosuEntity{
+public class UnodosuEntity{
  
     /*フィールド */
     @Id
@@ -18,14 +19,7 @@ public class unodosuEntity{
     private String question_content;//問題内容
     private String question_answer; //正解
     private String question_image;  //画像URL
-
-    //ミッションテーブル
-    private String mission_id;
-    private String mission_name;
-    private String mission_keyword;
-
-    //問題種類テーブル
-    private String questiontype_name;
+   //private List<String> options; // 選択肢のリスト
 
     /*getterとsetterの定義 */
 
@@ -50,18 +44,6 @@ public class unodosuEntity{
     public String getquestion_image(){
         return question_image;
     }
-    public String getMission_id(){
-        return mission_id;
-    }
-    public String getMission_name(){
-        return mission_name;
-    }
-    public String getmission_keyword(){
-        return mission_keyword;
-    }
-    public String getQuestiontype_name(){
-        return questiontype_name;
-    }
 
     public void setQuestion_id(String question_id){
         this.question_id = question_id;
@@ -84,17 +66,6 @@ public class unodosuEntity{
     public void setQuestion_image(String question_image){
         this.question_image = question_image;
     }
-    public void setMission_id(String mission_id){
-        this.mission_id = mission_id;
-    }
-    public void setMission_name(String mission_name){
-        this.mission_name = mission_name;
-    }
-    public void setMission_keyword(String mission_keyword){
-        this.mission_keyword = mission_keyword;
-    }
-    public void setQuestiontype_name(String questiontype_name){
-        this.questiontype_name = questiontype_name;
-    }
+
 
 }

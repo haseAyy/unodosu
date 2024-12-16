@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Question</title>
+</head>
+<body>
+    <h1>問題: <span th:text="${question.question_theme}"></span></h1>
+    <form action="/submit-answer" method="POST">
+        <!--<input type="hidden" name="question_id" th:value="${question.id}" />-->
+        <ul>
+             選択肢をループ表示 
+            <li th:each="option : ${options}">
+                <label>
+                    <input type="radio" name="answer" th:value="${option}" required /> 
+                    <span th:text="${option}"></span>
+                </label>
+            </li>
+        </ul>
+        <button type="submit">解答</button>
+    </form>
+</body>
+</html>

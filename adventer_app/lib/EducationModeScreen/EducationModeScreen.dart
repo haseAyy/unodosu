@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'ShapeEducationModeScreen.dart';
+import 'wordsEducationModeScreen.dart';
 import '../MeneScreen/HomeScreen.dart';
 
 // 丸いボタンを定義
 class CircularButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
-  final Color buttonColor;  // ボタン色を追加
+  final Color buttonColor; // ボタン色を追加
 
   const CircularButton({
     super.key,
     required this.text,
     required this.onPressed,
-    required this.buttonColor,  // コンストラクタにcolorを追加
+    required this.buttonColor, // コンストラクタにcolorを追加
   });
 
   @override
@@ -25,7 +26,7 @@ class CircularButton extends StatelessWidget {
         height: screenSize.height * 0.4,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: buttonColor,  // 渡された色を使う
+          color: buttonColor, // 渡された色を使う
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
@@ -103,7 +104,8 @@ class EducationModeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ShapeEducationModeScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const ShapeEducationModeScreen()),
                 );
               },
             ),
@@ -118,7 +120,8 @@ class EducationModeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const EducationModeScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const EducationModeScreen()),
                 );
               },
             ),
@@ -133,7 +136,8 @@ class EducationModeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const EducationModeScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const wordsEducationModeScreen()),
                 );
               },
             ),
@@ -148,7 +152,8 @@ class EducationModeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const EducationModeScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const EducationModeScreen()),
                 );
               },
             ),
