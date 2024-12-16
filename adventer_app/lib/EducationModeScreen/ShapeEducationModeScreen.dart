@@ -120,7 +120,7 @@ class ShapeEducationModeScreen extends StatelessWidget {
             child: Container(
               width: 200, // 丸の幅
               height: 200, // 丸の高さ
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.red, // 丸の色
                 shape: BoxShape.circle, // 形を丸に設定
               ),

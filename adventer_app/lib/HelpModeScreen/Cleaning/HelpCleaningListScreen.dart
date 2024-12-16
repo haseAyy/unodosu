@@ -101,13 +101,19 @@ class CleaningScreen extends StatelessWidget {
   }) {
     return Column(
       children: [
-        IconButton(
-          icon: Icon(icon, size: 50),
-          onPressed: onPressed,
+        // アイコンの位置を調整（上にずらしたり、左右にずらしたりできます）
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10), // アイコンを下にずらす
+          child: IconButton(
+            icon: Icon(icon, size: 100), // アイコンのサイズ調整
+            onPressed: onPressed,
+          ),
         ),
+        // テキストの位置調整（上または下にずらす）
         Text(
           label,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+
         ),
       ],
     );
