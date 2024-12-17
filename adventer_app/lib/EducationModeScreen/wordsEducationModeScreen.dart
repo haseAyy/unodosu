@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
-import 'EducationCorrectScreen.dart';
-import 'EducationIncorrectScreen.dart';
+//import 'EducationCorrectScreen.dart';
+//import 'EducationIncorrectScreen.dart';
 
 //unodosuEntityのデータモデル
 class UnodosuEntity {
@@ -10,14 +10,14 @@ class UnodosuEntity {
   final String questiontype_id;
   final String question_theme;
   final String question_answer;
-  final List<String> options;
+  //final List<String> options;
 
   UnodosuEntity({
     required this.question_id,
     required this.questiontype_id,
     required this.question_theme,
     required this.question_answer,
-    required this.options,
+    // required this.options,
   });
 
   // JSONをUnodosuEntityオブジェクトに変換
@@ -27,7 +27,7 @@ class UnodosuEntity {
       questiontype_id: json['questiontype_id'],
       question_theme: json['question_theme'],
       question_answer: json['question_answer'],
-      options: List<String>.from(json['options']),
+      //options: List<String>.from(json['options']),
     );
   }
 }
@@ -38,6 +38,16 @@ Future<UnodosuEntity?> fetchQuestion(String questiontype_id) async {
     Uri.parse(
         'http://10.24.110.65:8080/random-text-question?questiontype_id=$questiontype_id'),
   );
+
+  /*if (response.statusCode == 200) {
+    // レスポンスをUTF-8としてデコード
+    final decodedBody = utf8.decode(response.bodyBytes);
+    print('Decoded API Response: $decodedBody');
+
+    return UnodosuEntity.fromJson(jsonDecode(decodedBody));
+  } else {
+    throw Exception('Failed to load question');
+  }*/
 
   if (response.statusCode == 200) {
     // JSONレスポンスをパースしてUnodosuEntityに変換
@@ -84,41 +94,11 @@ class _wordsEducationModeScreenState extends State<wordsEducationModeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  //問題内容を表示
-                  Text('Question: ${question.question_theme}',
-                      style: TextStyle(fontSize: 18)),
-                  SizedBox(height: 20),
-                  Text('Options:', style: TextStyle(fontSize: 16)),
-
-                  ...question.options.map((option) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // 正解判定
-                            if (option == question.question_answer) {
-                              // 正解の場合、正解画面に遷移
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        EducationCorrectScreen()),
-                              );
-                            } else {
-                              // 不正解の場合、不正解画面に遷移
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        EducationIncorrectScreen()),
-                              );
-                            }
-                          },
-                          child: Text(option),
-                        ),
-                      )),
-                  if (question.options.isEmpty) // optionsが空の場合
-                    Text('No options available',
-                        style: TextStyle(fontSize: 16)),
+                  // 問題内容を表示
+                  Text(
+                    'Question: ${question.question_theme}',
+                    style: TextStyle(fontSize: 40),
+                  ),
                 ],
               ),
             );
