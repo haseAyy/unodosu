@@ -35,11 +35,11 @@ public interface UnodosuRepository extends JpaRepository <UnodosuEntity,String>{
     @Query(value = "SELECT question_answer FROM question WHERE question_id != :question_id AND questiontype_id = :questiontype_id LIMIT 3", nativeQuery = true)
     List<String> findDummyAnswers(@Param("question_id") String question_id, @Param("questiontype_id") String questiontype_id);
 
-    @Query(value = "SELECT * FROM question " +
+    /*@Query(value = "SELECT * FROM question " +
                "WHERE questiontype_id = ?1 " +
                "AND (?2 IS NULL OR question_id NOT IN (?3)) " +
                "ORDER BY RAND() LIMIT 1", nativeQuery = true)
-Optional<Question> findRandomQuestion(String questiontype_id, List<String> excludedIds);
+Optional<Question> findRandomQuestion(String questiontype_id, List<String> excludedIds);*/
 
 
 }

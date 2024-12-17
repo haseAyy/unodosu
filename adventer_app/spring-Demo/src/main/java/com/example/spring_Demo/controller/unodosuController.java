@@ -2,7 +2,7 @@ package com.example.spring_Demo.controller;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
+//import java.util.Collections;
 import jakarta.servlet.http.HttpSession;
 
 
@@ -15,9 +15,9 @@ import com.example.spring_Demo.model.UnodosuEntity;
 import com.example.spring_Demo.service.ProblemService;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+//import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.ui.Model;
+//import org.springframework.ui.Model;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class unodosuController {
   }
 
   @SuppressWarnings("unchecked")
-  @GetMapping("/random-text-question")
+  @GetMapping(value = "/random-text-question", produces = "application/json;charset=UTF-8")
   public ResponseEntity<UnodosuEntity> getRandomTextQuestion(@RequestParam String questiontype_id, HttpSession session) {
 
       // セッションから解いた問題のリストを取得
