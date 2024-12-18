@@ -10,8 +10,39 @@ class CleaningScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
+<<<<<<< HEAD
           // 背景色
           Container(color: Colors.lightBlue[300]),
+=======
+          // 背景色（温かみのある色調）
+          Container(color: Colors.teal[50]),
+
+          // 上部デコレーション（円形の装飾）
+          Positioned(
+            top: -50,
+            left: -50,
+            child: Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                color: Colors.orangeAccent[100],
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          Positioned(
+            top: 100,
+            right: -30,
+            child: Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                color: Colors.lightGreen[200],
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+>>>>>>> origin/master
 
           // 質問部分
           Positioned(
@@ -101,6 +132,7 @@ class CleaningScreen extends StatelessWidget {
   }) {
     return Column(
       children: [
+<<<<<<< HEAD
         IconButton(
           icon: Icon(icon, size: 50),
           onPressed: onPressed,
@@ -108,8 +140,30 @@ class CleaningScreen extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+=======
+        // アイコンの位置を調整（上にずらしたり、左右にずらしたりできます）
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10), // アイコンを下にずらす
+          child: IconButton(
+            icon: Icon(icon, size: 100), // アイコンのサイズ調整
+            onPressed: onPressed,
+          ),
+        ),
+        // テキストの位置調整（上または下にずらす）
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+>>>>>>> origin/master
         ),
       ],
     );
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/master

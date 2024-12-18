@@ -19,5 +19,9 @@ class MyApp extends StatelessWidget {
       home: const StartScreen(), // アプリ起動時の画面
     );
   }
+<<<<<<< HEAD
 }
 
+=======
+}
+>>>>>>> origin/master
