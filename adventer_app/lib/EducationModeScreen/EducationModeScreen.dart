@@ -68,8 +68,9 @@ class EducationModeScreen extends StatelessWidget {
                 const SizedBox(height: 30),
                 CategoryButton(
                   categoryName: 'かたち',
-                  description: 'かたちをまなぼう！\nいろんなかたちをさがしてみてね',
+                  description: 'かたちをまなぼう！\nいろんなかたちをさがそう',
                   backgroundColor: Colors.orange.shade100,
+                  icon: Icons.star, // アイコン追加
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -81,6 +82,7 @@ class EducationModeScreen extends StatelessWidget {
                   categoryName: 'いろ',
                   description: 'いろをまなぼう！\nカラフルなせかいがひろがるよ',
                   backgroundColor: Colors.blue.shade100,
+                  icon: Icons.palette, // アイコン追加
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -92,6 +94,7 @@ class EducationModeScreen extends StatelessWidget {
                   categoryName: 'もじ',
                   description: 'もじをまなぼう！\nたのしくもじをおぼえよう',
                   backgroundColor: Colors.green.shade100,
+                  icon: Icons.text_fields, // アイコン追加
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -101,8 +104,9 @@ class EducationModeScreen extends StatelessWidget {
                 ),
                 CategoryButton(
                   categoryName: 'けいさん',
-                  description: 'けいさんをまなぼう！\nかんたんなけいさんをとこう',
+                  description: 'けいさんをまなぼう！\nけいさんをといてみよう',
                   backgroundColor: Colors.pink.shade100,
+                  icon: Icons.calculate, // アイコン追加
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -140,6 +144,7 @@ class CategoryButton extends StatelessWidget {
   final String categoryName;
   final String description; // 説明文を追加
   final Color backgroundColor;
+  final IconData icon; // アイコンを追加
   final VoidCallback onPressed;
 
   const CategoryButton({
@@ -147,6 +152,7 @@ class CategoryButton extends StatelessWidget {
     required this.categoryName,
     required this.description,
     required this.backgroundColor,
+    required this.icon, // アイコンを追加
     required this.onPressed,
   });
 
@@ -171,6 +177,11 @@ class CategoryButton extends StatelessWidget {
         ),
         child: Row(
           children: [
+            Icon(
+              icon, // アイコンを表示
+              size: 40, // アイコンの大きさ
+              color: Colors.black54,
+            ),
             const SizedBox(width: 20), // アイコンとテキストの間隔
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

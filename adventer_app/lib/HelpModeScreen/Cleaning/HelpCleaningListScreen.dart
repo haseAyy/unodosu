@@ -10,8 +10,34 @@ class CleaningScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // 背景色
-          Container(color: Colors.lightBlue[300]),
+          // 背景色（温かみのある色調）
+          Container(color: Colors.teal[50]),
+
+          // 上部デコレーション（円形の装飾）
+          Positioned(
+            top: -50,
+            left: -50,
+            child: Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                color: Colors.orangeAccent[100],
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          Positioned(
+            top: 100,
+            right: -30,
+            child: Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                color: Colors.lightGreen[200],
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
 
           // 質問部分
           Positioned(
@@ -112,8 +138,11 @@ class CleaningScreen extends StatelessWidget {
         // テキストの位置調整（上または下にずらす）
         Text(
           label,
-          style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
         ),
       ],
     );
