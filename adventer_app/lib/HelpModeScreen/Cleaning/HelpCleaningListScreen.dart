@@ -10,10 +10,6 @@ class CleaningScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-<<<<<<< HEAD
-          // 背景色
-          Container(color: Colors.lightBlue[300]),
-=======
           // 背景色（温かみのある色調）
           Container(color: Colors.teal[50]),
 
@@ -42,7 +38,6 @@ class CleaningScreen extends StatelessWidget {
               ),
             ),
           ),
->>>>>>> origin/master
 
           // 質問部分
           Positioned(
@@ -132,15 +127,6 @@ class CleaningScreen extends StatelessWidget {
   }) {
     return Column(
       children: [
-<<<<<<< HEAD
-        IconButton(
-          icon: Icon(icon, size: 50),
-          onPressed: onPressed,
-        ),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-=======
         // アイコンの位置を調整（上にずらしたり、左右にずらしたりできます）
         Padding(
           padding: const EdgeInsets.only(bottom: 10), // アイコンを下にずらす
@@ -157,13 +143,8 @@ class CleaningScreen extends StatelessWidget {
             fontWeight: FontWeight.bold,
             color: Colors.black87,
           ),
->>>>>>> origin/master
         ),
       ],
     );
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/master

@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-import 'HomeScreen.dart';
-
-// スタート画面
-=======
 import 'HomeScreen.dart'; // 遷移先の画面
 
->>>>>>> origin/master
 class StartScreen extends StatelessWidget {
   const StartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final screenHeight = MediaQuery.of(context).size.height; // MediaQueryキャッシュ
-=======
->>>>>>> origin/master
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -26,17 +18,6 @@ class StartScreen extends StatelessWidget {
       child: Scaffold(
         body: Stack(
           children: [
-<<<<<<< HEAD
-            // 背景カラー1（上部の水色）
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: screenHeight * 0.9, // 上部90%
-              child: Container(color: Colors.lightBlue[300]),
-            ),
-            // 背景カラー2（下部の緑色）
-=======
             // 背景（白基調にアクセントカラーを追加）
             Positioned.fill(
               child: Container(
@@ -128,59 +109,16 @@ class StartScreen extends StatelessWidget {
               ),
             ),
             // 下部のアクセント（柔らかい波のデザイン）
->>>>>>> origin/master
             Positioned(
               bottom: 0,
               left: 0,
               right: 0,
-<<<<<<< HEAD
-              height: screenHeight * 0.1, // 下部10%
-              child: Container(color: Colors.green),
-            ),
-            // ロゴとスタートテキスト
-            Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min, // 中央にまとめて配置
-                children: [
-                  // ロゴ部分
-                  Container(
-                    width: 300,
-                    height: 300,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.orangeAccent[200],
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'ぼくとわたしの\n探検ワールド',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 70), // ロゴとテキストの間隔
-                  // スタートテキスト
-                  const Text(
-                    'スタート',
-                    style: TextStyle(
-                      fontSize: 30,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-=======
               child: ClipPath(
                 clipper: WaveClipper(),
                 child: Container(
                   height: 120,
                   color: const Color.fromARGB(255, 250, 213, 148),
                 ),
->>>>>>> origin/master
               ),
             ),
           ],
@@ -188,9 +126,6 @@ class StartScreen extends StatelessWidget {
       ),
     );
   }
-<<<<<<< HEAD
-}
-=======
 }
 
 // 波のデザイン用のカスタムクリッパー
@@ -213,4 +148,3 @@ class WaveClipper extends CustomClipper<Path> {
     return false;
   }
 }
->>>>>>> origin/master

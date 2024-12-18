@@ -1,24 +1,19 @@
-<<<<<<< HEAD
-import 'package:adventer_app/MeneScreen/StartScreen.dart';
-=======
->>>>>>> origin/master
 import 'package:flutter/material.dart';
 import '../EducationModeScreen/EducationModeScreen.dart';
 import '../HelpModeScreen/HelpModeScreen.dart';
 import '../ParentChildMode/ParentChildModeScreen.dart';
 
-<<<<<<< HEAD
 // 丸いボタンを定義
 class CircularButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
-  final Color buttonColor;  // ボタン色を追加
+  final Color buttonColor; // ボタン色を追加
 
   const CircularButton({
     super.key,
     required this.text,
     required this.onPressed,
-    required this.buttonColor,  // コンストラクタにcolorを追加
+    required this.buttonColor, // コンストラクタにcolorを追加
   });
 
   @override
@@ -31,7 +26,7 @@ class CircularButton extends StatelessWidget {
         height: screenSize.height * 0.4,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: buttonColor,  // 渡された色を使う
+          color: buttonColor, // 渡された色を使う
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
@@ -55,94 +50,12 @@ class CircularButton extends StatelessWidget {
   }
 }
 
-=======
->>>>>>> origin/master
 // ホーム画面
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-    final screenSize = MediaQuery.of(context).size; // MediaQueryキャッシュ
-    return Scaffold(
-      body: Stack(
-        children: [
-          // 背景カラー1（上部の水色）
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: screenSize.height * 0.9, // 上部90%
-            child: Container(color: Colors.lightBlue[300]),
-          ),
-          // 背景カラー2（下部の緑色）
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: screenSize.height * 0.1, // 下部10%
-            child: Container(color: Colors.green),
-          ),
-          // 左下に戻るボタン
-          Positioned(
-            bottom: 10,
-            left: 10,
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const StartScreen(),
-                  ),
-                );
-              },
-              backgroundColor: Colors.grey[350],
-              child: const Icon(Icons.arrow_back),
-            ),
-          ),
-          // メインコンテンツ（丸いボタン）
-          Positioned(
-            top: screenSize.height * 0.35, // 画面上部から35%下に配置
-            left: screenSize.width * 0.3, // ボタンを水平中央に配置
-            child: CircularButton(
-              text: 'おべんきょう',
-              buttonColor: Colors.green.shade100,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const EducationModeScreen()),
-                );
-              },
-            ),
-          ),
-          Positioned(
-            bottom: screenSize.width * 0.1,
-            left: screenSize.width * 0.05,
-            child: CircularButton(
-              text: 'おてつだい',
-              buttonColor: Colors.yellow.shade100,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HelpModeScreen()),
-                );
-              },
-            ),
-          ),
-          Positioned(
-            bottom: screenSize.width * 0.1,
-            right: screenSize.width * 0.05,
-            child: CircularButton(
-              text: 'おやこ',
-              buttonColor: Colors.pink.shade50,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ParentChildModeScreen(displayText: '星空を観察しよう!', )),
-                );
-              },
-=======
     final screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -247,7 +160,8 @@ class HomeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const EducationModeScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const EducationModeScreen()),
                     );
                   },
                 ),
@@ -259,7 +173,8 @@ class HomeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const HelpModeScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const HelpModeScreen()),
                     );
                   },
                 ),
@@ -271,22 +186,20 @@ class HomeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const ParentChildModeScreen(displayText: '星空を観察しよう!')),
+                      MaterialPageRoute(
+                          builder: (context) => const ParentChildModeScreen(
+                              displayText: '星空を観察しよう!')),
                     );
                   },
                 ),
                 const SizedBox(height: 30), // ボタンの下に空白を追加
               ],
->>>>>>> origin/master
             ),
           ),
         ],
       ),
     );
   }
-<<<<<<< HEAD
-}
-=======
 }
 
 // 長方形ボタンの定義
@@ -311,8 +224,10 @@ class RectangularButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10), // ボタン間の余白を狭める
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20), // 内部余白
+        margin: const EdgeInsets.symmetric(
+            vertical: 5, horizontal: 10), // ボタン間の余白を狭める
+        padding:
+            const EdgeInsets.symmetric(vertical: 20, horizontal: 20), // 内部余白
         height: 150, // ボタンの高さを大きくする
         decoration: BoxDecoration(
           color: buttonColor,
@@ -362,4 +277,3 @@ class RectangularButton extends StatelessWidget {
     );
   }
 }
->>>>>>> origin/master
