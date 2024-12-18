@@ -51,7 +51,7 @@ class HelpModeScreen extends StatelessWidget {
             child: Column(
               children: [
                 const Padding(
-                  padding:  EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
                     'もんだいをえらぼう！',
                     style: TextStyle(
@@ -65,8 +65,9 @@ class HelpModeScreen extends StatelessWidget {
                 const SizedBox(height: 100),
                 CategoryButton(
                   categoryName: 'おかたづけ',
-                  description: 'おかたづけをしよう！\nおかたづけをまなべるよ',
+                  description: 'おかたづけをしよう！\nおへやをきれいにしよう',
                   backgroundColor: const Color.fromARGB(255, 162, 243, 254),
+                  icon: Icons.cleaning_services, // アイコン追加
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -79,6 +80,7 @@ class HelpModeScreen extends StatelessWidget {
                   categoryName: 'おつかい',
                   description: 'おつかいをしよう！\nおかねをまなべるよ',
                   backgroundColor: const Color.fromARGB(255, 249, 255, 198),
+                  icon: Icons.shopping_cart, // アイコン追加
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -116,6 +118,7 @@ class CategoryButton extends StatelessWidget {
   final String categoryName;
   final String description; // 説明文を追加
   final Color backgroundColor;
+  final IconData icon; // アイコンを追加
   final VoidCallback onPressed;
 
   const CategoryButton({
@@ -123,6 +126,7 @@ class CategoryButton extends StatelessWidget {
     required this.categoryName,
     required this.description,
     required this.backgroundColor,
+    required this.icon, // アイコンを追加
     required this.onPressed,
   });
 
@@ -147,6 +151,11 @@ class CategoryButton extends StatelessWidget {
         ),
         child: Row(
           children: [
+            Icon(
+              icon, // アイコンを表示
+              size: 40, // アイコンの大きさ
+              color: Colors.black54,
+            ),
             const SizedBox(width: 20), // アイコンとテキストの間隔
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,7 +177,7 @@ class CategoryButton extends StatelessWidget {
               child: Text(
                 description,
                 style: const TextStyle(
-                  fontSize: 14,
+                  fontSize: 12,
                   color: Colors.black54,
                   fontFamily: 'Comic Sans MS',
                 ),

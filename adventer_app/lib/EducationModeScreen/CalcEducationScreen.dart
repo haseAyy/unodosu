@@ -95,7 +95,7 @@ class CalcEducationScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false, // 戻るボタンを非表示にする
-        backgroundColor: const Color.fromARGB(255, 255, 182, 193), // ピンク色の背景
+        backgroundColor: const Color.fromARGB(141, 57, 154, 0),
         elevation: 0,
         title: const Text(
           'いろもんだい',
@@ -146,7 +146,7 @@ class CalcEducationScreen extends StatelessWidget {
                 _showQuitDialog(context); // ダイアログを表示
               },
               style: TextButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 255, 182, 193),
+                backgroundColor: const Color.fromARGB(141, 57, 154, 0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20), // 角丸
                 ),
