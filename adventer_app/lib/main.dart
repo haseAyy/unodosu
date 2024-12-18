@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'Screen/StartScreen.dart';
+=======
+import 'MeneScreen/StartScreen.dart';
+>>>>>>> ayane
 
 void main() {
   runApp(const MyApp());
@@ -20,4 +24,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> ayane
