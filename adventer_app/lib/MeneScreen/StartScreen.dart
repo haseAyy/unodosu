@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'HomeScreen.dart';
+import 'HomeScreen.dart'; // 遷移先の画面
 
 class StartScreen extends StatelessWidget {
   const StartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height; // MediaQueryキャッシュ
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -17,217 +16,133 @@ class StartScreen extends StatelessWidget {
       child: Scaffold(
         body: Stack(
           children: [
-            // 背景カラー1（上部のグラデーション）
+            // 背景（白基調にアクセントカラーを追加）
             Positioned.fill(
               child: Container(
+                color: Colors.white,
+              ),
+            ),
+            // 上部のデコレーション（柔らかな雲のイメージ）
+            Positioned(
+              top: -50,
+              left: -50,
+              child: Container(
+                width: 200,
+                height: 200,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.lightBlue[300]!, Colors.green[200]!],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
+                  color: Colors.blue[100],
+                  shape: BoxShape.circle,
                 ),
               ),
             ),
-            // ロゴとスタートテキスト
+            Positioned(
+              top: 100,
+              right: -30,
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  color: Colors.yellow[100],
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+            // メインコンテンツ
             Center(
               child: Column(
-                mainAxisSize: MainAxisSize.min, // 中央にまとめて配置
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  // ロゴ部分
+                  // くまさんアイコン
                   Container(
-                    width: 260,
-                    height: 260,
+                    width: 220,
+                    height: 220,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.orangeAccent[200],
+                      color: Colors.brown[200],
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.orange.withOpacity(0.5),
-                          blurRadius: 15,
+                          color: Colors.brown.withOpacity(0.5),
+                          blurRadius: 10,
                           offset: const Offset(0, 5),
                         ),
                       ],
                     ),
-                    child: Center(
-                      child: Text(
-                        'ぼくとわたしの\n探検ワールド',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 10,
-                              color: Colors.black.withOpacity(0.2),
-                              offset: const Offset(2, 2),
-                            ),
-                          ],
-                        ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.pets, // くまさん風のアイコン
+                        size: 120,
+                        color: Colors.white,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 50), // ロゴとテキストの間隔
-                  // スタートテキスト
-                  const Text(
-                    '画面をタップして冒険を始めよう！',
+                  const SizedBox(height: 40),
+                  // タイトル
+                  Text(
+                    'ぼくとわたしの\n探検ワールド！',
+                    textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[800],
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Comic Sans MS', // ポップで親しみやすいフォント
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
+                  // サブタイトル
+                  Text(
+                    '画面をタップして次へ進もう',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  // 飾りのアイコン
                   Icon(
                     Icons.touch_app,
-                    size: 36,
-                    color: Colors.yellow[700],
+                    size: 50,
+                    color: Colors.blue[300],
                   ),
                 ],
               ),
             ),
-            // アニメーションする星（飾り）
+            // 下部のアクセント（柔らかい波のデザイン）
             Positioned(
-              top: 100,
-              left: 50,
-              child: _buildAnimatedStar(Colors.yellowAccent, 1.0),
-            ),
-            Positioned(
-              top: 200,
-              right: 60,
-              child: _buildAnimatedStar(Colors.white, 0.8),
-            ),
-            Positioned(
-              bottom: 100,
-              left: 120,
-              child: _buildAnimatedStar(Colors.orange, 1.2),
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: ClipPath(
+                clipper: WaveClipper(),
+                child: Container(
+                  height: 120,
+                  color: const Color.fromARGB(255, 250, 213, 148),
+                ),
+              ),
             ),
           ],
         ),
       ),
     );
   }
-
-  // アニメーションする星の装飾
-  Widget _buildAnimatedStar(Color color, double scale) {
-    return TweenAnimationBuilder(
-      tween: Tween<double>(begin: 0.8, end: 1.2),
-      duration: const Duration(seconds: 1),
-      curve: Curves.easeInOut,
-      builder: (context, value, child) {
-        return Transform.scale(
-          scale: value * scale,
-          child: child,
-        );
-      },
-      onEnd: () {
-        Future.delayed(const Duration(milliseconds: 300), () => const HomeScreen());
-      },
-      child: Icon(
-        Icons.star,
-        size: 40,
-        color: color,
-      ),
-    );
-  }
 }
 
-
-
-/*
-class StartScreen extends StatelessWidget {
-  const StartScreen({super.key});
+// 波のデザイン用のカスタムクリッパー
+class WaveClipper extends CustomClipper<Path> {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      /*appBar: AppBar(
-        title: Text('教育アプリ'),
-        backgroundColor: Colors.orangeAccent,
-      ),*/
-    
-        
-      body: PageView(
-        scrollDirection: Axis.horizontal, // 横にスライド
-        children: [
-          CategoryScreen(
-            categoryName: 'かたち',
-            backgroundColor: const Color.fromARGB(255, 252, 194, 214),
-            textColor: Colors.white,
-          ),
-          CategoryScreen(
-            categoryName: 'いろ',
-            backgroundColor: const Color.fromARGB(255, 161, 225, 255),
-            textColor: Colors.white,
-          ),
-          CategoryScreen(
-            categoryName: 'もじ',
-            backgroundColor: const Color.fromARGB(255, 135, 254, 133),
-            textColor: Colors.black,
-          ),
-          CategoryScreen(
-            categoryName: 'けいさん',
-            backgroundColor: const Color.fromARGB(255, 248, 194, 151),
-            textColor: Colors.white,
-          ),
-        ],
-      ),
-      // 左下の戻るボタン
-      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      floatingActionButton: Builder(
-        builder: (context) {
-          return Positioned(
-            bottom: 10,
-            left: 10,
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => StartScreen(),
-                  ),
-                );
-              },
-              backgroundColor: Colors.grey[350],
-              child: const Icon(Icons.arrow_back),
-            ),
-          );
-        },
-      ),
-    );
+  Path getClip(Size size) {
+    var path = Path();
+    path.lineTo(0, size.height - 30);
+    path.quadraticBezierTo(
+        size.width / 4, size.height, size.width / 2, size.height - 30);
+    path.quadraticBezierTo(
+        size.width * 3 / 4, size.height - 60, size.width, size.height - 30);
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
   }
-}
-
-   
-
-class CategoryScreen extends StatelessWidget {
-  final String categoryName;
-  final Color backgroundColor;
-  final Color textColor;
-
-  CategoryScreen({
-    required this.categoryName,
-    required this.backgroundColor,
-    required this.textColor,
-  });
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: backgroundColor, // 背景色を設定
-      child: Center(
-        child: Text(
-          '$categoryNameの問題を解こう！',
-          style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-            color: textColor,
-            fontFamily: 'Comic Sans MS', // ポップなフォント
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
   }
 }
-*/
