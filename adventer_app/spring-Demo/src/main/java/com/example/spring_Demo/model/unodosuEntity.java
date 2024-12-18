@@ -2,7 +2,9 @@ package com.example.spring_Demo.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-//import java.util.List;
+import java.util.List;
+
+import jakarta.persistence.Transient;
 
 
 
@@ -19,7 +21,11 @@ public class UnodosuEntity{
     private String question_content;//問題内容
     private String question_answer; //正解
     private String question_image;  //画像URL
-   //private List<String> options; // 選択肢のリスト
+   
+    // 選択肢を動的に生成するために使用
+    @Transient
+    private List<String> options;
+     // optionsフィールドの定義
 
     /*getterとsetterの定義 */
 
@@ -66,6 +72,16 @@ public class UnodosuEntity{
     public void setQuestion_image(String question_image){
         this.question_image = question_image;
     }
+
+    public List<String> getOptions() {
+        return options;
+    }
+
+    public void setOptions(List<String> options) {
+        this.options = options;
+    }
+
+    
 
 
 }
