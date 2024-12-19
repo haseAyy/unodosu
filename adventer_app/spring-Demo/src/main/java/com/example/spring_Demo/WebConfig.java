@@ -14,7 +14,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://10.24.110.65:8080", "http://localhost:8080") // アクセスを許可
+                        .allowedOrigins("http://10.24.108.170:8080", "http://localhost:8080") // アクセスを許可
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*");
             }

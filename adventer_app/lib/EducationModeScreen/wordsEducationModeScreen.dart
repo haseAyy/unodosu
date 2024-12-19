@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
-//import 'EducationCorrectScreen.dart';　//正解画面
-//import 'EducationIncorrectScreen.dart';//不正解画面
-
-//unodosuEntityのデータモデル
-class question {
+import 'EducationModeScreen.dart';
+import 'CalcEducationScreen.dart';
+import '../MeneScreen/HomeScreen.dart';
+class Question {
   final String question_id;
   final String questiontype_id;
   final String question_theme;
@@ -13,7 +12,7 @@ class question {
   final String question_content;
   final List<String> options;
 
-  question({
+  Question({
     required this.question_id,
     required this.questiontype_id,
     required this.question_theme,
@@ -22,9 +21,8 @@ class question {
     required this.options,
   });
 
-  // JSONをUnodosuEntityオブジェクトに変換
-  factory question.fromJson(Map<String, dynamic> json) {
-    return question(
+  factory Question.fromJson(Map<String, dynamic> json) {
+    return Question(
       question_id: json['question_id'],
       questiontype_id: json['questiontype_id'],
       question_theme: json['question_theme'],
@@ -32,28 +30,29 @@ class question {
       question_content: json['question_content'],
       options: json['options'] != null && json['options'].isNotEmpty
           ? List<String>.from(json['options'])
-          : ['No options available'], // デフォルト値を設定
+          : ['No options available'],
     );
   }
 }
 
-// APIリクエストを送信して、問題を取得するメソッド
-Future<question?> fetchQuestion(String questiontype_id) async {
+Future<Question?> fetchQuestion(String questiontype_id) async {
   final response = await http.get(
     Uri.parse(
         'http://10.24.110.65:8080/random-text-question?questiontype_id=$questiontype_id'),
   );
 
   if (response.statusCode == 200) {
-    // JSONレスポンスをパースしてUnodosuEntityに変換
-    return question.fromJson(jsonDecode(response.body));
+    return Question.fromJson(jsonDecode(response.body));
   } else {
     throw Exception('Failed to load question');
   }
 }
 
+
+//文字問題出題画面
 class wordsEducationModeScreen extends StatefulWidget {
   const wordsEducationModeScreen({super.key});
+
 
   @override
   _WordsEducationModeScreenState createState() =>
@@ -61,129 +60,313 @@ class wordsEducationModeScreen extends StatefulWidget {
 }
 
 class _WordsEducationModeScreenState extends State<wordsEducationModeScreen> {
-  late Future<question?> questionFuture; // 問題を保持する変数
-  String? selectedAnswer; // ユーザーが選んだ選択肢
+  late Future<Question?> questionFuture;
+  String? selectedAnswer;
 
   @override
   void initState() {
     super.initState();
-    //最初に問題を取得する
-    questionFuture = fetchQuestion("KMS003"); // 適切なquestionTypeidを指定
+    questionFuture = fetchQuestion("KMS003");
   }
 
-  // ユーザーが選んだ選択肢に基づいて正解か不正解かを判定する
-  void checkAnswer(question question) {
-    if (selectedAnswer == question.question_answer) {
-      // 正解の場合
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Correct!'),
-            content: Text('Your answer is correct!'),
-            actions: <Widget>[
-              TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      // 不正解の場合
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Incorrect!'),
-            content: Text('Your answer is incorrect!'),
-            actions: <Widget>[
-              TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
+// ポップアップダイアログを表示する関数
+  void _showQuitDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('ほんとうにやめる？'),
+          content: const Text('もんだいをおわってもいいですか？'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // ダイアログを閉じる
+              },
+              child: const Text('キャンセル'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // ダイアログを閉じて、問題一覧画面に戻る
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationModeScreen()));
+              },
+              child: const Text('やめる'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void checkAnswer(Question question) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(selectedAnswer == question.question_answer
+              ? 'Correct!'
+              : 'Incorrect!'),
+          content: Text(
+              'Your answer is ${selectedAnswer == question.question_answer ? 'correct' : 'incorrect'}!'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
-      appBar: AppBar(title: Text('Words Education Mode')),
-      body: FutureBuilder<question?>(
-        future: questionFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (snapshot.hasData) {
-            // 問題が取得できた場合
-            final question = snapshot.data!;
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 問題内容を表示
-                  Text(
-                    '${question.question_content}\n'
-                    '\n${question.question_theme}',
-                    style: TextStyle(fontSize: 40),
-                  ),
-                  SizedBox(height: 20),
-                  // 選択肢のボタンを表示
-                  ...question.options.map((option) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            selectedAnswer = option; // 選択した選択肢を記録
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: selectedAnswer == option
-                              ? Colors.blue // 選択中の色
-                              : Colors.grey, // 通常の色
-                        ),
-                        child: Text(
-                          option,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                  SizedBox(height: 20),
-                  // 「選択肢を確定」ボタン（まだ正解・不正解の処理はしない）
-                  ElevatedButton(
-                    onPressed: selectedAnswer == null
-                        ? null
-                        : () {
-                            // ここで正解・不正解の処理を追加可能
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('選択肢 "$selectedAnswer" を選びました'),
-                              ),
-                            );
-                          },
-                    child: Text('選択肢を確定'),
-                  ),
-                ],
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+        elevation: 0,
+        title: const Text(
+          'もじもんだい',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Comic Sans MS',
+          ),
+        ),
+        centerTitle: true,
+      ),
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          //上部のソフトな装飾
+          Positioned(
+            top: -50,
+            left: -50,
+            child: Container(
+              width: 150,
+              height: 150,
+              decoration: const BoxDecoration(
+                color: Color.fromARGB(50, 255, 182, 193),
+                shape: BoxShape.circle,
               ),
-            );
-          } else {
-            return Center(child: Text('No data found.'));
-          }
-        },
+            ),
+          ),
+          //下部のソフトな装飾
+          Positioned(
+            bottom: -50,
+            right: -50,
+            child: Container(
+              width: 200,
+              height: 200,
+              decoration: const BoxDecoration(
+                color: Color.fromARGB(50, 173, 216, 230),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          // 問題中断ボタン（左下）
+          Positioned(
+            bottom: 30,
+            left: 10,
+            child: TextButton(
+              onPressed: () {
+                _showQuitDialog(context); // ダイアログを表示
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20), // 角丸
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+              ),
+              child: const Text(
+                'やめる',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white, // テキストカラー（白）
+                  fontFamily: 'Comic Sans MS', // フォント
+                ),
+              ),
+            ),
+          ),
+          // 問題テキスト
+
+          Positioned(
+            top: screenSize.height * 0.15,
+            left: 0,
+            right: 0,
+            child: Column(
+              children: [
+                const Text(
+                  'このもんだいをといてみよう！',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontFamily: 'Comic Sans MS',
+                  ),
+                ),
+                const SizedBox(height: 60),
+                FutureBuilder<Question?>(
+                  future: questionFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else if (snapshot.hasData) {
+                      final question = snapshot.data!;
+                      return Column(
+                        children: [
+                          Text(
+                            question.question_content,
+                            style: const TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              fontFamily: 'Comic Sans MS',
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            question.question_theme,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              fontFamily: 'Comic Sans MS',
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      return const Text('No data found.');
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: screenSize.height * 0.15,
+            left: 0,
+            right: 0,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    RectangularButton(
+                      text: 'A. 選択肢1',
+                      buttonColor: const Color.fromARGB(255, 250, 240, 230),
+                      textColor: Colors.black,
+                      width: screenSize.width * 0.4,
+                      height: 70,
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const wordsEducationModeScreen()));
+                      },
+                    ),
+                    RectangularButton(
+                      text: 'B. 選択肢2',
+                      buttonColor: const Color.fromARGB(255, 250, 240, 230),
+                      textColor: Colors.black,
+                      width: screenSize.width * 0.4,
+                      height: 70,
+                      onPressed: () {
+                         Navigator.push(context, MaterialPageRoute(builder: (_) => const wordsEducationModeScreen()));
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    RectangularButton(
+                      text: 'C. 選択肢3',
+                      buttonColor: const Color.fromARGB(255, 250, 240, 230),
+                      textColor: Colors.black,
+                      width: screenSize.width * 0.4,
+                      height: 70,
+                      onPressed: () {
+                         Navigator.push(context, MaterialPageRoute(builder: (_) => const wordsEducationModeScreen()));
+                      },
+                    ),
+                    RectangularButton(
+                      text: 'D. 選択肢4',
+                      buttonColor: const Color.fromARGB(255, 250, 240, 230),
+                      textColor: Colors.black,
+                      width: screenSize.width * 0.4,
+                      height: 70,
+                      onPressed: () {
+                         Navigator.push(context, MaterialPageRoute(builder: (_) => const wordsEducationModeScreen()));
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class RectangularButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onPressed;
+  final Color buttonColor;
+  final double width;
+  final double height;
+  final Color textColor;
+
+  const RectangularButton({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    required this.buttonColor,
+    this.width = 200,
+    this.height = 60,
+    required this.textColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: buttonColor,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.4),
+              blurRadius: 8,
+              offset: const Offset(3, 5),
+            ),
+          ],
+        ),
+        child: Center(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+              fontFamily: 'Comic Sans MS',
+            ),
+          ),
+        ),
       ),
     );
   }

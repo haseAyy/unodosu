@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'ShapeEducationScreen.dart'; // 修正されたインポート
 
+
 // 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
   final String text;
