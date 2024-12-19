@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'MeneScreen/StartScreen.dart';
 
+//コメント
+
 void main() {
   runApp(const MyApp());
 }
