@@ -2,7 +2,7 @@ package com.example.spring_Demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.example.spring_Demo.model.UnodosuEntity;
+import com.example.spring_Demo.model.question;
 import com.example.spring_Demo.repository.UnodosuRepository;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ public class ProblemService {
     @Autowired
     private UnodosuRepository unodosuRepository;
 
-    public UnodosuEntity getRandomTextQuestion(String questiontype_id, List<String> solvedQuestions) {
+    public question getRandomTextQuestion(String questiontype_id, List<String> solvedQuestions) {
 
         // 空リストの場合でもnullではなく空リストを渡す
         if (solvedQuestions == null) {
@@ -23,7 +23,7 @@ public class ProblemService {
         }
 
         // ランダムな問題を取得
-        UnodosuEntity randomQuestion = unodosuRepository.findRandomQuestionExcluding(questiontype_id, solvedQuestions);
+        question randomQuestion = unodosuRepository.findRandomQuestionExcluding(questiontype_id, solvedQuestions);
 
         if (randomQuestion == null) {
             return null; // 問題が見つからない場合はnullを返す

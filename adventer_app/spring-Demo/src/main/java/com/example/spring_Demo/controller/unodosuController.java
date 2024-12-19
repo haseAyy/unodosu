@@ -7,7 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import com.example.spring_Demo.model.UnodosuEntity;
+import com.example.spring_Demo.model.question;
+import com.example.spring_Demo.model.question;
 import com.example.spring_Demo.service.ProblemService;
 import org.springframework.web.bind.annotation.GetMapping;
 //import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +32,7 @@ public class unodosuController {
 
   @SuppressWarnings("unchecked")
   @GetMapping(value = "/random-text-question", produces = "application/json;charset=UTF-8")
-  public ResponseEntity<UnodosuEntity> getRandomTextQuestion(@RequestParam String questiontype_id, HttpSession session) {
+  public ResponseEntity<question> getRandomTextQuestion(@RequestParam String questiontype_id, HttpSession session) {
 
      // セッションから解いた問題のリストを取得
     List<String> solvedQuestions = (List<String>) session.getAttribute("solvedQuestions");
@@ -41,7 +42,7 @@ public class unodosuController {
     }
 
     // 新しい問題を取得（解いた問題を除外）
-    UnodosuEntity randomQuestion = problemService.getRandomTextQuestion(questiontype_id, solvedQuestions);
+    question randomQuestion = problemService.getRandomTextQuestion(questiontype_id, solvedQuestions);
     if (randomQuestion == null) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 問題が無ければ204レスポンス
     }

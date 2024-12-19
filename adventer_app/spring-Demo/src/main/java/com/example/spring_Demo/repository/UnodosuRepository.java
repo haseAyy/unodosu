@@ -9,12 +9,12 @@ import org.springframework.data.repository.query.Param;
 
 
 
-import com.example.spring_Demo.model.UnodosuEntity;
+import com.example.spring_Demo.model.question;
 
 import java.util.List;
 
 @Repository
-public interface UnodosuRepository extends JpaRepository <UnodosuEntity,String>{
+public interface UnodosuRepository extends JpaRepository <question,String>{
 
     //問題をランダムに出題
    /* @Query(value = "SELECT * FROM question WHERE questiontype_id = :questiontype_id " + "AND (:solvedQuestions IS NULL OR :solvedQuestions = '' OR question_id NOT IN (:solvedQuestions)) " + 
@@ -28,7 +28,7 @@ public interface UnodosuRepository extends JpaRepository <UnodosuEntity,String>{
     AND (:solvedQuestions IS NULL OR question_id NOT IN (:solvedQuestions)) 
     ORDER BY RAND() LIMIT 1
     """, nativeQuery = true)
-    UnodosuEntity findRandomQuestionExcluding(@Param("questiontype_id") String questiontype_id,  @Param("solvedQuestions") List<String> solvedQuestions);
+    question findRandomQuestionExcluding(@Param("questiontype_id") String questiontype_id,  @Param("solvedQuestions") List<String> solvedQuestions);
 
     @Query(value = "SELECT question_answer FROM question WHERE questiontype_id = :questiontype_id " + "AND question_id != :question_id LIMIT 3", nativeQuery = true)
     List<String> findDummyAnswersByType(@Param("question_id") String question_id,  @Param("questiontype_id") String questiontype_id);

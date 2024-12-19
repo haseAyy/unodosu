@@ -9,7 +9,7 @@ import jakarta.persistence.Transient;
 
 
 @Entity
-public class UnodosuEntity{
+public class question{
  
     /*フィールド */
     @Id
