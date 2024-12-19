@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'HomeScreen.dart'; // 遷移先の画面
 
+//かわいい画面
+
 class StartScreen extends StatelessWidget {
   const StartScreen({super.key});
 
