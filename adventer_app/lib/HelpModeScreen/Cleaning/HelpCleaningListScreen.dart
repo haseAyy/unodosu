@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter/material.dart';
-
 class CleaningScreen extends StatelessWidget {
   const CleaningScreen({super.key});
 
@@ -99,7 +97,7 @@ class CleaningScreen extends StatelessWidget {
                   context: context, // contextを渡す
                   icon: Icons.table_restaurant,
                   label: 'テーブル',
-                  backgroundColor: const Color.fromARGB(255, 255, 224, 120)!,
+                  backgroundColor: const Color.fromARGB(255, 255, 224, 120),
                   onPressed: () {
                     // テーブル選択時の処理
                   },
