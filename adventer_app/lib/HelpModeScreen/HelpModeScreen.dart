@@ -8,6 +8,8 @@ class HelpModeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
 
     return Scaffold(
       body: Stack(
@@ -15,16 +17,16 @@ class HelpModeScreen extends StatelessWidget {
           // 背景（白基調にアクセントカラーを追加）
           Positioned.fill(
             child: Container(
-              color: Colors.white,
+              color: Colors.teal[50],
             ),
           ),
           // 上部デコレーション（柔らかい円形の装飾）
           Positioned(
-            top: -50,
-            left: -50,
+            top: -screenHeight * 0.05, // 画面サイズに基づく位置調整
+            left: -screenWidth * 0.1,
             child: Container(
-              width: 200,
-              height: 200,
+              width: screenWidth * 0.5,
+              height: screenWidth * 0.5,
               decoration: BoxDecoration(
                 color: Colors.pinkAccent[100],
                 shape: BoxShape.circle,
@@ -32,11 +34,11 @@ class HelpModeScreen extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 100,
-            right: -30,
+            top: screenHeight * 0.1, // 画面サイズに基づく位置調整
+            right: -screenWidth * 0.1,
             child: Container(
-              width: 150,
-              height: 150,
+              width: screenWidth * 0.4,
+              height: screenWidth * 0.4,
               decoration: BoxDecoration(
                 color: Colors.greenAccent[100],
                 shape: BoxShape.circle,
@@ -45,14 +47,14 @@ class HelpModeScreen extends StatelessWidget {
           ),
           // メインコンテンツ（カテゴリー画面）
           Positioned(
-            top: screenSize.height * 0.2, // 画面上部に配置
+            top: screenHeight * 0.2, // 画面上部に配置
             left: 0,
             right: 0,
             child: Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                  child: const Text(
                     'もんだいをえらぼう！',
                     style: TextStyle(
                       fontSize: 24,
@@ -62,11 +64,11 @@ class HelpModeScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(height: 100),
+                SizedBox(height: screenHeight * 0.1),
                 CategoryButton(
                   categoryName: 'おかたづけ',
                   description: 'おかたづけをしよう！\nおへやをきれいにしよう',
-                  backgroundColor: const Color.fromARGB(255, 162, 243, 254),
+                  backgroundColor: const Color.fromARGB(255, 226, 199, 255),
                   icon: Icons.cleaning_services, // アイコン追加
                   onPressed: () {
                     Navigator.push(
@@ -75,11 +77,11 @@ class HelpModeScreen extends StatelessWidget {
                     );
                   },
                 ),
-                const SizedBox(height: 50), // ボタン間の間隔を追加
+                SizedBox(height: screenHeight * 0.05), // ボタン間の間隔を画面サイズに基づく
                 CategoryButton(
                   categoryName: 'おつかい',
                   description: 'おつかいをしよう！\nおかねをまなべるよ',
-                  backgroundColor: const Color.fromARGB(255, 249, 255, 198),
+                  backgroundColor: const Color.fromARGB(255, 255, 212, 198),
                   icon: Icons.shopping_cart, // アイコン追加
                   onPressed: () {
                     Navigator.push(
@@ -93,8 +95,8 @@ class HelpModeScreen extends StatelessWidget {
           ),
           // 左下の戻るボタン
           Positioned(
-            bottom: 10,
-            left: 10,
+            bottom: screenHeight * 0.03, // 画面サイズに基づく位置調整
+            left: screenWidth * 0.05,
             child: FloatingActionButton(
               onPressed: () {
                 Navigator.pushReplacement(
@@ -132,12 +134,16 @@ class CategoryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
+
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20), // ボタン間の余白
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20), // 内部余白
-        height: 150, // ボタンの高さ
+        margin: EdgeInsets.symmetric(vertical: screenHeight * 0.02, horizontal: screenWidth * 0.05), // ボタン間の余白
+        padding: EdgeInsets.symmetric(vertical: screenHeight * 0.03, horizontal: screenWidth * 0.05), // 内部余白
+        height: screenHeight * 0.2, // ボタンの高さ
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(20),
@@ -153,18 +159,18 @@ class CategoryButton extends StatelessWidget {
           children: [
             Icon(
               icon, // アイコンを表示
-              size: 40, // アイコンの大きさ
+              size: screenWidth * 0.12, // アイコンの大きさ
               color: Colors.black54,
             ),
-            const SizedBox(width: 20), // アイコンとテキストの間隔
+            SizedBox(width: screenWidth * 0.03), // アイコンとテキストの間隔
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   categoryName,
-                  style: const TextStyle(
-                    fontSize: 22,
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.05, // フォントサイズを画面幅に基づいて設定
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                     fontFamily: 'Comic Sans MS', // ポップなフォント
@@ -172,16 +178,17 @@ class CategoryButton extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(width: 20), // 説明文とタイトルの間隔
+            SizedBox(width: screenWidth * 0.03), // 説明文とタイトルの間隔
             Expanded(
               child: Text(
                 description,
-                style: const TextStyle(
-                  fontSize: 12,
+                style: TextStyle(
+                  fontSize: screenWidth * 0.03, // フォントサイズを画面幅に基づいて設定
                   color: Colors.black54,
                   fontFamily: 'Comic Sans MS',
                 ),
-                overflow: TextOverflow.ellipsis, // テキストが長くても切れるように
+                maxLines: null, // 最大行数を制限しない
+                softWrap: true, // 改行を許可する
               ),
             ),
           ],

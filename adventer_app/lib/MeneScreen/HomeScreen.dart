@@ -170,15 +170,25 @@ class RectangularButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
+
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10), // ボタン間の余白を狭める
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20), // 内部余白
-        height: 150, // ボタンの高さを大きくする
+        margin: EdgeInsets.symmetric(
+          vertical: screenHeight * 0.01, // ボタン間の垂直間隔
+          horizontal: screenWidth * 0.03, // ボタン間の横の余白
+        ),
+        padding: EdgeInsets.symmetric(
+          vertical: screenHeight * 0.02, // ボタン内の上下余白
+          horizontal: screenWidth * 0.05, // ボタン内の左右余白
+        ),
+        height: screenHeight * 0.16, // ボタンの高さは画面高さの18%
         decoration: BoxDecoration(
           color: buttonColor,
-          borderRadius: BorderRadius.circular(20), // 角丸のサイズ
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
@@ -192,31 +202,35 @@ class RectangularButton extends StatelessWidget {
           children: [
             Icon(
               icon,
-              size: 60, // アイコンを大きくする
+              size: screenWidth * 0.14, // アイコンのサイズは画面幅の14%
               color: Colors.black54,
             ),
-            const SizedBox(width: 30), // アイコンとテキストの間隔
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 22, // タイトルフォントサイズを大きく
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+            SizedBox(width: screenWidth * 0.1), // アイコンとテキストの間隔
+            Expanded(  // これでテキストが横幅に合わせて表示されるようにする
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.06, // タイトルフォントサイズは画面幅の6%
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  description,
-                  style: const TextStyle(
-                    fontSize: 16, // 説明テキストを大きく
-                    color: Colors.black54,
+                  SizedBox(height: screenHeight * 0.01), // タイトルと説明の間隔
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.03, // 説明テキストは画面幅の5%
+                      color: Colors.black54,
+                    ),
+                    overflow: TextOverflow.ellipsis, // 文字がはみ出る場合は「...」で省略
+                    maxLines: 1, // 1行に制限
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

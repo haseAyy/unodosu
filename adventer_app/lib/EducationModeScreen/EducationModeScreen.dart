@@ -1,9 +1,9 @@
-import 'package:adventer_app/EducationModeScreen/CalcEducationScreen.dart';
-import 'package:adventer_app/EducationModeScreen/LetterEducationScreen.dart';
 import 'package:flutter/material.dart';
-import 'ShapeEducationScreen.dart'; 
-import 'ColorEducationScreen.dart';
 import '../MeneScreen/HomeScreen.dart';
+import 'Calc/CalcStartScreen.dart';
+import 'Color/ColorStartScreen.dart';
+import 'Letter/LetterStartScreen.dart';
+import 'Shape/ShapeStartScreen.dart';
 
 class EducationModeScreen extends StatelessWidget {
   const EducationModeScreen({super.key});
@@ -74,7 +74,7 @@ class EducationModeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const ShapeEducationScreen()),
+                      MaterialPageRoute(builder: (context) => const ShapeStartScreen()),
                     );
                   },
                 ),
@@ -86,7 +86,7 @@ class EducationModeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const ColorEducationScreen()),
+                      MaterialPageRoute(builder: (context) => const ColorStartScreen()),
                     );
                   },
                 ),
@@ -98,7 +98,7 @@ class EducationModeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const LetterEducationScreen()),
+                      MaterialPageRoute(builder: (context) => const LetterStartScreen()),
                     );
                   },
                 ),
@@ -110,7 +110,7 @@ class EducationModeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const CalcEducationScreen()),
+                      MaterialPageRoute(builder: (context) => const CalcStartScreen()),
                     );
                   },
                 ),
@@ -158,12 +158,14 @@ class CategoryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20), // ボタン間の余白
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20), // 内部余白
-        height: 120, // ボタンの高さ
+        margin: EdgeInsets.symmetric(vertical: screenSize.height * 0.01, horizontal: screenSize.width * 0.05), // ボタン間の余白
+        padding: EdgeInsets.symmetric(vertical: screenSize.height * 0.025, horizontal: screenSize.width * 0.05), // 内部余白（少し大きく）
+        height: screenSize.height * 0.135, // ボタンの高さを12%に変更
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(20),
@@ -179,18 +181,18 @@ class CategoryButton extends StatelessWidget {
           children: [
             Icon(
               icon, // アイコンを表示
-              size: 40, // アイコンの大きさ
+              size: screenSize.width * 0.12, // アイコンの大きさを画面幅の12%に変更
               color: Colors.black54,
             ),
-            const SizedBox(width: 20), // アイコンとテキストの間隔
+            SizedBox(width: screenSize.width * 0.05), // アイコンとテキストの間隔
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   categoryName,
-                  style: const TextStyle(
-                    fontSize: 22,
+                  style: TextStyle(
+                    fontSize: screenSize.width * 0.05, // フォントサイズ（画面幅の7%に変更）
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                     fontFamily: 'Comic Sans MS', // ポップなフォント
@@ -198,12 +200,12 @@ class CategoryButton extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(width: 20), // 説明文とタイトルの間隔
+            SizedBox(width: screenSize.width * 0.05), // 説明文とタイトルの間隔
             Expanded(
               child: Text(
                 description,
-                style: const TextStyle(
-                  fontSize: 14,
+                style: TextStyle(
+                  fontSize: screenSize.width * 0.03, // フォントサイズ（画面幅の5%に変更）
                   color: Colors.black54,
                   fontFamily: 'Comic Sans MS',
                 ),
