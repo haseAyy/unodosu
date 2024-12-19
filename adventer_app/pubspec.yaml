@@ -88,3 +88,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+  # 画像をassetsセクションで指定
+  assets:
+    - assets/images/keisan_startScreen.png

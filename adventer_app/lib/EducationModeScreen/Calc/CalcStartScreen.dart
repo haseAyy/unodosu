@@ -2,46 +2,8 @@ import 'package:flutter/material.dart';
 import 'CalcEducationScreen.dart'; // 計算問題出題画面
 
 // 計算問題スタート画面
-class CalcStartScreen extends StatefulWidget {
+class CalcStartScreen extends StatelessWidget {
   const CalcStartScreen({super.key});
-
-  @override
-  _CalcStartScreenState createState() => _CalcStartScreenState();
-}
-
-class _CalcStartScreenState extends State<CalcStartScreen> with TickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    // アニメーションコントローラーを初期化
-    _controller = AnimationController(
-      duration: const Duration(seconds: 3),
-      vsync: this,
-    );
-
-    // 数字が上下に動くアニメーション
-    _animation = Tween<double>(begin: 0, end: -30).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    )..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          _controller.reverse();
-        } else if (status == AnimationStatus.dismissed) {
-          _controller.forward();
-        }
-      });
-
-    // アニメーション開始
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +12,7 @@ class _CalcStartScreenState extends State<CalcStartScreen> with TickerProviderSt
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false, // 戻るボタンを非表示
-        backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+        backgroundColor: Colors.pink.shade100,
         elevation: 0,
         centerTitle: true,
       ),
@@ -65,13 +27,13 @@ class _CalcStartScreenState extends State<CalcStartScreen> with TickerProviderSt
         },
         child: Stack(
           children: [
-            // 数字がふよふよ浮いているアニメーション
-            _buildFloatingNumber(screenSize, '1', 0.35, 0.1, Colors.orange, 0.15),
-            _buildFloatingNumber(screenSize, '2', 0.6, 0.7, Colors.green, 0.1),
-            _buildFloatingNumber(screenSize, '3', 0.25, 0.65, Colors.blue, 0.12),
-            _buildFloatingNumber(screenSize, '4', 0.65, 0.2, Colors.purple, 0.15),
-            _buildFloatingNumber(screenSize, '5', 0.45, 0.45, Colors.red, 0.1),
-            _buildFloatingNumber(screenSize, '6', 0.15, 0.3, const Color.fromARGB(255, 173, 217, 30), 0.12),
+            // 背景画像を設定
+            Positioned.fill(
+              child: Image.asset(
+                'assets/images/keisan_startScreen.png', // 画像ファイルのパス
+                fit: BoxFit.cover, // 画面全体にフィットさせる
+              ),
+            ),
             // 上部の「けいさんもんだいスタート」テキスト
             Positioned(
               top: screenSize.height * 0.05,
@@ -110,31 +72,6 @@ class _CalcStartScreenState extends State<CalcStartScreen> with TickerProviderSt
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  // 数字を配置するメソッド
-  Widget _buildFloatingNumber(Size screenSize, String text, double top, double left, Color color, double sizeFactor) {
-    return Positioned(
-      top: screenSize.height * top,
-      left: screenSize.width * left,
-      child: AnimatedBuilder(
-        animation: _animation,
-        builder: (context, child) {
-          return Transform.translate(
-            offset: Offset(0, _animation.value),
-            child: child,
-          );
-        },
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: screenSize.height * sizeFactor,
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
         ),
       ),
     );
