@@ -210,7 +210,7 @@ class ShapeEducationScreen extends StatelessWidget {
                       width: screenSize.width * 0.4,
                       height: 70,
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationCorrectScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationCorrectScreen(message: "a",)));
                       },
                     ),
                     RectangularButton(

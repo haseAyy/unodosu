@@ -195,7 +195,7 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => const EducationCorrectScreen()),
+              builder: (context) => const EducationCorrectScreen(message: 'いろ')),
         );
       } else {
         Navigator.pushReplacement(

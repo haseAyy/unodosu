@@ -141,7 +141,7 @@ class ShapeEducationModeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const EducationCorrectScreen(),
+                    builder: (context) => const EducationCorrectScreen(message: "a",),
                   ),
                 );
               },
