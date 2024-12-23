@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'Cleaning/HelpCleaningListScreen.dart';
 import '../MeneScreen/HomeScreen.dart';
 
@@ -118,9 +119,9 @@ class HelpModeScreen extends StatelessWidget {
 
 class CategoryButton extends StatelessWidget {
   final String categoryName;
-  final String description; // 説明文を追加
+  final String description;
   final Color backgroundColor;
-  final IconData icon; // アイコンを追加
+  final IconData icon;
   final VoidCallback onPressed;
 
   const CategoryButton({
@@ -128,72 +129,130 @@ class CategoryButton extends StatelessWidget {
     required this.categoryName,
     required this.description,
     required this.backgroundColor,
-    required this.icon, // アイコンを追加
+    required this.icon,
     required this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final screenWidth = screenSize.width;
-    final screenHeight = screenSize.height;
+
+    final buttonHeight = screenSize.height * 0.2; // ボタンの高さを調整
+    final buttonWidth = screenSize.width * 0.9; // ボタンの幅を調整
 
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: screenHeight * 0.02, horizontal: screenWidth * 0.05), // ボタン間の余白
-        padding: EdgeInsets.symmetric(vertical: screenHeight * 0.03, horizontal: screenWidth * 0.05), // 内部余白
-        height: screenHeight * 0.2, // ボタンの高さ
+        height: buttonHeight,
+        width: buttonWidth,
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 8,
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 10,
               offset: const Offset(4, 6),
             ),
           ],
         ),
-        child: Row(
+        child: Stack(
           children: [
-            Icon(
-              icon, // アイコンを表示
-              size: screenWidth * 0.12, // アイコンの大きさ
-              color: Colors.black54,
+            // 縫い目を描画する CustomPaint
+            CustomPaint(
+              painter: StitchPainter(buttonWidth, buttonHeight),
+              child: Container(),
             ),
-            SizedBox(width: screenWidth * 0.03), // アイコンとテキストの間隔
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  categoryName,
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.05, // フォントサイズを画面幅に基づいて設定
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                    fontFamily: 'Comic Sans MS', // ポップなフォント
+            // ボタンのコンテンツ（アイコン、テキスト）
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05), // 左右のパディングを調整
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    icon,
+                    size: screenSize.width * 0.15, // アイコンのサイズ調整
+                    color: Colors.black54,
                   ),
-                ),
-              ],
-            ),
-            SizedBox(width: screenWidth * 0.03), // 説明文とタイトルの間隔
-            Expanded(
-              child: Text(
-                description,
-                style: TextStyle(
-                  fontSize: screenWidth * 0.03, // フォントサイズを画面幅に基づいて設定
-                  color: Colors.black54,
-                  fontFamily: 'Comic Sans MS',
-                ),
-                maxLines: null, // 最大行数を制限しない
-                softWrap: true, // 改行を許可する
+                  const SizedBox(width: 20), // アイコンとテキストの間隔調整
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        categoryName,
+                        style: TextStyle(
+                          fontSize: screenSize.width * 0.06, // テキストサイズ調整
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        description,
+                        style: TextStyle(
+                          fontSize: screenSize.width * 0.03, // 説明文のサイズ調整
+                          color: Colors.black54,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],
         ),
       ),
     );
+  }
+}
+
+class StitchPainter extends CustomPainter {
+  final double buttonWidth;
+  final double buttonHeight;
+
+  StitchPainter(this.buttonWidth, this.buttonHeight);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint stitchPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0; // 縫い目の太さ
+
+    final double dashWidth = 10.0;
+    final double dashSpace = 6.0;
+
+    // ボタンの内側に収まるように調整
+    final double padding = 5.0; // 内側の余白を設定
+
+    final Path path = Path()
+      ..addRRect(RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+          padding, padding, // 余白を考慮して内側に合わせる
+          buttonWidth - padding * 2, // 内側に合わせて幅を調整
+          buttonHeight - padding * 2, // 内側に合わせて高さを調整
+        ),
+        Radius.circular(20), // 角丸の半径を調整
+      ));
+
+    // 破線を描画
+    for (PathMetric pathMetric in path.computeMetrics()) {
+      double distance = 0;
+      while (distance < pathMetric.length) {
+        final Path segment = pathMetric.extractPath(
+          distance,
+          distance + dashWidth,
+        );
+        canvas.drawPath(segment, stitchPaint);
+        distance += dashWidth + dashSpace;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false; // 再描画は不要
   }
 }

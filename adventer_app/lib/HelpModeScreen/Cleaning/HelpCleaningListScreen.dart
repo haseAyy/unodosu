@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 
 class CleaningScreen extends StatelessWidget {
   const CleaningScreen({super.key});
@@ -152,10 +153,22 @@ class CleaningScreen extends StatelessWidget {
               ),
             ],
           ),
-          child: IconButton(
-            icon: Icon(icon, size: screenWidth * 0.25), // アイコンのサイズを画面サイズに基づいて調整
-            onPressed: onPressed,
-            color: Colors.black54, // アイコン色を白に設定
+          child: Stack(
+            children: [
+              // 縫い目のデザインを描画
+              CustomPaint(
+                painter: StitchPainter(),
+                child: Container(),
+              ),
+              // アイコン
+              Center(
+                child: IconButton(
+                  icon: Icon(icon, size: screenWidth * 0.25), // アイコンのサイズを画面サイズに基づいて調整
+                  onPressed: onPressed,
+                  color: Colors.black54, // アイコン色を黒に設定
+                ),
+              ),
+            ],
           ),
         ),
         SizedBox(height: screenHeight * 0.02), // アイコンとテキストの間隔
@@ -170,5 +183,45 @@ class CleaningScreen extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class StitchPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint stitchPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0; // 縫い目の太さ
+
+    final double dashWidth = 10.0;
+    final double dashSpace = 6.0;
+
+    // 縫い目をボタンの内側に少しだけ描画
+    final double padding = 4.0; // 縫い目の内側に少しだけ余白を追加
+
+    final Path path = Path()
+      ..addRRect(RRect.fromRectAndRadius(
+        Rect.fromLTWH(padding, padding, size.width - padding * 2, size.height - padding * 2),
+        Radius.circular(20), // 角丸の半径を調整
+      ));
+
+    // 破線を描画
+    for (PathMetric pathMetric in path.computeMetrics()) {
+      double distance = 0;
+      while (distance < pathMetric.length) {
+        final Path segment = pathMetric.extractPath(
+          distance,
+          distance + dashWidth,
+        );
+        canvas.drawPath(segment, stitchPaint);
+        distance += dashWidth + dashSpace;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false; // 再描画は不要
   }
 }
