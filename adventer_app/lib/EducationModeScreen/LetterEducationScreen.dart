@@ -43,7 +43,7 @@ class Question {
 Future<Question?> fetchQuestion(String questiontypeId) async {
   final response = await http.get(
     Uri.parse(
-        'http://10.24.110.65:8080/random-text-question?questiontype_id=$questiontypeId'),
+        'http://10.24.110.66:8080/random-text-question?questiontype_id=$questiontypeId'),
   );
 
   if (response.statusCode == 200) {
@@ -309,7 +309,7 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                 ),
                 // 選択肢ボタンエリア
                 Positioned(
-                  bottom: screenSize.height * 0.15,
+                  bottom: screenSize.height * 0.20,
                   left: 0,
                   right: 0,
                   child: Column(
@@ -349,7 +349,7 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
 
                             // 横のスペースを追加
                             if (i + 1 < question.options.length)
-                              SizedBox(height: 20), // ボタン間のスペースを20に設定
+                              SizedBox(height: 90), // ボタン間のスペースを90に設定
                             if (i + 1 < question.options.length)
                               RectangularButton(
                                 text: question.options[i + 1],
