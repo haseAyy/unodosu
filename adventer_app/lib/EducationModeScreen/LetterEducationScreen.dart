@@ -1,9 +1,8 @@
-import 'package:adventer_app/EducationModeScreen/wordsEducationModeScreen.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
-import 'EducationCorrectScreen.dart';
-import 'EducationIncorrectScreen.dart';
+import 'EducationCorrectScreen.dart'; //正解画面
+import 'EducationIncorrectScreen.dart'; //不正解画面
 import 'EducationModeScreen.dart';
 
 // questionのデータモデル
@@ -13,7 +12,7 @@ class Question {
   final String question_theme;
   final String question_answer;
   final String question_content;
-  final List<String> options;
+  final Map<String, String> options;
 
   Question({
     required this.question_id,
@@ -33,8 +32,8 @@ class Question {
       question_answer: json['question_answer'],
       question_content: json['question_content'],
       options: json['options'] != null && json['options'].isNotEmpty
-          ? List<String>.from(json['options'])
-          : ['No options available'], // デフォルト値
+          ? Map<String, String>.from(json['options'])
+          : {'No options available': ''}, // デフォルト値
     );
   }
 }
@@ -43,7 +42,7 @@ class Question {
 Future<Question?> fetchQuestion(String questiontypeId) async {
   final response = await http.get(
     Uri.parse(
-        'http://10.24.110.65:8080/random-text-question?questiontype_id=$questiontypeId'),
+        'http://10.24.108.170:8080/random-text-question?questiontype_id=$questiontypeId'),
   );
 
   if (response.statusCode == 200) {
@@ -53,40 +52,22 @@ Future<Question?> fetchQuestion(String questiontypeId) async {
   }
 }
 
-//正解・不正解未実装
-/*Future<String> submitAnswer(String question_id, String question_answer) async {
+Future<String> submitAnswer(String questionId, String selectedAnswer) async {
   final response = await http.post(
-    Uri.parse('http://10.24.110.65:8080/submit-answer'),
-    body: {
-      'question_id': question_id,
-      'question_answer': question_answer,
-    },
+    Uri.parse('http://10.24.108.170:8080/submit-answer'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'questionId': questionId,
+      'answer': selectedAnswer,
+    }),
   );
 
   if (response.statusCode == 200) {
-    return response.body; // "correct" または "incorrect" が返される
+    return response.body; // "correct" または "incorrect"
   } else {
     throw Exception('Failed to submit answer');
   }
 }
-
-// 選択肢ボタンが押された時に呼ばれる
-void onAnswerSelected(String selectedAnswer, String question_id) async {
-  String result = await submitAnswer(question_id, selectedAnswer);
-  
-  // 結果に応じて画面遷移
-  if (result == 'correct') {
-    Navigator.push(
-      context, //正解画面へ遷移
-      MaterialPageRoute(builder: (_) => const EducationCorrectScreen()),
-    );
-  } else {
-    Navigator.push(
-      context,//不正解画面へ遷移
-      MaterialPageRoute(builder: (_) => const EducationIncorrectScreen()),
-    );
-  }
-}*/
 
 // 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
@@ -186,6 +167,33 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
         );
       },
     );
+  }
+
+  // ユーザーが答えを選んだときに呼び出すメソッド
+  void _handleAnswerSubmission(
+      String selectedAnswerId, Question question, BuildContext context) async {
+    try {
+      final result =
+          await submitAnswer(question.question_id, selectedAnswerId); // 修正
+      if (result == "correct") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const EducationCorrectScreen()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const EducationIncorrectScreen()),
+        );
+      }
+    } catch (e) {
+      print("Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('エラーが発生しました')),
+      );
+    }
   }
 
   @override
@@ -309,9 +317,9 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                 ),
                 // 選択肢ボタンエリア
                 Positioned(
-                  bottom: screenSize.height * 0.15,
+                  bottom: screenSize.height * 0.18,
                   left: 0,
-                  right: 0,
+                  right: 20,
                   child: Column(
                     children: [
                       for (int i = 0; i < question.options.length; i += 2)
@@ -319,66 +327,37 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             if (i < question.options.length)
+                              SizedBox(height: 90),
+                            RectangularButton(
+                              text:
+                                  question.options.keys.toList()[i], // 選択肢のテキスト
+                              buttonColor:
+                                  const Color.fromARGB(255, 250, 240, 230),
+                              textColor: Colors.black,
+                              width: screenSize.width * 0.4,
+                              height: 70,
+                              onPressed: () {
+                                final selectedAnswerId = question.options.values
+                                    .toList()[i]; // question_idを送信
+                                _handleAnswerSubmission(
+                                    selectedAnswerId, question, context);
+                              },
+                            ),
+                            if (i + 1 < question.options.length)
                               RectangularButton(
-                                text: question.options[i], //選択肢表示
+                                text: question.options.keys.toList()[i + 1],
                                 buttonColor:
                                     const Color.fromARGB(255, 250, 240, 230),
                                 textColor: Colors.black,
                                 width: screenSize.width * 0.4,
                                 height: 70,
                                 onPressed: () {
-                                  // 正解・不正解の画面に遷移
-                                  if (question.options[i] ==
-                                      question.question_answer) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) =>
-                                              const EducationCorrectScreen()),
-                                    );
-                                  } else {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) =>
-                                              const EducationIncorrectScreen()),
-                                    );
-                                  }
+                                  final selectedAnswerId =
+                                      question.options.values.toList()[i + 1];
+                                  _handleAnswerSubmission(
+                                      selectedAnswerId, question, context);
                                 },
                               ),
-
-                            // 横のスペースを追加
-                            if (i + 1 < question.options.length)
-                              SizedBox(height: 20), // ボタン間のスペースを20に設定
-                            if (i + 1 < question.options.length)
-                              RectangularButton(
-                                text: question.options[i + 1],
-                                buttonColor:
-                                    const Color.fromARGB(255, 250, 240, 230),
-                                textColor: Colors.black,
-                                width: screenSize.width * 0.4,
-                                height: 70,
-                                onPressed: () {
-                                  if (question.options[i + 1] ==
-                                      question.question_answer) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) =>
-                                              const EducationCorrectScreen()),
-                                    );
-                                  } else {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) =>
-                                              const EducationIncorrectScreen()),
-                                    );
-                                  }
-                                },
-                              ),
-                            // ボタン間のスペースを開ける
-                            const SizedBox(height: 20), // ここで縦方向に間隔を追加
                           ],
                         ),
                     ],
@@ -387,7 +366,7 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
               ],
             );
           } else {
-            return const Center(child: Text('No data found.'));
+            return const Center(child: Text('No data available.'));
           }
         },
       ),

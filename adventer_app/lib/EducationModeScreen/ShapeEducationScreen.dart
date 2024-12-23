@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
+import 'EducationCorrectScreen.dart'; //正解画面
+import 'EducationIncorrectScreen.dart'; //不正解画面
+import 'EdcationResultScreen.dart';
 import 'EducationModeScreen.dart';
-import 'CalcEducationScreen.dart';
-import '../MeneScreen/HomeScreen.dart';
-import 'package:flutter/material.dart';
 import 'ShapePainter.dart'; // ShapePainter.dartをインポート
 import 'dart:math';  // cos, sinを使うためにインポート
 
-
-
+// questionのデータモデル
 class Question {
   final String question_id;
   final String questiontype_id;
   final String question_theme;
   final String question_answer;
   final String question_content;
-  final List<String> options;
+  final Map<String, String> options;
 
   Question({
     required this.question_id,
@@ -27,6 +26,7 @@ class Question {
     required this.options,
   });
 
+  // JSONをQuestionオブジェクトに変換
   factory Question.fromJson(Map<String, dynamic> json) {
     return Question(
       question_id: json['question_id'],
@@ -35,12 +35,13 @@ class Question {
       question_answer: json['question_answer'],
       question_content: json['question_content'],
       options: json['options'] != null && json['options'].isNotEmpty
-          ? List<String>.from(json['options'])
-          : ['No options available'],
+          ? Map<String, String>.from(json['options'])
+          : {'No options available': ''}, // デフォルト値
     );
   }
 }
 
+// APIリクエストを送信して、問題を取得するメソッド
 Future<Question?> fetchQuestion(String questiontype_id) async {
   final response = await http.get(
     Uri.parse(
@@ -55,24 +56,48 @@ Future<Question?> fetchQuestion(String questiontype_id) async {
 }
 
 
-//形問題出題画面
+
+
+
+Future<String> submitAnswer(String questionId, String selectedAnswer) async {
+  final response = await http.post(
+    Uri.parse('http://10.24.108.170:8080/submit-answer'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'questionId': questionId,
+      'answer': selectedAnswer,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    print('Response body: ${response.body}');  // レスポンスの内容を確認
+    return response.body.trim(); // 余分な空白があれば削除
+    //return response.body; // "correct" または "incorrect"
+  } else {
+    throw Exception('Failed to submit answer');
+  }
+}
+
+
+
+
+
+
+
+
+// かたち問題出題画面
 class ShapeEducationScreen extends StatefulWidget {
   const ShapeEducationScreen({super.key});
 
-  
-
   @override
-  _ShapeEducationScreenState createState() =>
-      _ShapeEducationScreenState();
+  _ShapeEducationScreenState createState() => _ShapeEducationScreenState();
 }
 
 class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
   late Future<Question?> questionFuture;
+  
 
-  String? selectedAnswer;
-  String correctShape = 'しかく'; // 正解の形を格納
 
-  final List<String> shapes = ['ほし', 'しかく', 'まる', 'さんかく']; // 形のリスト
 
   @override
   void initState() {
@@ -81,11 +106,7 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
   }
 
 
-
-
-
-
-// ポップアップダイアログを表示する関数
+//ポップアップダイアログを表示
   void _showQuitDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -103,7 +124,10 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // ダイアログを閉じて、問題一覧画面に戻る
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationModeScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const EducationModeScreen()));
               },
               child: const Text('やめる'),
             ),
@@ -113,35 +137,39 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
     );
   }
 
-  void checkAnswer(Question question) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(selectedAnswer == question.question_answer
-              ? 'Correct!'
-              : 'Incorrect!'),
-          content: Text(
-              'Your answer is ${selectedAnswer == question.question_answer ? 'correct' : 'incorrect'}!'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+
+
+   // ユーザーが答えを選んだときに呼び出すメソッド
+// ユーザーが答えを選んだときに呼び出すメソッド
+  void _handleAnswerSubmission(
+      String selectedAnswerId, Question question, BuildContext context) async {
+    try {
+      final result =
+          await submitAnswer(question.question_id, selectedAnswerId); // 修正
+          print("Answer submission result: $result"); // デバッグ用ログを追加
+      if (result =="correct") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const EducationCorrectScreen()),
         );
-      },
-    );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const EducationIncorrectScreen()),
+        );
+      }
+    } catch (e) {
+      print("Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('エラーが発生しました')),
+      );
+    }
   }
 
 
-// 形をランダムに選ぶ
-  String getRandomShape() {
-    final random = Random();
-    return shapes[random.nextInt(shapes.length)];
-  }
+
 
 
   @override
@@ -165,79 +193,90 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
         centerTitle: true,
       ),
       backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          //上部のソフトな装飾
-          Positioned(
-            top: -50,
-            left: -50,
-            child: Container(
-              width: 150,
-              height: 150,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 255, 182, 193),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          //下部のソフトな装飾
-          Positioned(
-            bottom: -50,
-            right: -50,
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 173, 216, 230),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          // 問題中断ボタン（左下）
-          Positioned(
-            bottom: 30,
-            left: 10,
-            child: TextButton(
-              onPressed: () {
-                _showQuitDialog(context); // ダイアログを表示
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: const Color.fromARGB(141, 57, 154, 0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20), // 角丸
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-              ),
-              child: const Text(
-                'やめる',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white, // テキストカラー（白）
-                  fontFamily: 'Comic Sans MS', // フォント
-                ),
-              ),
-            ),
-          ),
-          // 問題テキスト
-
-          Positioned(
-            top: screenSize.height * 0.15,
-            left: 0,
-            right: 0,
-            child: Column(
+      body: FutureBuilder<Question?>(
+        future: questionFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData) {
+            final question = snapshot.data!;
+            return Stack(
               children: [
-                /*const Text(
-                  'このもんだいをといてみよう！',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    fontFamily: 'Comic Sans MS',
+                // 背景装飾
+                Positioned(
+                  top: -50,
+                  left: -50,
+                  child: Container(
+                    width: 150,
+                    height: 150,
+                    decoration: const BoxDecoration(
+                      color: Color.fromARGB(50, 255, 182, 193),
+                      shape: BoxShape.circle,
+                    ),
                   ),
-                ),*/
-                const SizedBox(height: 60),
+                ),
+                Positioned(
+                  bottom: -50,
+                  right: -50,
+                  child: Container(
+                    width: 200,
+                    height: 200,
+                    decoration: const BoxDecoration(
+                      color: Color.fromARGB(50, 173, 216, 230),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+                // 問題中断ボタン（左下）
+                Positioned(
+                  bottom: 30,
+                  left: 10,
+                  child: TextButton(
+                    onPressed: () {
+                      _showQuitDialog(context); // ダイアログを表示
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20), // 角丸
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 25),
+                    ),
+                    child: const Text(
+                      'やめる',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white, // テキストカラー（白）
+                        fontFamily: 'Comic Sans MS', // フォント
+                      ),
+                    ),
+                  ),
+                ),
+
+
+                // 問題テキストと選択肢
+                Positioned(
+                  top: screenSize.height * 0.15,
+                  left: 0,
+                  right: 0,
+                  child: Column(
+                    children: [
+                      /*const Text(
+                        'このかたちと\nおなじかたちをみつけよう！',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontFamily: 'Comic Sans MS',
+                        ),
+                      ),*/
+
+                      const SizedBox(height: 60),
                 FutureBuilder<Question?>(
                   future: questionFuture,
                   builder: (context, snapshot) {
@@ -248,9 +287,10 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
                     } else if (snapshot.hasData) {
                       final question = snapshot.data!;
 
-                      correctShape = getRandomShape(); // ランダムに図形を設定
+                  //correctShape = getRandomShape(); // ランダムに図形を設定
 
-                      return Column(
+
+                  return Column(
                         children: [
                           Text(
                             question.question_content,
@@ -262,16 +302,20 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
                             ),
                           ),
 
-                          /*const SizedBox(height: 20),
-                          Text(
-                            question.question_theme,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                              fontFamily: 'Comic Sans MS',
-                            ),
-                          ),*/
+                      /*const SizedBox(height: 60),
+                      Container(
+                        width: 160,
+                        height: 160,
+                        decoration: const BoxDecoration(
+                          color: Color.fromARGB(255, 154, 208, 255),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Text(
+                            question.question_theme, // question_theme（問題内容)を表示
+                            style: const TextStyle(fontSize: 40),
+                          */
+
 
                           // ShapePainterを動的に変更
                           //図形を表示
@@ -282,10 +326,10 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
                             child: CustomPaint(
                               painter: ShapePainter(question.question_theme), // question_themeに基づいて図形を描画
                             ),
-                          ),
-
+                           ),
                         ],
-                      );
+                          );
+                       
                     } else {
                       return const Text('No data found.');
                     }
@@ -294,78 +338,71 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
               ],
             ),
           ),
-          Positioned(
-            bottom: screenSize.height * 0.15,
-            left: 0,
-            right: 0,
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    RectangularButton(
-                      text: 'A.$correctShape',
-                      buttonColor: const Color.fromARGB(255, 250, 240, 230),
-                      textColor: Colors.black,
-                      width: screenSize.width * 0.4,
-                      height: 70,
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const ShapeEducationScreen()));
-                        //checkAnswer(correctShape); // ユーザーが選んだものと正解を比較
-                      },
-                    ),
-                    RectangularButton(
-                      text: 'B. $correctShape',
-                      buttonColor: const Color.fromARGB(255, 250, 240, 230),
-                      textColor: Colors.black,
-                      width: screenSize.width * 0.4,
-                      height: 70,
-                      onPressed: () {
-                         Navigator.push(context, MaterialPageRoute(builder: (_) => const ShapeEducationScreen()));
-                         //checkAnswer(correctShape); // ユーザーが選んだものと正解を比較
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    RectangularButton(
-                      text: 'C. $correctShape',
-                      buttonColor: const Color.fromARGB(255, 250, 240, 230),
-                      textColor: Colors.black,
-                      width: screenSize.width * 0.4,
-                      height: 70,
-                      onPressed: () {
-                         Navigator.push(context, MaterialPageRoute(builder: (_) => const ShapeEducationScreen()));
-                         //checkAnswer(correctShape); // ユーザーが選んだものと正解を比較
-                      },
-                    ),
-                    RectangularButton(
-                      text: 'D. $correctShape',
-                      buttonColor: const Color.fromARGB(255, 250, 240, 230),
-                      textColor: Colors.black,
-                      width: screenSize.width * 0.4,
-                      height: 70,
-                      onPressed: () {
-                         Navigator.push(context, MaterialPageRoute(builder: (_) => const ShapeEducationScreen()));
-                         //checkAnswer(correctShape); // ユーザーが選んだものと正解を比較
-                      },
-                    ),
-                  ],
+
+
+
+          
+
+
+
+                // 選択肢ボタンエリア
+                Positioned(
+                  bottom: screenSize.height * 0.15,
+                  left: 0,
+                  right: 0,
+                  child: Column(
+                    children: [
+                      for (int i = 0; i < question.options.length; i += 2)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            if (i < question.options.length)
+                              RectangularButton(
+                                text: question.options.keys.toList()[i], //選択肢表示
+                                buttonColor:
+                                    const Color.fromARGB(255, 250, 240, 230),
+                                textColor: Colors.black,
+                                width: screenSize.width * 0.4,
+                                height: 70,
+                                onPressed: () {
+                                  final selectedAnswer =
+                                      question.options.keys.toList()[i];
+                                  _handleAnswerSubmission(selectedAnswer,
+                                      question, context); // 修正箇所
+                                },
+                              ),
+                            if (i + 1 < question.options.length)
+                              RectangularButton(
+                                text: question.options.keys.toList()[i + 1],
+                                buttonColor:
+                                    const Color.fromARGB(255, 250, 240, 230),
+                                textColor: Colors.black,
+                                width: screenSize.width * 0.4,
+                                height: 70,
+                                onPressed: () {
+                                  final selectedAnswer =
+                                      question.options.keys.toList()[i + 1];
+                                  _handleAnswerSubmission(selectedAnswer,
+                                      question, context); // 修正箇所
+                                },
+                              ),
+                          ],
+                        ),
+                    ],
+                  ),
                 ),
               ],
-            ),
-          ),
-        ],
+            );
+          } else {
+            return const Center(child: Text('No data available.'));
+          }
+        },
       ),
     );
   }
 }
 
-
-
+// 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;

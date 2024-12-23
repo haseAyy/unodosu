@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'EducationCorrectScreen.dart';
 import 'EducationIncorrectScreen.dart';
+import 'EdcationResultScreen.dart';
 import 'EducationModeScreen.dart';
 import 'EdcationResultScreen.dart';
 
@@ -247,7 +248,7 @@ class ColorEducationScreen extends StatelessWidget {
                       width: screenSize.width * 0.4,
                       height: 70,
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationResultScreen()));
+                        //Navigator.push(context, MaterialPageRoute(builder: (_) => const EdcationResultScreen()));
                       },
                     ),
                   ],

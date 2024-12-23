@@ -56,7 +56,13 @@ class RectangularButton extends StatelessWidget {
 
 // 結果画面
 class EducationResultScreen extends StatelessWidget {
-  const EducationResultScreen({super.key});
+  final int correctCount;
+  final int incorrectCount;
+
+  const EducationResultScreen({super.key,required this.correctCount,
+    required this.incorrectCount,});
+    
+
 
   @override
   Widget build(BuildContext context) {
