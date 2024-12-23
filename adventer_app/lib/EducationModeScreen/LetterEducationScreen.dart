@@ -171,18 +171,28 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
 
   // ユーザーが答えを選んだときに呼び出すメソッド
   void _handleAnswerSubmission(
-      String selectedAnswer, Question question, BuildContext context) async {
-    final result = await submitAnswer(question.question_id, selectedAnswer);
-    if (result == "correct") {
-      Navigator.pushReplacement(
+      String selectedAnswerId, Question question, BuildContext context) async {
+    try {
+      final result =
+          await submitAnswer(question.question_id, selectedAnswerId); // 修正
+      if (result == "correct") {
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => const EducationCorrectScreen()));
-    } else {
-      Navigator.pushReplacement(
+              builder: (context) => const EducationCorrectScreen()),
+        );
+      } else {
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => const EducationIncorrectScreen()));
+              builder: (context) => const EducationIncorrectScreen()),
+        );
+      }
+    } catch (e) {
+      print("Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('エラーが発生しました')),
+      );
     }
   }
 
@@ -307,9 +317,9 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                 ),
                 // 選択肢ボタンエリア
                 Positioned(
-                  bottom: screenSize.height * 0.20,
+                  bottom: screenSize.height * 0.18,
                   left: 0,
-                  right: 0,
+                  right: 20,
                   child: Column(
                     children: [
                       for (int i = 0; i < question.options.length; i += 2)
@@ -317,20 +327,22 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             if (i < question.options.length)
-                              RectangularButton(
-                                text: question.options.keys.toList()[i], //選択肢表示
-                                buttonColor:
-                                    const Color.fromARGB(255, 250, 240, 230),
-                                textColor: Colors.black,
-                                width: screenSize.width * 0.4,
-                                height: 70,
-                                onPressed: () {
-                                  final selectedAnswer =
-                                      question.options.keys.toList()[i];
-                                  _handleAnswerSubmission(selectedAnswer,
-                                      question, context); // 修正箇所
-                                },
-                              ),
+                              SizedBox(height: 90),
+                            RectangularButton(
+                              text:
+                                  question.options.keys.toList()[i], // 選択肢のテキスト
+                              buttonColor:
+                                  const Color.fromARGB(255, 250, 240, 230),
+                              textColor: Colors.black,
+                              width: screenSize.width * 0.4,
+                              height: 70,
+                              onPressed: () {
+                                final selectedAnswerId = question.options.values
+                                    .toList()[i]; // question_idを送信
+                                _handleAnswerSubmission(
+                                    selectedAnswerId, question, context);
+                              },
+                            ),
                             if (i + 1 < question.options.length)
                               RectangularButton(
                                 text: question.options.keys.toList()[i + 1],
@@ -340,10 +352,10 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                                 width: screenSize.width * 0.4,
                                 height: 70,
                                 onPressed: () {
-                                  final selectedAnswer =
-                                      question.options.keys.toList()[i + 1];
-                                  _handleAnswerSubmission(selectedAnswer,
-                                      question, context); // 修正箇所
+                                  final selectedAnswerId =
+                                      question.options.values.toList()[i + 1];
+                                  _handleAnswerSubmission(
+                                      selectedAnswerId, question, context);
                                 },
                               ),
                           ],
