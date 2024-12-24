@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
-import 'EducationCorrectScreen.dart'; //正解画面
-import 'EducationIncorrectScreen.dart'; //不正解画面
-import 'EducationModeScreen.dart';
+import 'EducationCorrectScreen.dart'; // 正解画面
+import 'EducationIncorrectScreen.dart'; // 不正解画面
+import 'EducationModeScreen.dart'; // モード画面
+import 'EdcationResultScreen.dart'; // 結果画面
 
 // questionのデータモデル
 class Question {
@@ -65,7 +66,7 @@ Future<String> submitAnswer(String questionId, String selectedAnswer) async {
   if (response.statusCode == 200) {
     return response.body; // "correct" または "incorrect"
   } else {
-    throw Exception('Failed to submit answer');
+    throw Exception('回答の送信に失敗しました');
   }
 }
 
@@ -124,14 +125,23 @@ class RectangularButton extends StatelessWidget {
 
 // 文字問題出題画面
 class LetterEducationScreen extends StatefulWidget {
-  const LetterEducationScreen({super.key});
+  final int questionCount;
+  final int correctCount;
+  const LetterEducationScreen(
+      {required this.questionCount, required this.correctCount});
 
   @override
-  _LetterEducationScreenState createState() => _LetterEducationScreenState();
+  _LetterEducationScreenState createState() =>
+      _LetterEducationScreenState(questionCount, correctCount);
 }
 
 class _LetterEducationScreenState extends State<LetterEducationScreen> {
   late Future<Question?> questionFuture;
+  late int questionCount; // このクラス内で管理する変数
+  late int correctCount; // 正解数を追跡する変数
+
+  // コンストラクタで初期値を設定
+  _LetterEducationScreenState(this.questionCount, this.correctCount);
 
   @override
   void initState() {
@@ -139,6 +149,7 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
     questionFuture = fetchQuestion("KMS003"); // questiontypeIdを指定
   }
 
+  //やめるダイアログを表示
   void _showQuitDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -175,21 +186,49 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
     try {
       final result =
           await submitAnswer(question.question_id, selectedAnswerId); // 修正
-      if (result == "correct") {
+
+      setState(() {
+        questionCount++; // 問題数をカウント
+        if (result == "correct") {
+          correctCount++; // 正解数をカウント
+        }
+      });
+
+      if (questionCount >= 10) {
+        // 10問解いたあとは結果画面に遷移
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => const EducationCorrectScreen()),
+              builder: (context) =>
+                  EdcationResultScreen(correctCount: correctCount)),
         );
       } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const EducationIncorrectScreen()),
-        );
+        if (result == "correct") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EducationCorrectScreen(
+                    message: 'もじ',
+                    questionCount: questionCount,
+                    correctCount: correctCount)),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EducationIncorrectScreen(
+                    questionCount: questionCount, correctCount: correctCount)),
+          );
+        }
+        // 次の問題を取得する処理を呼び出す
+        if (questionCount < 5) {
+          setState(() {
+            questionFuture = fetchQuestion("KMS003"); // 次の問題を取得
+          });
+        }
       }
     } catch (e) {
-      print("Error: $e");
+      print("エラー: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('エラーが発生しました')),
       );
@@ -226,6 +265,7 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData) {
             final question = snapshot.data!;
+
             return Stack(
               children: [
                 // 背景装飾
@@ -317,9 +357,9 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                 ),
                 // 選択肢ボタンエリア
                 Positioned(
-                  bottom: screenSize.height * 0.18,
+                  bottom: screenSize.height * 0.20,
                   left: 0,
-                  right: 20,
+                  right: 0,
                   child: Column(
                     children: [
                       for (int i = 0; i < question.options.length; i += 2)
@@ -327,22 +367,21 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             if (i < question.options.length)
-                              SizedBox(height: 90),
-                            RectangularButton(
-                              text:
-                                  question.options.keys.toList()[i], // 選択肢のテキスト
-                              buttonColor:
-                                  const Color.fromARGB(255, 250, 240, 230),
-                              textColor: Colors.black,
-                              width: screenSize.width * 0.4,
-                              height: 70,
-                              onPressed: () {
-                                final selectedAnswerId = question.options.values
-                                    .toList()[i]; // question_idを送信
-                                _handleAnswerSubmission(
-                                    selectedAnswerId, question, context);
-                              },
-                            ),
+                              RectangularButton(
+                                text: question.options.keys.toList()[i], //選択肢表示
+                                buttonColor:
+                                    const Color.fromARGB(255, 250, 240, 230),
+                                textColor: Colors.black,
+                                width: screenSize.width * 0.4,
+                                height: 70,
+                                onPressed: () {
+                                  final selectedAnswerId = question
+                                      .options.values
+                                      .toList()[i]; //question.idを送信
+                                  _handleAnswerSubmission(selectedAnswerId,
+                                      question, context); // 修正箇所
+                                },
+                              ),
                             if (i + 1 < question.options.length)
                               RectangularButton(
                                 text: question.options.keys.toList()[i + 1],
@@ -354,8 +393,8 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                                 onPressed: () {
                                   final selectedAnswerId =
                                       question.options.values.toList()[i + 1];
-                                  _handleAnswerSubmission(
-                                      selectedAnswerId, question, context);
+                                  _handleAnswerSubmission(selectedAnswerId,
+                                      question, context); // 修正箇所
                                 },
                               ),
                           ],

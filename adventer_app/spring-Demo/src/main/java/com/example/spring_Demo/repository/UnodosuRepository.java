@@ -27,4 +27,5 @@ public interface UnodosuRepository extends JpaRepository<question, String> {
     LIMIT 3
     """, nativeQuery = true)
     List<Object[]> findDummyAnswersWithIds(@Param("question_id") String question_id, @Param("questiontype_id") String questiontype_id);
+
 }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
-import 'EducationCorrectScreen.dart'; //正解画面
-import 'EducationIncorrectScreen.dart'; //不正解画面
-import 'EducationModeScreen.dart';
+import 'EducationCorrectScreen.dart'; // 正解画面
+import 'EducationIncorrectScreen.dart'; // 不正解画面
+import 'EducationModeScreen.dart'; // モード画面
+import 'EdcationResultScreen.dart'; // 結果画面
 
 // questionのデータモデル
 class Question {
@@ -65,7 +66,7 @@ Future<String> submitAnswer(String questionId, String selectedAnswer) async {
   if (response.statusCode == 200) {
     return response.body; // "correct" または "incorrect"
   } else {
-    throw Exception('Failed to submit answer');
+    throw Exception('回答の送信に失敗しました');
   }
 }
 
@@ -124,21 +125,29 @@ class RectangularButton extends StatelessWidget {
 
 // 文字問題出題画面
 class ShapeEducationScreen extends StatefulWidget {
-  const ShapeEducationScreen({super.key});
+  final int questionCount;
+  final int correctCount;
+  const ShapeEducationScreen(
+      {required this.questionCount, required this.correctCount});
 
   @override
-  _ShapeEducationScreen createState() => _ShapeEducationScreen();
+  _ShapeEducationScreenState createState() => _ShapeEducationScreenState();
 }
 
-class _ShapeEducationScreen extends State<ShapeEducationScreen> {
+class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
   late Future<Question?> questionFuture;
+  late int questionCount; // このクラス内で管理する変数
+  late int correctCount; // 正解数を追跡する変数
 
   @override
   void initState() {
     super.initState();
-    questionFuture = fetchQuestion("KMS001"); // questiontypeIdを指定
+    questionCount = widget.questionCount;
+    correctCount = widget.correctCount;
+    questionFuture = fetchQuestion("KMS003"); // questiontypeIdを指定
   }
 
+  //やめるダイアログを表示
   void _showQuitDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -171,18 +180,56 @@ class _ShapeEducationScreen extends State<ShapeEducationScreen> {
 
   // ユーザーが答えを選んだときに呼び出すメソッド
   void _handleAnswerSubmission(
-      String selectedAnswer, Question question, BuildContext context) async {
-    final result = await submitAnswer(question.question_id, selectedAnswer);
-    if (result == "correct") {
-      Navigator.pushReplacement(
+      String selectedAnswerId, Question question, BuildContext context) async {
+    try {
+      final result =
+          await submitAnswer(question.question_id, selectedAnswerId); // 修正
+
+      setState(() {
+        questionCount++; // 問題数をカウント
+        if (result == "correct") {
+          correctCount++; // 正解数をカウント
+        }
+      });
+
+      if (questionCount >= 10) {
+        // 10問解いたあとは結果画面に遷移
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => const EducationCorrectScreen()));
-    } else {
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const EducationIncorrectScreen()));
+              builder: (context) =>
+                  EdcationResultScreen(correctCount: correctCount)),
+        );
+      } else {
+        if (result == "correct") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EducationCorrectScreen(
+                    message: 'かたち',
+                    questionCount: questionCount,
+                    correctCount: correctCount)),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EducationIncorrectScreen(
+                    questionCount: questionCount, correctCount: correctCount)),
+          );
+        }
+        // 次の問題を取得する処理を呼び出す
+        if (questionCount < 5) {
+          setState(() {
+            questionFuture = fetchQuestion("KMS003"); // 次の問題を取得
+          });
+        }
+      }
+    } catch (e) {
+      print("エラー: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('エラーが発生しました')),
+      );
     }
   }
 
@@ -216,6 +263,7 @@ class _ShapeEducationScreen extends State<ShapeEducationScreen> {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData) {
             final question = snapshot.data!;
+
             return Stack(
               children: [
                 // 背景装飾

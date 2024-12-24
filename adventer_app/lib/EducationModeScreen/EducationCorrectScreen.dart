@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'ShapeEducationScreen.dart'; // 修正されたインポート
+import 'ColorEducationScreen.dart'; // いろの画面
+import 'LetterEducationScreen.dart'; // もじの画面
+import 'CalcEducationScreen.dart';
 
 // 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
@@ -56,7 +59,16 @@ class RectangularButton extends StatelessWidget {
 
 // 正解画面
 class EducationCorrectScreen extends StatelessWidget {
-  const EducationCorrectScreen({super.key});
+  final String message; // 受け取るメッセージ（いろ、もじなど）
+
+  final int questionCount;
+  final int correctCount;
+
+  const EducationCorrectScreen({
+    required this.message,
+    required this.questionCount,
+    required this.correctCount,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -135,13 +147,49 @@ class EducationCorrectScreen extends StatelessWidget {
                   buttonColor: const Color.fromARGB(255, 250, 240, 230),
                   textColor: Colors.black,
                   onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            const ShapeEducationScreen(), // 修正された遷移先
-                      ),
-                    );
+                    // メッセージに基づいて遷移先を変更
+                    if (message == "いろ") {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ColorEducationScreen(
+                            questionCount: questionCount,
+                            correctCount: correctCount,
+                          ), // いろの画面
+                        ),
+                      );
+                    } else if (message == "もじ") {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LetterEducationScreen(
+                            questionCount: questionCount,
+                            correctCount: correctCount,
+                          ), // もじの画面
+                        ),
+                      );
+                    } else if (message == "けいさん") {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CalcEducationScreen(
+                            questionCount: questionCount,
+                            correctCount: correctCount,
+                          ), // けいさんの画面
+                        ),
+                      );
+                    } else {
+                      // デフォルトの遷移
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ShapeEducationScreen(
+                            questionCount: questionCount,
+                            correctCount: correctCount,
+                          ),
+                        ),
+                      );
+                    }
                   },
                 ),
               ],
