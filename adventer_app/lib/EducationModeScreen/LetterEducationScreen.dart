@@ -217,7 +217,9 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => EducationIncorrectScreen(
-                    questionCount: questionCount, correctCount: correctCount)),
+                    message: 'もじ',
+                    questionCount: questionCount,
+                    correctCount: correctCount)),
           );
         }
         // 次の問題を取得する処理を呼び出す

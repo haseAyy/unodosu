@@ -1,99 +1,46 @@
 import 'package:flutter/material.dart';
-import '../MeneScreen/HomeScreen.dart';
 import 'Cleaning/HelpCleaningListScreen.dart';
-
-// 四角のボタンを定義
-class RectangularButton extends StatelessWidget {
-  final String text;
-  final VoidCallback onPressed;
-  final Color buttonColor;
-  final double width;
-  final double height;
-  final Color textColor;
-
-  const RectangularButton({
-    super.key,
-    required this.text,
-    required this.onPressed,
-    required this.buttonColor,
-    this.width = 200,
-    this.height = 60,
-    required this.textColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        width: width,
-        height: height,
-        decoration: BoxDecoration(
-          color: buttonColor,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 8,
-              offset: const Offset(2, 4),
-            ),
-          ],
-        ),
-        child: Center(
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: textColor,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+import '../MeneScreen/HomeScreen.dart';
 
 class HelpModeScreen extends StatelessWidget {
   const HelpModeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size; // MediaQueryキャッシュ
+    final screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
       body: Stack(
         children: [
-          // 背景カラー1（上部の水色）
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: screenSize.height * 0.9, // 上部90%
-            child: Container(color: Colors.lightBlue[300]),
+          // 背景（白基調にアクセントカラーを追加）
+          Positioned.fill(
+            child: Container(
+              color: Colors.white,
+            ),
           ),
-          // 背景カラー2（下部の緑色）
+          // 上部デコレーション（柔らかい円形の装飾）
           Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: screenSize.height * 0.1, // 下部10%
-            child: Container(color: Colors.green),
+            top: -50,
+            left: -50,
+            child: Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                color: Colors.pinkAccent[100],
+                shape: BoxShape.circle,
+              ),
+            ),
           ),
-          // 左下に戻るボタン
           Positioned(
-            bottom: 10,
-            left: 10,
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HomeScreen(),
-                  ),
-                );
-              },
-              backgroundColor: Colors.grey[100],
-              child: const Icon(Icons.arrow_back),
+            top: 100,
+            right: -30,
+            child: Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                color: Colors.greenAccent[100],
+                shape: BoxShape.circle,
+              ),
             ),
           ),
           // メインコンテンツ（カテゴリー画面）
@@ -146,6 +93,23 @@ class HelpModeScreen extends StatelessWidget {
               ],
             ),
           ),
+          // 左下の戻るボタン
+          Positioned(
+            bottom: 10,
+            left: 10,
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomeScreen(),
+                  ),
+                );
+              },
+              backgroundColor: Colors.grey[100],
+              child: const Icon(Icons.arrow_back),
+            ),
+          ),
         ],
       ),
     );
@@ -154,9 +118,9 @@ class HelpModeScreen extends StatelessWidget {
 
 class CategoryButton extends StatelessWidget {
   final String categoryName;
-  final String description;
+  final String description; // 説明文を追加
   final Color backgroundColor;
-  final IconData icon;
+  final IconData icon; // アイコンを追加
   final VoidCallback onPressed;
 
   const CategoryButton({
@@ -164,7 +128,7 @@ class CategoryButton extends StatelessWidget {
     required this.categoryName,
     required this.description,
     required this.backgroundColor,
-    required this.icon,
+    required this.icon, // アイコンを追加
     required this.onPressed,
   });
 
@@ -192,11 +156,11 @@ class CategoryButton extends StatelessWidget {
         child: Row(
           children: [
             Icon(
-              icon,
-              size: 40,
+              icon, // アイコンを表示
+              size: 40, // アイコンの大きさ
               color: Colors.black54,
             ),
-            const SizedBox(width: 20),
+            const SizedBox(width: 20), // アイコンとテキストの間隔
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -207,12 +171,12 @@ class CategoryButton extends StatelessWidget {
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
-                    fontFamily: 'Comic Sans MS',
+                    fontFamily: 'Comic Sans MS', // ポップなフォント
                   ),
                 ),
               ],
             ),
-            const SizedBox(width: 20),
+            const SizedBox(width: 20), // 説明文とタイトルの間隔
             Expanded(
               child: Text(
                 description,
@@ -221,7 +185,7 @@ class CategoryButton extends StatelessWidget {
                   color: Colors.black54,
                   fontFamily: 'Comic Sans MS',
                 ),
-                overflow: TextOverflow.ellipsis,
+                overflow: TextOverflow.ellipsis, // テキストが長くても切れるように
               ),
             ),
           ],

@@ -123,7 +123,7 @@ class RectangularButton extends StatelessWidget {
   }
 }
 
-// 文字問題出題画面
+// 計算問題出題画面
 class CalcEducationScreen extends StatefulWidget {
   final int questionCount;
   final int correctCount;
@@ -131,7 +131,8 @@ class CalcEducationScreen extends StatefulWidget {
       {required this.questionCount, required this.correctCount});
 
   @override
-  _CalcEducationScreenState createState() => _CalcEducationScreenState();
+  _CalcEducationScreenState createState() =>
+      _CalcEducationScreenState(questionCount, correctCount);
 }
 
 class _CalcEducationScreenState extends State<CalcEducationScreen> {
@@ -139,12 +140,13 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
   late int questionCount; // このクラス内で管理する変数
   late int correctCount; // 正解数を追跡する変数
 
+  // コンストラクタで初期値を設定
+  _CalcEducationScreenState(this.questionCount, this.correctCount);
+
   @override
   void initState() {
     super.initState();
-    questionCount = widget.questionCount;
-    correctCount = widget.correctCount;
-    questionFuture = fetchQuestion("KMS003"); // questiontypeIdを指定
+    questionFuture = fetchQuestion("KMS004"); // questiontypeIdを指定
   }
 
   //やめるダイアログを表示
@@ -206,7 +208,7 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => EducationCorrectScreen(
-                    message: 'けいさん',
+                    message: 'もじ',
                     questionCount: questionCount,
                     correctCount: correctCount)),
           );
@@ -215,7 +217,9 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => EducationIncorrectScreen(
-                    questionCount: questionCount, correctCount: correctCount)),
+                    message: 'もじ',
+                    questionCount: questionCount,
+                    correctCount: correctCount)),
           );
         }
         // 次の問題を取得する処理を呼び出す
@@ -373,9 +377,10 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
                                 width: screenSize.width * 0.4,
                                 height: 70,
                                 onPressed: () {
-                                  final selectedAnswer =
-                                      question.options.keys.toList()[i];
-                                  _handleAnswerSubmission(selectedAnswer,
+                                  final selectedAnswerId = question
+                                      .options.values
+                                      .toList()[i]; //question.idを送信
+                                  _handleAnswerSubmission(selectedAnswerId,
                                       question, context); // 修正箇所
                                 },
                               ),
@@ -388,9 +393,9 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
                                 width: screenSize.width * 0.4,
                                 height: 70,
                                 onPressed: () {
-                                  final selectedAnswer =
-                                      question.options.keys.toList()[i + 1];
-                                  _handleAnswerSubmission(selectedAnswer,
+                                  final selectedAnswerId =
+                                      question.options.values.toList()[i + 1];
+                                  _handleAnswerSubmission(selectedAnswerId,
                                       question, context); // 修正箇所
                                 },
                               ),

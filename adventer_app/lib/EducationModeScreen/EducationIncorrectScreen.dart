@@ -1,6 +1,8 @@
-import 'package:adventer_app/EducationModeScreen/LetterEducationScreen.dart';
-import 'package:adventer_app/EducationModeScreen/ShapeEducationScreen.dart';
 import 'package:flutter/material.dart';
+import 'ShapeEducationScreen.dart';
+import 'ColorEducationScreen.dart'; // いろの画面
+import 'LetterEducationScreen.dart'; // もじの画面
+import 'CalcEducationScreen.dart';
 
 // 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
@@ -57,10 +59,14 @@ class RectangularButton extends StatelessWidget {
 
 // 不正解画面
 class EducationIncorrectScreen extends StatelessWidget {
+  final String message; // 受け取るメッセージ（いろ、もじなど）
   final int questionCount;
   final int correctCount;
+
   const EducationIncorrectScreen(
-      {required this.questionCount, required this.correctCount});
+      {required this.message,
+      required this.questionCount,
+      required this.correctCount});
 
   @override
   Widget build(BuildContext context) {
@@ -165,22 +171,60 @@ class EducationIncorrectScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 40),
                 RectangularButton(
-                  text: 'つぎのもんだい',
-                  width: screenSize.width * 0.6,
-                  height: screenSize.height * 0.1,
-                  buttonColor: const Color.fromARGB(255, 250, 240, 230),
-                  textColor: Colors.black,
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LetterEducationScreen(
-                            questionCount: questionCount,
-                            correctCount: correctCount),
-                      ),
-                    );
-                  },
-                ),
+                    text: 'つぎのもんだい',
+                    width: screenSize.width * 0.6,
+                    height: screenSize.height * 0.1,
+                    buttonColor: const Color.fromARGB(255, 250, 240, 230),
+                    textColor: Colors.black,
+                    onPressed: () {
+                      // 遷移前にデバッグ出力
+                      print("遷移先画面: $message");
+                      print(
+                          "遷移前: questionCount: $questionCount, correctCount: $correctCount");
+                      // メッセージに基づいて遷移先を変更
+                      if (message == "いろ") {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ColorEducationScreen(
+                              questionCount: questionCount,
+                              correctCount: correctCount,
+                            ), // いろの画面
+                          ),
+                        );
+                      } else if (message == "もじ") {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LetterEducationScreen(
+                              questionCount: questionCount,
+                              correctCount: correctCount,
+                            ), // もじの画面
+                          ),
+                        );
+                      } else if (message == "けいさん") {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CalcEducationScreen(
+                              questionCount: questionCount,
+                              correctCount: correctCount,
+                            ), // けいさんの画面
+                          ),
+                        );
+                      } else {
+                        // デフォルトの遷移
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ShapeEducationScreen(
+                              questionCount: questionCount,
+                              correctCount: correctCount,
+                            ),
+                          ),
+                        );
+                      }
+                    }),
               ],
             ),
           ),
