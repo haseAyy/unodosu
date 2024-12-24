@@ -80,6 +80,7 @@ public class unodosuController {
         System.out.println("Received questionId: " + questionId);
         System.out.println("Selected answerId: " + selectedAnswerId);
 
+
         // 出題された問題のIDと選択されたIDが一致している場合は「正解」、異なる場合は「不正解」としてレスポンスを返す
         if (questionId.equals(selectedAnswerId)) {
             return ResponseEntity.ok("correct");  // 正解の場合
