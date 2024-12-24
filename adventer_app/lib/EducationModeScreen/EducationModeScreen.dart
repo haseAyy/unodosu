@@ -70,7 +70,7 @@ class EducationModeScreen extends StatelessWidget {
                 CategoryButton(
                   categoryName: 'かたち',
                   description: 'かたちをまなぼう！\nいろんなかたちをさがそう',
-                  backgroundColor: Colors.orange.shade100,
+                  backgroundColor: Colors.blue.shade100,
                   icon: Icons.star, // アイコン追加
                   onPressed: () {
                     Navigator.push(
@@ -83,7 +83,7 @@ class EducationModeScreen extends StatelessWidget {
                 CategoryButton(
                   categoryName: 'いろ',
                   description: 'いろをまなぼう！\nカラフルなせかいがひろがるよ',
-                  backgroundColor: Colors.blue.shade100,
+                  backgroundColor: Colors.orange.shade100,
                   icon: Icons.palette, // アイコン追加
                   onPressed: () {
                     Navigator.push(

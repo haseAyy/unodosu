@@ -91,4 +91,7 @@ flutter:
 
   # 画像をassetsセクションで指定
   assets:
-    - assets/images/keisan_startScreen.png
+    - assets/images/ColorStartScreen.png
+    - assets/images/ShapeStartScreen.png
+    - assets/images/LetterStartScreen.png
+    - assets/images/CalcStartScreen.png

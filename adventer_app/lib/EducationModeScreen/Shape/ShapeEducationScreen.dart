@@ -97,7 +97,7 @@ class ShapeEducationScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false, // 戻るボタンを非表示にする
-        backgroundColor: const Color.fromARGB(255, 255, 173, 51),
+        backgroundColor: Colors.blue.shade100,
         elevation: 0,
         title: const Text(
           'かたちもんだい',
@@ -148,7 +148,7 @@ class ShapeEducationScreen extends StatelessWidget {
                 _showQuitDialog(context); // ダイアログを表示
               },
               style: TextButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 255, 173, 51),
+                backgroundColor: Colors.blue.shade100,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20), // 角丸
                 ),

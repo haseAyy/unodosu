@@ -8,71 +8,74 @@ class CalcStartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false, // 戻るボタンを非表示
-        backgroundColor: Colors.pink.shade100,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      backgroundColor: Colors.white, // 背景を白に統一
-      body: GestureDetector(
-        behavior: HitTestBehavior.opaque, // 空白部分でもタップを認識する
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const CalcEducationScreen()),
-          );
-        },
-        child: Stack(
-          children: [
-            // 背景画像を設定
-            Positioned.fill(
-              child: Image.asset(
-                'assets/images/keisan_startScreen.png', // 画像ファイルのパス
-                fit: BoxFit.cover, // 画面全体にフィットさせる
-              ),
+      body: Stack(
+        children: [
+          // 背景画像
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/CalcStartScreen.png', // 絵の具の背景画像を配置
+              fit: BoxFit.cover, // 画面全体に広がるように
             ),
-            // 上部の「けいさんもんだいスタート」テキスト
-            Positioned(
-              top: screenSize.height * 0.05,
-              left: screenSize.width * 0.1,
-              right: screenSize.width * 0.1,
-              child: Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: const Color.fromARGB(255, 12, 137, 129), width: 2),
-                      borderRadius: BorderRadius.circular(15),
-                      color: const Color.fromARGB(255, 232, 255, 253),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                    child: const Text(
-                      'けいさんもんだいスタート！',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Comic Sans MS',
-                        color: Color.fromARGB(255, 0, 0, 0),
-                      ),
-                    ),
+          ),
+          // コンテンツ部分
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black, width: 2),
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.white,
                   ),
-                  const SizedBox(height: 10), // 下のテキストとの間隔を確保
-                  const Text(
-                    'がめんをタップして！',
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  child: const Text(
+                    'けいさんをまなぼう！', // タイトル
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey,
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CalcEducationScreen(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.2,
+                      vertical: screenHeight * 0.02,
+                    ),
+                    backgroundColor: const Color.fromARGB(255, 255, 123, 0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    elevation: 5,
+                  ),
+                  child: const Text(
+                    'スタート',
+                    style: TextStyle(
+                      fontSize: 30,
+                      color: Colors.white,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
