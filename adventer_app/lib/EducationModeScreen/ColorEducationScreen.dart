@@ -61,6 +61,8 @@ class RectangularButton extends StatelessWidget {
 // 色問題出題画面
 class ColorEducationScreen extends StatelessWidget {
   const ColorEducationScreen({super.key});
+  final int questionCount = 0;
+  final int correctCount = 0;
 
   // ポップアップダイアログを表示する関数
   void _showQuitDialog(BuildContext context) {
@@ -212,7 +214,7 @@ class ColorEducationScreen extends StatelessWidget {
                       width: screenSize.width * 0.4,
                       height: 70,
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationCorrectScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => EducationCorrectScreen(questionCount: questionCount,correctCount: correctCount)));
                       },
                     ),
                     RectangularButton(
@@ -222,7 +224,7 @@ class ColorEducationScreen extends StatelessWidget {
                       width: screenSize.width * 0.4,
                       height: 70,
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationIncorrectScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => EducationIncorrectScreen(questionCount: questionCount,correctCount: correctCount)));
                       },
                     ),
                   ],
@@ -238,7 +240,7 @@ class ColorEducationScreen extends StatelessWidget {
                       width: screenSize.width * 0.4,
                       height: 70,
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationIncorrectScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => EducationIncorrectScreen(questionCount: questionCount, correctCount: correctCount)));
                       },
                     ),
                     RectangularButton(

@@ -150,10 +150,12 @@ class EducationModeScreen extends StatelessWidget {
                   backgroundColor: Colors.orange.shade100,
                   icon: Icons.star,
                   onPressed: () {
+                    int questionCount = 0;  // 任意の値をセット
+                    int correctCount = 0;
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ShapeEducationScreen()),
+                          builder: (context) => ShapeEducationScreen(questionCount: questionCount,correctCount: correctCount)),
                     );
                   },
                 ),

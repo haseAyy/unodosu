@@ -57,7 +57,10 @@ class RectangularButton extends StatelessWidget {
 
 // 正解画面
 class EducationCorrectScreen extends StatelessWidget {
-  const EducationCorrectScreen({super.key});
+
+  final int questionCount;
+  final int correctCount;
+  const EducationCorrectScreen({required this.questionCount,required this.correctCount});
 
   @override
   Widget build(BuildContext context) {
@@ -139,8 +142,7 @@ class EducationCorrectScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            const ShapeEducationScreen(), // 修正された遷移先
+                        builder: (context) => ShapeEducationScreen(questionCount: questionCount,correctCount: correctCount), // 修正された遷移先
                       ),
                     );
                   },

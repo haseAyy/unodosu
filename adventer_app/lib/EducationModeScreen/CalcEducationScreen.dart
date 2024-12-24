@@ -59,6 +59,8 @@ class RectangularButton extends StatelessWidget {
 // 計算問題出題画面
 class CalcEducationScreen extends StatelessWidget {
   const CalcEducationScreen({super.key});
+  final int questionCount = 0;
+  final int correctCount = 0;
 
   // ポップアップダイアログを表示する関数
   void _showQuitDialog(BuildContext context) {
@@ -210,7 +212,7 @@ class CalcEducationScreen extends StatelessWidget {
                       width: screenSize.width * 0.4,
                       height: 70,
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationCorrectScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => EducationCorrectScreen(questionCount: questionCount,correctCount :correctCount)));
                       },
                     ),
                     RectangularButton(
@@ -220,7 +222,7 @@ class CalcEducationScreen extends StatelessWidget {
                       width: screenSize.width * 0.4,
                       height: 70,
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationIncorrectScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => EducationIncorrectScreen(questionCount: questionCount,correctCount: correctCount)));
                       },
                     ),
                   ],
@@ -236,7 +238,7 @@ class CalcEducationScreen extends StatelessWidget {
                       width: screenSize.width * 0.4,
                       height: 70,
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationIncorrectScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => EducationIncorrectScreen(questionCount: questionCount,correctCount: correctCount)));
                       },
                     ),
                     RectangularButton(
@@ -246,7 +248,7 @@ class CalcEducationScreen extends StatelessWidget {
                       width: screenSize.width * 0.4,
                       height: 70,
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationIncorrectScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => EducationIncorrectScreen(questionCount: questionCount, correctCount: correctCount)));
                       },
                     ),
                   ],

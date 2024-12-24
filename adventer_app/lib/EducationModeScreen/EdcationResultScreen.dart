@@ -55,14 +55,10 @@ class RectangularButton extends StatelessWidget {
 }
 
 // 結果画面
-class EducationResultScreen extends StatelessWidget {
+class EdcationResultScreen extends StatelessWidget {
   final int correctCount;
-  final int incorrectCount;
 
-  const EducationResultScreen({super.key,required this.correctCount,
-    required this.incorrectCount,});
-    
-
+  const EdcationResultScreen({required this.correctCount});
 
   @override
   Widget build(BuildContext context) {
@@ -128,6 +124,16 @@ class EducationResultScreen extends StatelessWidget {
                   'ぜんぶとけたね！',
                   style: TextStyle(
                     fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontFamily: 'Comic Sans MS',
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  '10問中 $correctCount 問正解！',
+                  style: const TextStyle(
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                     fontFamily: 'Comic Sans MS',

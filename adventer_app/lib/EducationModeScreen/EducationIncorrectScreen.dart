@@ -56,7 +56,9 @@ class RectangularButton extends StatelessWidget {
 
 // 不正解画面
 class EducationIncorrectScreen extends StatelessWidget {
-  const EducationIncorrectScreen({super.key});
+  final int questionCount;
+  final int correctCount;
+  const EducationIncorrectScreen({required this.questionCount,required this.correctCount});
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +172,7 @@ class EducationIncorrectScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ShapeEducationScreen(),
+                        builder: (context) => ShapeEducationScreen(questionCount: questionCount,correctCount: correctCount),
                       ),
                     );
                   },

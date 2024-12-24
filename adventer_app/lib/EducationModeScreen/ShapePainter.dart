@@ -24,7 +24,7 @@ class ShapePainter extends CustomPainter {
     }
   }
 
-   // 星形を描画
+  // 星形を描画
   void _drawStar(Canvas canvas, Size size, Paint paint) {
     final center = Offset(size.width / 2, size.height / 2);
     final outerRadius = size.width / 3;  // 外側の半径
@@ -34,7 +34,6 @@ class ShapePainter extends CustomPainter {
 
     // 最初の角度を -pi / 2 に設定（上方向）
     double angle = -pi / 2;
-
 
     // 外側の頂点
     for (int i = 0; i < 5; i++) {
@@ -61,14 +60,14 @@ class ShapePainter extends CustomPainter {
   // 丸形を描画
   void _drawCircle(Canvas canvas, Size size, Paint paint) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 3; // 丸の半径
+    final radius = size.width / 3.5; // 丸の半径を小さくする（1/3から1/4に変更）
     canvas.drawCircle(center, radius, paint);
   }
 
   // 三角形を描画
   void _drawTriangle(Canvas canvas, Size size, Paint paint) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 3; // 三角形の大きさ
+    final radius = size.width / 4; // 三角形の大きさを小さくする（1/3から1/4に変更）
 
     Path path = Path();
     path.moveTo(center.dx, center.dy - radius); // 上の頂点

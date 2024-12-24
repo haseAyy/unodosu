@@ -173,19 +173,21 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
   void _handleAnswerSubmission(
       String selectedAnswerId, Question question, BuildContext context) async {
     try {
+      int questionCount = 0;
+      int correctCount  = 0;
       final result =
           await submitAnswer(question.question_id, selectedAnswerId); // 修正
       if (result == "correct") {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => const EducationCorrectScreen()),
+              builder: (context) => EducationCorrectScreen(questionCount: questionCount,correctCount: correctCount)),
         );
       } else {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => const EducationIncorrectScreen()),
+              builder: (context) => EducationIncorrectScreen(questionCount: questionCount,correctCount: correctCount)),
         );
       }
     } catch (e) {
