@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
 import 'EducationCorrectScreen.dart'; //正解画面
@@ -299,7 +299,7 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
                       ),
                      
                      Positioned(
-                          top: screenSize.height * 0.80, // 上から25%の位置に配置
+                          top: screenSize.height * 0.25, // 上から25%の位置に配置
                           left: 0,
                           right: 0,
                         child: Center(
@@ -373,3 +373,4 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
     );
   }
 }
+*/

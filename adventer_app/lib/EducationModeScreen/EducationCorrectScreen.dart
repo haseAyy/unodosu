@@ -61,8 +61,14 @@ class RectangularButton extends StatelessWidget {
 class EducationCorrectScreen extends StatelessWidget {
   final String message; // 受け取るメッセージ（いろ、もじなど）
 
-  // コンストラクタでメッセージを受け取る
-  const EducationCorrectScreen({super.key, required this.message});
+  final int questionCount;
+  final int correctCount;
+
+  const EducationCorrectScreen({
+    required this.message,
+    required this.questionCount,
+    required this.correctCount,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -146,30 +152,51 @@ class EducationCorrectScreen extends StatelessWidget {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ColorEducationScreen(), // いろの画面
+                          builder: (context) => LetterEducationScreen(
+                            questionCount: questionCount,
+                            correctCount: correctCount,
+                          ), // いろの画面
                         ),
                       );
                     } else if (message == "もじ") {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const LetterEducationScreen(), // もじの画面
+                          builder: (context) => LetterEducationScreen(
+                            questionCount: questionCount,
+                            correctCount: correctCount,
+                          ), // もじの画面
                         ),
                       );
-                    }else if(message == "けいさん"){
-                       Navigator.pushReplacement(
+                    } else if (message == "けいさん") {
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const CalcEducationScreen(), // けいさんの画面
+                          builder: (context) => LetterEducationScreen(
+                            questionCount: questionCount,
+                            correctCount: correctCount,
+                          ), // けいさんの画面
                         ),
                       );
-
+                       }else if (message == "かたち") {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ShapeEducationScreen(
+                            questionCount: questionCount,
+                            correctCount: correctCount,
+                          ), // もじの画面
+                        ),
+                      );
                     }else {
                       // デフォルトの遷移
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ShapeEducationScreen(),
+                          builder: (context) => ShapeEducationScreen(
+                            questionCount: questionCount,
+                            correctCount: correctCount,
+                          ),
                         ),
                       );
                     }

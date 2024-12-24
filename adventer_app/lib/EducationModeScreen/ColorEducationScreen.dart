@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
 import 'EducationCorrectScreen.dart'; //正解画面
 import 'EducationIncorrectScreen.dart'; //不正解画面
 import 'EducationModeScreen.dart';
+import 'dart:math';  // cos, sinを使うためにインポート
 
 // questionのデータモデル
 class Question {
@@ -48,7 +49,7 @@ Future<Question?> fetchQuestion(String questiontypeId) async {
   if (response.statusCode == 200) {
     return Question.fromJson(jsonDecode(response.body));
   } else {
-    throw Exception('Failed to load question');
+    throw Exception('問題の取得に失敗しました');
   }
 }
 
@@ -389,4 +390,4 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
       ),
     );
   }
-}
+}*/
