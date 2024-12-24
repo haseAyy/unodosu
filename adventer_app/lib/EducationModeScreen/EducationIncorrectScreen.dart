@@ -1,4 +1,7 @@
 import 'package:adventer_app/EducationModeScreen/ShapeEducationScreen.dart';
+import 'ColorEducationScreen.dart';
+import 'CalcEducationScreen.dart';
+import 'LetterEducationScreen.dart';
 import 'package:flutter/material.dart';
 
 // 四角いボタンを定義
@@ -58,11 +61,52 @@ class RectangularButton extends StatelessWidget {
 class EducationIncorrectScreen extends StatelessWidget {
   final int questionCount;
   final int correctCount;
-  const EducationIncorrectScreen({required this.questionCount,required this.correctCount});
+  final String nextScreenFlag; // 追加: 遷移先を指定するフラグ
+  const EducationIncorrectScreen({
+    required this.questionCount,
+    required this.correctCount,
+    required this.nextScreenFlag,
+  });
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+
+    // 遷移先の画面を取得するメソッド
+    Widget _getNextScreen() {
+      switch (nextScreenFlag) {
+        case 'shape':
+          return ShapeEducationScreen(
+            questionCount: questionCount,
+            correctCount: correctCount,
+          );
+        case 'calc':
+          return CalcEducationScreen(
+            questionCount: questionCount,
+            correctCount: correctCount,
+          );
+        case 'color':
+          return ColorEducationScreen(
+            questionCount: questionCount,
+            correctCount: correctCount,
+          );
+        case 'letter':
+          return LetterEducationScreen(
+            questionCount: questionCount,
+            correctCount: correctCount,
+          );
+        default:
+          // デフォルトケース
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('エラー'),
+            ),
+            body: const Center(
+              child: Text('次の画面が見つかりません。'),
+            ),
+          );
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -172,7 +216,7 @@ class EducationIncorrectScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ShapeEducationScreen(questionCount: questionCount,correctCount: correctCount),
+                        builder: (context) => _getNextScreen(), // () を付けて実行
                       ),
                     );
                   },

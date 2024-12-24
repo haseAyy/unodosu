@@ -225,11 +225,11 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => EducationIncorrectScreen(questionCount: questionCount,correctCount: correctCount)),
+                builder: (context) => EducationIncorrectScreen(questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'color')),
           );
         }
         // 次の問題を取得する処理を呼び出す
-        if (questionCount < 5) {
+        if (questionCount < 10) {
           setState(() {
             questionFuture = fetchQuestion("KMS001"); // 次の問題を取得
           });

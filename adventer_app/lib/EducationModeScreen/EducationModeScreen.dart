@@ -165,10 +165,12 @@ class EducationModeScreen extends StatelessWidget {
                   backgroundColor: Colors.blue.shade100,
                   icon: Icons.palette,
                   onPressed: () {
+                    int questionCount = 0;  // 任意の値をセット
+                    int correctCount = 0;
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ColorEducationScreen()),
+                          builder: (context) => ColorEducationScreen(questionCount: questionCount,correctCount: correctCount)),
                     );
                   },
                 ),
@@ -178,10 +180,12 @@ class EducationModeScreen extends StatelessWidget {
                   backgroundColor: Colors.green.shade100,
                   icon: Icons.text_fields,
                   onPressed: () {
+                    int questionCount = 0;  // 任意の値をセット
+                    int correctCount = 0;
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const LetterEducationScreen()),
+                          builder: (context) => LetterEducationScreen(questionCount: questionCount,correctCount: correctCount)),
                     );
                   },
                 ),
@@ -191,10 +195,12 @@ class EducationModeScreen extends StatelessWidget {
                   backgroundColor: Colors.pink.shade100,
                   icon: Icons.calculate,
                   onPressed: () {
+                    int questionCount = 0;  // 任意の値をセット
+                    int correctCount = 0;
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const CalcEducationScreen()),
+                          builder: (context) => CalcEducationScreen(questionCount: questionCount,correctCount: correctCount)),
                     );
                   },
                 ),
