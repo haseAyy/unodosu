@@ -79,7 +79,10 @@ class ColorEducationScreen extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // ダイアログを閉じて、問題一覧画面に戻る
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationModeScreen()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const EducationModeScreen()),
+                );
               },
               child: const Text('やめる'),
             ),
@@ -214,7 +217,10 @@ class ColorEducationScreen extends StatelessWidget {
                       width: screenWidth * 0.4,
                       height: screenHeight * 0.08,
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationCorrectScreen()));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const EducationCorrectScreen()), // 修正
+                        );
                       },
                     ),
                     RectangularButton(
@@ -224,7 +230,10 @@ class ColorEducationScreen extends StatelessWidget {
                       width: screenWidth * 0.4,
                       height: screenHeight * 0.08,
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationIncorrectScreen()));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const EducationIncorrectScreen()), // 修正
+                        );
                       },
                     ),
                   ],
@@ -240,7 +249,10 @@ class ColorEducationScreen extends StatelessWidget {
                       width: screenWidth * 0.4,
                       height: screenHeight * 0.08,
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationIncorrectScreen()));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const EducationIncorrectScreen()), // 修正
+                        );
                       },
                     ),
                     RectangularButton(
@@ -250,7 +262,10 @@ class ColorEducationScreen extends StatelessWidget {
                       width: screenWidth * 0.4,
                       height: screenHeight * 0.08,
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationResultScreen()));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const EducationResultScreen()), // 修正
+                        );
                       },
                     ),
                   ],
