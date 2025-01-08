@@ -219,7 +219,8 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                 builder: (context) => EducationIncorrectScreen(
                     message: 'もじ',
                     questionCount: questionCount,
-                    correctCount: correctCount)),
+                    correctCount: correctCount,
+                    correctAnswer: question.question_answer)),
           );
         }
         // 次の問題を取得する処理を呼び出す
