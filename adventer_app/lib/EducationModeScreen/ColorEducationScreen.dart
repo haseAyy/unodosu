@@ -1,8 +1,9 @@
-/*import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
 import 'EducationCorrectScreen.dart'; //正解画面
 import 'EducationIncorrectScreen.dart'; //不正解画面
+import 'EdcationResultScreen.dart';
 import 'EducationModeScreen.dart';
 import 'dart:math';  // cos, sinを使うためにインポート
 
@@ -126,13 +127,26 @@ class RectangularButton extends StatelessWidget {
 
 // 色問題出題画面
 class ColorEducationScreen extends StatefulWidget {
-  const ColorEducationScreen({super.key});
+    final int questionCount;
+  final int correctCount;
+  const ColorEducationScreen({required this.questionCount,required this.correctCount});
+ 
   @override
-  _ColorEducationScreenState createState() => _ColorEducationScreenState();
+  _ColorEducationScreenState createState() => _ColorEducationScreenState(questionCount, correctCount);
 }
 
 class _ColorEducationScreenState extends State<ColorEducationScreen> {
   late Future<Question?> questionFuture;
+  late int questionCount; // このクラス内で管理する変数
+  late int correctCount; // 正解数を追跡する変数 
+
+
+  // コンストラクタで初期値を設定
+  _ColorEducationScreenState(this.questionCount,this.correctCount);
+
+  //gpt
+  //List<String> solvedQuestions = []; // 解いた問題を保存するリスト
+  
 
     @override
   void initState() {
@@ -192,27 +206,56 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
     try {
       final result =
           await submitAnswer(question.question_id, selectedAnswerId); // 修正
+           debugPrint('問題数を増やす前: $questionCount');
+    // 問題数をカウント
+    setState(() {
+      questionCount++; // 問題数をカウント
       if (result == "correct") {
+        correctCount++; // 正解数をカウント
+      }
+    });
+    debugPrint('問題数を増やした後: $questionCount');
+    debugPrint('正解数: $correctCount');
+     if (questionCount >= 10) {
+        // 10問解いたあとは結果画面に遷移
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (context) => const EducationCorrectScreen(message: 'いろ')),
+          MaterialPageRoute(builder: (context) => EdcationResultScreen(correctCount: correctCount)),
         );
       } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const EducationIncorrectScreen()),
-        );
+        if (result == "correct") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EducationCorrectScreen
+                (message: 'いろ',
+                  questionCount: questionCount,
+                correctCount: correctCount)),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EducationIncorrectScreen(questionCount: questionCount,correctCount: correctCount)),
+          );
+        }
+        // 次の問題を取得する処理を呼び出す
+        if (questionCount < 5) {
+          setState(() {
+            questionFuture = fetchQuestion("KMS001"); // 次の問題を取得
+          });
+        }
       }
     } catch (e) {
-      print("Error: $e");
+      print("エラー: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('エラーが発生しました')),
       );
     }
   }
 
+
+    
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -323,10 +366,7 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
                             shape: BoxShape.circle,
                           ),
                           child: Center(
-                            child: Text(
-                              question.question_theme, // テキストの内容を表示
-                              style: const TextStyle(fontSize: 40),
-                            ),
+                            
                           ),
                         ),
 
@@ -390,4 +430,4 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
       ),
     );
   }
-}*/
+}

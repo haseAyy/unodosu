@@ -152,7 +152,7 @@ class EducationCorrectScreen extends StatelessWidget {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => LetterEducationScreen(
+                          builder: (context) => ColorEducationScreen(
                             questionCount: questionCount,
                             correctCount: correctCount,
                           ), // いろの画面
@@ -162,7 +162,7 @@ class EducationCorrectScreen extends StatelessWidget {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => LetterEducationScreen(
+                          builder: (context) => ColorEducationScreen(
                             questionCount: questionCount,
                             correctCount: correctCount,
                           ), // もじの画面

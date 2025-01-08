@@ -172,7 +172,7 @@ class EducationModeScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => LetterEducationScreen(
+                          builder: (context) => ColorEducationScreen(
                               questionCount: questionCount,
                               correctCount: correctCount)),
                     );
