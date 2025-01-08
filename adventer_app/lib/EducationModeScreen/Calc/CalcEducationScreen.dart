@@ -98,7 +98,7 @@ class CalcEducationScreen extends StatelessWidget {
         backgroundColor: Colors.pink.shade100,
         elevation: 0,
         title: const Text(
-          'もんだい',
+          'けいさんもんだい',
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,

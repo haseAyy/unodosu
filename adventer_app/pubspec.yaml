@@ -95,3 +95,7 @@ flutter:
     - assets/images/ShapeStartScreen.png
     - assets/images/LetterStartScreen.png
     - assets/images/CalcStartScreen.png
+    - assets/images/HelpBedStartScreen.png
+    - assets/images/HelpBathStartScreen.png
+    - assets/images/HelpTableStartScreen.png
+    - assets/images/HelpErrandStartScreen.png

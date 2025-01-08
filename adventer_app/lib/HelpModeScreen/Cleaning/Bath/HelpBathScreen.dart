@@ -1,8 +1,8 @@
-import 'package:adventer_app/HelpModeScreen/HelpModeScreen.dart';
 import 'package:flutter/material.dart';
-import 'HelpErrandCorrectScreen.dart';
-import 'HelpErrandIncrrectScreen.dart';
-import 'HelpErrandResult.dart';
+import 'package:adventer_app/HelpModeScreen/Cleaning/HelpCleaningListScreen.dart';
+import '../HelpCleaningCorrectScreen.dart';
+import '../HelpCleaningIncorrectScreen.dart';
+
 // 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
   final String text;
@@ -56,9 +56,9 @@ class RectangularButton extends StatelessWidget {
   }
 }
 
-// おつかい問題出題画面
-class HelpErrandScreen extends StatelessWidget {
-  const HelpErrandScreen({super.key});
+// おふろ問題出題画面
+class HelpBathScreen extends StatelessWidget {
+  const HelpBathScreen({super.key});
 
   // ポップアップダイアログを表示する関数
   void _showQuitDialog(BuildContext context) {
@@ -78,7 +78,7 @@ class HelpErrandScreen extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // ダイアログを閉じて、問題一覧画面に戻る
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpModeScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpCleaningListScreen()));
               },
               child: const Text('やめる'),
             ),
@@ -97,10 +97,10 @@ class HelpErrandScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false, // 戻るボタンを非表示にする
-        backgroundColor: const Color.fromARGB(255, 255, 104, 96),
+        backgroundColor: Colors.blueAccent[100]!,
         elevation: 0,
         title: const Text(
-          'おつかいもんだい',
+          'おふろもんだい',
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -150,7 +150,7 @@ class HelpErrandScreen extends StatelessWidget {
                 _showQuitDialog(context); // ダイアログを表示
               },
               style: TextButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 255, 104, 96),
+                backgroundColor: Colors.blueAccent[100]!,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20), // 角丸
                 ),
@@ -167,116 +167,6 @@ class HelpErrandScreen extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
-            top: screenSize.height * 0.45, // 適切な位置に調整
-            right: screenSize.width * 0.05, // 適切な位置に調整
-            child: HintIcon(
-              onPressed: () {
-                // ヒントのポップアップ表示
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20), // 角丸
-                      ),
-                      title: const Center(
-                        child: Text(
-                          'ヒント',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontFamily: 'Comic Sans MS',
-                          ),
-                        ),
-                      ),
-                      content:const Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                         SizedBox(height: 10), // 少し余白を追加
-                          Row(
-                            children: [
-                             SizedBox(width: 10),
-                             Text(
-                                '①  →  １えん',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                  fontFamily: 'Comic Sans MS',
-                                ),
-                              ),
-                            ],
-                          ),
-                         SizedBox(height: 10), // 少し余白を追加
-                          Row(
-                            children: [
-                              
-                             SizedBox(width: 10),
-                             Text(
-                                '⑤  →  ５えん',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                  fontFamily: 'Comic Sans MS',
-                                ),
-                              ),
-                            ],
-                          ),
-                         SizedBox(height: 10), // 少し余白を追加
-                          Row(
-                            children: [
-                              
-                             SizedBox(width: 10),
-                             Text(
-                                '⑩  →  １０えん',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                  fontFamily: 'Comic Sans MS',
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      actions: [
-                        Center(
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.pop(context); // ポップアップを閉じる
-                            },
-                            style: TextButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(255, 255, 104, 96),
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 10,
-                                horizontal: 30,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20), // ボタンの角丸
-                              ),
-                            ),
-                            child: const Text(
-                              '閉じる',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                fontFamily: 'Comic Sans MS',
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-          ),
           // 問題テキスト
           Positioned(
             top: screenSize.height * 0.15,
@@ -285,7 +175,7 @@ class HelpErrandScreen extends StatelessWidget {
             child: Column(
               children: [
                 const Text(
-                  'おかねはいくらでしょう？',
+                  'おふろをそうじするための\nどうぐはどれかな？',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24,
@@ -318,23 +208,23 @@ class HelpErrandScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     RectangularButton(
-                      text: 'A.５００えん',
+                      text: 'A.ブラシ',
                       buttonColor: const Color.fromARGB(255, 250, 240, 230),
                       textColor: Colors.black,
                       width: screenSize.width * 0.4, // 横幅調整
                       height: 70, // 高さ調整
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpErrandCorrectScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpCleaningCorrectScreen()));
                       },
                     ),
                     RectangularButton(
-                      text: 'B.３００えん',
+                      text: 'B.ぞうきん',
                       buttonColor: const Color.fromARGB(255, 250, 240, 230),
                       textColor: Colors.black,
                       width: screenSize.width * 0.4, // 横幅調整
                       height: 70, // 高さ調整
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpErrandIncorrectScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpCleaningIncorrectScreen()));
                       },
                     ),
                   ],
@@ -344,23 +234,23 @@ class HelpErrandScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     RectangularButton(
-                      text: 'C.１２０えん',
+                      text: 'C.ほうき',
                       buttonColor: const Color.fromARGB(255, 250, 240, 230),
                       textColor: Colors.black,
                       width: screenSize.width * 0.4, // 横幅調整
                       height: 70, // 高さ調整
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpErrandIncorrectScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpCleaningIncorrectScreen()));
                       },
                     ),
                     RectangularButton(
-                      text: 'D.２０００えん',
+                      text: 'D.はんかち',
                       buttonColor: const Color.fromARGB(255, 250, 240, 230),
                       textColor: Colors.black,
                       width: screenSize.width * 0.4, // 横幅調整
                       height: 70, // 高さ調整
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpErrandResultScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpCleaningIncorrectScreen()));
                       },
                     ),
                   ],
@@ -369,41 +259,6 @@ class HelpErrandScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class HintIcon extends StatelessWidget {
-  final VoidCallback onPressed;
-
-  const HintIcon({super.key, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        width: 60,
-        height: 60,
-        decoration: BoxDecoration(
-          color: Colors.yellow[100],
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.4),
-              blurRadius: 6,
-              offset: const Offset(2, 4),
-            ),
-          ],
-        ),
-        child: Center(
-          child: Icon(
-            Icons.lightbulb_outline,
-            size: 32,
-            color: Colors.orangeAccent,
-          ),
-        ),
       ),
     );
   }

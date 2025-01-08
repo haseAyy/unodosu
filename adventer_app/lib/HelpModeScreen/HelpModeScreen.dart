@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'Cleaning/HelpCleaningListScreen.dart';
 import '../MeneScreen/HomeScreen.dart';
+import 'Errand/HelpErrandStartScreen.dart';
 
 class HelpModeScreen extends StatelessWidget {
   const HelpModeScreen({super.key});
@@ -74,7 +75,7 @@ class HelpModeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const CleaningScreen()),
+                      MaterialPageRoute(builder: (context) => const HelpCleaningListScreen()),
                     );
                   },
                 ),
@@ -87,7 +88,7 @@ class HelpModeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const CleaningScreen()),
+                      MaterialPageRoute(builder: (context) => const HelpErrandStartScreen()),
                     );
                   },
                 ),

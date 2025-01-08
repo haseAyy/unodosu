@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'CalcEducationScreen.dart'; // 計算問題出題画面
+import 'HelpBedScreen.dart';
 
-// 計算問題スタート画面
-class CalcStartScreen extends StatelessWidget {
-  const CalcStartScreen({super.key});
+// ベッド問題スタート画面
+class HelpBedStartScreen extends StatelessWidget {
+  const HelpBedStartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class CalcStartScreen extends StatelessWidget {
           // 背景画像
           Positioned.fill(
             child: Image.asset(
-              'assets/images/CalcStartScreen.png',
+              'assets/images/HelpBedStartScreen.png',
               fit: BoxFit.cover, // 画面全体に広がるように
             ),
           ),
@@ -34,7 +34,7 @@ class CalcStartScreen extends StatelessWidget {
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                   child: const Text(
-                    'けいさんをまなぼう！', // タイトル
+                    'ベッドのおかたづけ', // タイトル
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -49,7 +49,7 @@ class CalcStartScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const CalcEducationScreen(),
+                        builder: (context) => const HelpBedScreen(),
                       ),
                     );
                   },

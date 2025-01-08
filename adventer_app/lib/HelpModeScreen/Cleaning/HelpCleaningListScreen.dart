@@ -1,8 +1,12 @@
+import 'package:adventer_app/HelpModeScreen/Cleaning/Bed/HelpBedStartScreen.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import '../HelpModeScreen.dart';
+import 'Bath/HelpBathStartScreen.dart';
+import 'Table/HelpTableStartScreen.dart';
 
-class CleaningScreen extends StatelessWidget {
-  const CleaningScreen({super.key});
+class HelpCleaningListScreen extends StatelessWidget {
+  const HelpCleaningListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +83,10 @@ class CleaningScreen extends StatelessWidget {
                   backgroundColor: const Color.fromARGB(255, 20, 154, 127),
                   onPressed: () {
                     // ベッド選択時の処理
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HelpBedStartScreen()),
+                    );
                   },
                 ),
                 SizedBox(height: screenHeight * 0.01), // ボタン間の隙間
@@ -90,6 +98,10 @@ class CleaningScreen extends StatelessWidget {
                   backgroundColor: Colors.blueAccent[100]!,
                   onPressed: () {
                     // おふろ選択時の処理
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HelpBathStartScreen()),
+                    );
                   },
                 ),
                 SizedBox(height: screenHeight * 0.01), // ボタン間の隙間
@@ -101,6 +113,10 @@ class CleaningScreen extends StatelessWidget {
                   backgroundColor: const Color.fromARGB(255, 255, 224, 120),
                   onPressed: () {
                     // テーブル選択時の処理
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HelpTableStartScreen()),
+                    );
                   },
                 ),
               ],
@@ -113,7 +129,10 @@ class CleaningScreen extends StatelessWidget {
             left: screenWidth * 0.05,
             child: FloatingActionButton(
               onPressed: () {
-                Navigator.pop(context); // 前の画面に戻る
+                Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HelpModeScreen()),
+                    );
               },
               backgroundColor: Colors.grey[100],
               child: const Icon(Icons.arrow_back),
