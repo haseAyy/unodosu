@@ -140,6 +140,7 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
   late Future<Question?> questionFuture;
   late int questionCount; // このクラス内で管理する変数
   late int correctCount; // 正解数を追跡する変数 
+  late Question currentQuestion;
 
 
   // コンストラクタで初期値を設定
@@ -218,13 +219,13 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => EducationCorrectScreen(questionCount: questionCount,correctCount: correctCount)),
+                builder: (context) => EducationCorrectScreen(questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'letter')),
           );
         } else {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => EducationIncorrectScreen(questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'color')),
+                builder: (context) => EducationIncorrectScreen(correctAnswer: currentQuestion.questionAnswer,questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'letter')),
           );
         }
         // 次の問題を取得する処理を呼び出す

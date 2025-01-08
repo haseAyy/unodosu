@@ -2,6 +2,7 @@ import 'package:adventer_app/EducationModeScreen/ShapeEducationScreen.dart';
 import 'ColorEducationScreen.dart';
 import 'CalcEducationScreen.dart';
 import 'LetterEducationScreen.dart';
+
 import 'package:flutter/material.dart';
 
 // 四角いボタンを定義
@@ -59,10 +60,13 @@ class RectangularButton extends StatelessWidget {
 
 // 不正解画面
 class EducationIncorrectScreen extends StatelessWidget {
+  final String correctAnswer;
   final int questionCount;
   final int correctCount;
   final String nextScreenFlag; // 追加: 遷移先を指定するフラグ
+
   const EducationIncorrectScreen({
+    required this.correctAnswer,
     required this.questionCount,
     required this.correctCount,
     required this.nextScreenFlag,
@@ -194,8 +198,8 @@ class EducationIncorrectScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: const Text(
-                    '解説: この問題は形を正しく識別することが求められました。次回はもっとがんばろう！',
+                  child: Text(
+                    '正解: $correctAnswer',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

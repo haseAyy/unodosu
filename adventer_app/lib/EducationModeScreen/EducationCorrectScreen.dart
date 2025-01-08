@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'ShapeEducationScreen.dart'; // 修正されたインポート
-
+import 'ShapeEducationScreen.dart';
+import 'CalcEducationScreen.dart';
+import 'ColorEducationScreen.dart';
+import 'LetterEducationScreen.dart'; // 他の画面もインポート
 
 // 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
@@ -57,14 +59,55 @@ class RectangularButton extends StatelessWidget {
 
 // 正解画面
 class EducationCorrectScreen extends StatelessWidget {
-
   final int questionCount;
   final int correctCount;
-  const EducationCorrectScreen({required this.questionCount,required this.correctCount});
+  final String nextScreenFlag; // 遷移先の画面を指定（文字列）
+
+  const EducationCorrectScreen({
+    required this.questionCount,
+    required this.correctCount,
+    required this.nextScreenFlag, // 必須パラメータに追加
+  });
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+
+    // 遷移先の画面を取得するメソッド
+    Widget _getNextScreen() {
+      switch (nextScreenFlag) {
+        case 'shape':
+          return ShapeEducationScreen(
+            questionCount: questionCount,
+            correctCount: correctCount,
+          );
+        case 'calc':
+          return CalcEducationScreen(
+            questionCount: questionCount,
+            correctCount: correctCount,
+          );
+        case 'color':
+          return ColorEducationScreen(
+            questionCount: questionCount,
+            correctCount: correctCount,
+          );
+        case 'letter':
+          return LetterEducationScreen(
+            questionCount: questionCount,
+            correctCount: correctCount,
+          );
+        default:
+          // デフォルトケース
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('エラー'),
+            ),
+            body: const Center(
+              child: Text('次の画面が見つかりません。'),
+            ),
+          );
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -142,7 +185,7 @@ class EducationCorrectScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ShapeEducationScreen(questionCount: questionCount,correctCount: correctCount), // 修正された遷移先
+                        builder: (context) => _getNextScreen(), // 動的に遷移先を指定
                       ),
                     );
                   },

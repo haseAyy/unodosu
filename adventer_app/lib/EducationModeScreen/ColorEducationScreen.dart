@@ -140,6 +140,7 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
   late Future<Question?> questionFuture;
   late int questionCount; // このクラス内で管理する変数
   late int correctCount; // 正解数を追跡する変数 
+  late Question currentQuestion;
 
 
   // コンストラクタで初期値を設定
@@ -218,19 +219,19 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => EducationCorrectScreen(questionCount: questionCount,correctCount: correctCount)),
+                builder: (context) => EducationCorrectScreen(questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'color')),
           );
         } else {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => EducationIncorrectScreen(questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'color')),
+                builder: (context) => EducationIncorrectScreen(correctAnswer: currentQuestion.questionAnswer,questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'color')),
           );
         }
         // 次の問題を取得する処理を呼び出す
         if (questionCount < 10) {
           setState(() {
-            questionFuture = fetchQuestion("KMS003"); // 次の問題を取得
+            questionFuture = fetchQuestion("KMS002"); // 次の問題を取得
           });
         }
       }

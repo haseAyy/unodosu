@@ -8,6 +8,7 @@ import 'EducationModeScreen.dart';
 import 'ShapePainter.dart'; // ShapePainter.dartをインポート
 import 'dart:math';  // cos, sinを使うためにインポート
 
+
 // questionのデータモデル
 class Question {
   final String questionId;
@@ -141,6 +142,7 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
   late Future<Question?> questionFuture;
   late int questionCount; // このクラス内で管理する変数
   late int correctCount; // 正解数を追跡する変数 
+  late Question currentQuestion;
 
 
   // コンストラクタで初期値を設定
@@ -219,13 +221,13 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => EducationCorrectScreen(questionCount: questionCount,correctCount: correctCount)),
+                builder: (context) => EducationCorrectScreen(questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'shape')),
           );
         } else {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => EducationIncorrectScreen(questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'color')),
+                builder: (context) => EducationIncorrectScreen(correctAnswer: "「${question.questionAnswer}」",questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'shape')),
           );
         }
         // 次の問題を取得する処理を呼び出す
