@@ -1,5 +1,3 @@
-import 'package:adventer_app/EducationModeScreen/EducationModeScreen.dart';
-import 'package:adventer_app/HelpModeScreen/Cleaning/HelpCleaningListScreen.dart';
 import 'package:adventer_app/HelpModeScreen/HelpModeScreen.dart';
 import 'package:flutter/material.dart';
 
