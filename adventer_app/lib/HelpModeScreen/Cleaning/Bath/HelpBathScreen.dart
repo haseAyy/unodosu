@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'EducationCorrectScreen.dart';
-import 'EducationIncorrectScreen.dart';
-import 'EducationModeScreen.dart';
-import 'EdcationResultScreen.dart';
+import 'package:adventer_app/HelpModeScreen/Cleaning/HelpCleaningListScreen.dart';
+import '../HelpCleaningCorrectScreen.dart';
+import '../HelpCleaningIncorrectScreen.dart';
 
 // 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
@@ -57,9 +56,9 @@ class RectangularButton extends StatelessWidget {
   }
 }
 
-// 色問題出題画面
-class ColorEducationScreen extends StatelessWidget {
-  const ColorEducationScreen({super.key});
+// おふろ問題出題画面
+class HelpBathScreen extends StatelessWidget {
+  const HelpBathScreen({super.key});
 
   // ポップアップダイアログを表示する関数
   void _showQuitDialog(BuildContext context) {
@@ -79,7 +78,7 @@ class ColorEducationScreen extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // ダイアログを閉じて、問題一覧画面に戻る
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationModeScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpCleaningListScreen()));
               },
               child: const Text('やめる'),
             ),
@@ -92,14 +91,16 @@ class ColorEducationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false, // 戻るボタンを非表示にする
-        backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+        backgroundColor: Colors.blueAccent[100]!,
         elevation: 0,
         title: const Text(
-          'いろもんだい',
+          'おふろもんだい',
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -112,42 +113,44 @@ class ColorEducationScreen extends StatelessWidget {
       backgroundColor: Colors.white, // 背景を白に統一
       body: Stack(
         children: [
-          // 上部のソフトな装飾
+          // 背景色（温かみのある色調）
+          Container(color: Colors.teal[50]),
+
+          // 上部デコレーション（円形の装飾）
           Positioned(
-            top: -50,
-            left: -50,
+            top: -screenHeight * 0.05, // 画面サイズに基づく位置調整
+            left: -screenWidth * 0.1,
             child: Container(
-              width: 150,
-              height: 150,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 255, 182, 193), // 薄いピンク
+              width: screenWidth * 0.4, // 画面サイズに基づくサイズ調整
+              height: screenWidth * 0.4,
+              decoration: BoxDecoration(
+                color: Colors.orangeAccent[100],
                 shape: BoxShape.circle,
               ),
             ),
           ),
-          // 下部のソフトな装飾
           Positioned(
-            bottom: -50,
-            right: -50,
+            top: screenHeight * 0.2, // 画面サイズに基づく位置調整
+            right: -screenWidth * 0.1,
             child: Container(
-              width: 200,
-              height: 200,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 173, 216, 230), // 薄い水色
+              width: screenWidth * 0.3,
+              height: screenWidth * 0.3,
+              decoration: BoxDecoration(
+                color: Colors.lightGreen[200],
                 shape: BoxShape.circle,
               ),
             ),
           ),
           // 問題中断ボタン（左下）
           Positioned(
-            bottom: 30,
+            bottom: screenSize.height * 0.05, // 位置調整
             left: 10,
             child: TextButton(
               onPressed: () {
                 _showQuitDialog(context); // ダイアログを表示
               },
               style: TextButton.styleFrom(
-                backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+                backgroundColor: Colors.blueAccent[100]!,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20), // 角丸
                 ),
@@ -172,7 +175,7 @@ class ColorEducationScreen extends StatelessWidget {
             child: Column(
               children: [
                 const Text(
-                  'このいろと\nおなじいろをみつけよう！',
+                  'おふろをそうじするための\nどうぐはどれかな？',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24,
@@ -184,8 +187,8 @@ class ColorEducationScreen extends StatelessWidget {
                 const SizedBox(height: 60),
                 // 問題の丸
                 Container(
-                  width: 160,
-                  height: 160,
+                  width: screenSize.width * 0.4, // 比率調整
+                  height: screenSize.width * 0.4, // 比率調整
                   decoration: const BoxDecoration(
                     color: Color.fromARGB(255, 154, 208, 255),
                     shape: BoxShape.circle,
@@ -196,7 +199,7 @@ class ColorEducationScreen extends StatelessWidget {
           ),
           // ボタンエリア
           Positioned(
-            bottom: screenSize.height * 0.15,
+            bottom: screenSize.height * 0.15, // 位置調整
             left: 0,
             right: 0,
             child: Column(
@@ -205,23 +208,23 @@ class ColorEducationScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     RectangularButton(
-                      text: 'A.あお',
+                      text: 'A.ブラシ',
                       buttonColor: const Color.fromARGB(255, 250, 240, 230),
                       textColor: Colors.black,
-                      width: screenSize.width * 0.4,
-                      height: 70,
+                      width: screenSize.width * 0.4, // 横幅調整
+                      height: 70, // 高さ調整
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationCorrectScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpCleaningCorrectScreen()));
                       },
                     ),
                     RectangularButton(
-                      text: 'B.あか',
+                      text: 'B.ぞうきん',
                       buttonColor: const Color.fromARGB(255, 250, 240, 230),
                       textColor: Colors.black,
-                      width: screenSize.width * 0.4,
-                      height: 70,
+                      width: screenSize.width * 0.4, // 横幅調整
+                      height: 70, // 高さ調整
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationIncorrectScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpCleaningIncorrectScreen()));
                       },
                     ),
                   ],
@@ -231,23 +234,23 @@ class ColorEducationScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     RectangularButton(
-                      text: 'C.きいろ',
+                      text: 'C.ほうき',
                       buttonColor: const Color.fromARGB(255, 250, 240, 230),
                       textColor: Colors.black,
-                      width: screenSize.width * 0.4,
-                      height: 70,
+                      width: screenSize.width * 0.4, // 横幅調整
+                      height: 70, // 高さ調整
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationIncorrectScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpCleaningIncorrectScreen()));
                       },
                     ),
                     RectangularButton(
-                      text: 'D.みどり',
+                      text: 'D.はんかち',
                       buttonColor: const Color.fromARGB(255, 250, 240, 230),
                       textColor: Colors.black,
-                      width: screenSize.width * 0.4,
-                      height: 70,
+                      width: screenSize.width * 0.4, // 横幅調整
+                      height: 70, // 高さ調整
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationResultScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpCleaningIncorrectScreen()));
                       },
                     ),
                   ],

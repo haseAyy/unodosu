@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'EducationCorrectScreen.dart';
-import 'EducationIncorrectScreen.dart';
-import 'EducationModeScreen.dart';
+import '../EducationCorrectScreen.dart';
+import '../EducationIncorrectScreen.dart';
+import '../EducationModeScreen.dart';
 
 // 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
@@ -56,9 +56,9 @@ class RectangularButton extends StatelessWidget {
   }
 }
 
-// 文字問題出題画面
-class LetterEducationScreen extends StatelessWidget {
-  const LetterEducationScreen({super.key});
+// 計算問題出題画面
+class CalcEducationScreen extends StatelessWidget {
+  const CalcEducationScreen({super.key});
 
   // ポップアップダイアログを表示する関数
   void _showQuitDialog(BuildContext context) {
@@ -95,10 +95,10 @@ class LetterEducationScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false, // 戻るボタンを非表示にする
-        backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+        backgroundColor: Colors.pink.shade100,
         elevation: 0,
         title: const Text(
-          'もじもんだい',
+          'けいさんもんだい',
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -139,14 +139,14 @@ class LetterEducationScreen extends StatelessWidget {
           ),
           // 問題中断ボタン（左下）
           Positioned(
-            bottom: 30,
+            bottom: screenSize.height * 0.05, // 位置調整
             left: 10,
             child: TextButton(
               onPressed: () {
                 _showQuitDialog(context); // ダイアログを表示
               },
               style: TextButton.styleFrom(
-                backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+                backgroundColor: Colors.pink.shade100,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20), // 角丸
                 ),
@@ -171,7 +171,7 @@ class LetterEducationScreen extends StatelessWidget {
             child: Column(
               children: [
                 const Text(
-                  'このもじと\nおなじもじをみつけよう！',
+                  'このもんだいをといてみよう！',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24,
@@ -183,8 +183,8 @@ class LetterEducationScreen extends StatelessWidget {
                 const SizedBox(height: 60),
                 // 問題の丸
                 Container(
-                  width: 160,
-                  height: 160,
+                  width: screenSize.width * 0.4, // 比率調整
+                  height: screenSize.width * 0.4, // 比率調整
                   decoration: const BoxDecoration(
                     color: Color.fromARGB(255, 154, 208, 255),
                     shape: BoxShape.circle,
@@ -195,7 +195,7 @@ class LetterEducationScreen extends StatelessWidget {
           ),
           // ボタンエリア
           Positioned(
-            bottom: screenSize.height * 0.15,
+            bottom: screenSize.height * 0.15, // 位置調整
             left: 0,
             right: 0,
             child: Column(
@@ -204,21 +204,21 @@ class LetterEducationScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     RectangularButton(
-                      text: 'A.お',
+                      text: 'A.３',
                       buttonColor: const Color.fromARGB(255, 250, 240, 230),
                       textColor: Colors.black,
-                      width: screenSize.width * 0.4,
-                      height: 70,
+                      width: screenSize.width * 0.4, // 横幅調整
+                      height: 70, // 高さ調整
                       onPressed: () {
                         Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationCorrectScreen()));
                       },
                     ),
                     RectangularButton(
-                      text: 'B.あ',
+                      text: 'B.２',
                       buttonColor: const Color.fromARGB(255, 250, 240, 230),
                       textColor: Colors.black,
-                      width: screenSize.width * 0.4,
-                      height: 70,
+                      width: screenSize.width * 0.4, // 横幅調整
+                      height: 70, // 高さ調整
                       onPressed: () {
                         Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationIncorrectScreen()));
                       },
@@ -230,21 +230,21 @@ class LetterEducationScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     RectangularButton(
-                      text: 'C.ろ',
+                      text: 'C.６',
                       buttonColor: const Color.fromARGB(255, 250, 240, 230),
                       textColor: Colors.black,
-                      width: screenSize.width * 0.4,
-                      height: 70,
+                      width: screenSize.width * 0.4, // 横幅調整
+                      height: 70, // 高さ調整
                       onPressed: () {
                         Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationIncorrectScreen()));
                       },
                     ),
                     RectangularButton(
-                      text: 'D.り',
+                      text: 'D.９',
                       buttonColor: const Color.fromARGB(255, 250, 240, 230),
                       textColor: Colors.black,
-                      width: screenSize.width * 0.4,
-                      height: 70,
+                      width: screenSize.width * 0.4, // 横幅調整
+                      height: 70, // 高さ調整
                       onPressed: () {
                         Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationIncorrectScreen()));
                       },

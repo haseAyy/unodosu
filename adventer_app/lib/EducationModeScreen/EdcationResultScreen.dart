@@ -65,13 +65,13 @@ class EducationResultScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false, // 戻るボタンを非表示
-        backgroundColor: const Color.fromARGB(255, 173, 216, 230), // 淡い水色
+        backgroundColor: const Color.fromARGB(255, 222, 94, 94),
         elevation: 0,
         title: const Text(
-          'おめでとう！',
+          'けっか',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
             fontFamily: 'Comic Sans MS',
           ),
@@ -83,11 +83,11 @@ class EducationResultScreen extends StatelessWidget {
         children: [
           // 上部のソフトな装飾
           Positioned(
-            top: -50,
-            left: -50,
+            top: -0.1 * screenSize.height,
+            left: -0.1 * screenSize.width,
             child: Container(
-              width: 150,
-              height: 150,
+              width: 0.3 * screenSize.width,
+              height: 0.3 * screenSize.width,
               decoration: const BoxDecoration(
                 color: Color.fromARGB(50, 173, 216, 230), // 薄い水色
                 shape: BoxShape.circle,
@@ -96,11 +96,11 @@ class EducationResultScreen extends StatelessWidget {
           ),
           // 下部のソフトな装飾
           Positioned(
-            bottom: -50,
-            right: -50,
+            bottom: -0.1 * screenSize.height,
+            right: -0.1 * screenSize.width,
             child: Container(
-              width: 200,
-              height: 200,
+              width: 0.4 * screenSize.width,
+              height: 0.4 * screenSize.width,
               decoration: const BoxDecoration(
                 color: Color.fromARGB(50, 255, 182, 193), // 薄いピンク
                 shape: BoxShape.circle,
@@ -112,26 +112,36 @@ class EducationResultScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.check_circle_outline,
-                  size: 150,
+                  size: 0.2 * screenSize.height, // アイコンのサイズを画面高さに基づいて調整
                   color: Colors.orange,
                 ),
-                const SizedBox(height: 20),
-                const Text(
+                SizedBox(height: 0.05 * screenSize.height), // 高さに基づいて余白を調整
+                Text(
                   'ぜんぶとけたね！',
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 0.04 * screenSize.height, // 画面高さに基づいてフォントサイズを調整
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                     fontFamily: 'Comic Sans MS',
                   ),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 0.05 * screenSize.height), // 高さに基づいて余白を調整
+                Text(
+                  '10もんちゅう8もんせいかい！', // 結果を表示
+                  style: TextStyle(
+                    fontSize: 0.03 * screenSize.height, // フォントサイズを調整
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                    fontFamily: 'Comic Sans MS',
+                  ),
+                ),
+                SizedBox(height: 0.08 * screenSize.height), // 高さに基づいて余白を調整
                 RectangularButton(
                   text: 'もんだいをえらぼう',
-                  width: screenSize.width * 0.6,
-                  height: screenSize.height * 0.1,
+                  width: 0.6 * screenSize.width, // 幅を画面幅に基づいて調整
+                  height: 0.1 * screenSize.height, // 高さを画面高さに基づいて調整
                   buttonColor: const Color.fromARGB(255, 250, 240, 230),
                   textColor: Colors.black,
                   onPressed: () {

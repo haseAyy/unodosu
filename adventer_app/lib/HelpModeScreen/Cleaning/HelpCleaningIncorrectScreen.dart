@@ -1,4 +1,4 @@
-import 'package:adventer_app/EducationModeScreen/Shape/ShapeEducationScreen.dart';
+import 'package:adventer_app/HelpModeScreen/Cleaning/Bed/HelpBedScreen.dart';
 import 'package:flutter/material.dart';
 
 // 四角いボタンを定義
@@ -55,8 +55,8 @@ class RectangularButton extends StatelessWidget {
 }
 
 // 不正解画面
-class EducationIncorrectScreen extends StatelessWidget {
-  const EducationIncorrectScreen({super.key});
+class HelpCleaningIncorrectScreen extends StatelessWidget {
+  const HelpCleaningIncorrectScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +171,7 @@ class EducationIncorrectScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ShapeEducationScreen(),
+                        builder: (context) => const HelpBedScreen(),
                       ),
                     );
                   },

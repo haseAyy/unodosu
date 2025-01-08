@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'Cleaning/HelpCleaningListScreen.dart';
 import '../MeneScreen/HomeScreen.dart';
+import 'Errand/HelpErrandStartScreen.dart';
 
 class HelpModeScreen extends StatelessWidget {
   const HelpModeScreen({super.key});
@@ -8,6 +10,8 @@ class HelpModeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
 
     return Scaffold(
       body: Stack(
@@ -15,16 +19,16 @@ class HelpModeScreen extends StatelessWidget {
           // 背景（白基調にアクセントカラーを追加）
           Positioned.fill(
             child: Container(
-              color: Colors.white,
+              color: Colors.teal[50],
             ),
           ),
           // 上部デコレーション（柔らかい円形の装飾）
           Positioned(
-            top: -50,
-            left: -50,
+            top: -screenHeight * 0.05, // 画面サイズに基づく位置調整
+            left: -screenWidth * 0.1,
             child: Container(
-              width: 200,
-              height: 200,
+              width: screenWidth * 0.5,
+              height: screenWidth * 0.5,
               decoration: BoxDecoration(
                 color: Colors.pinkAccent[100],
                 shape: BoxShape.circle,
@@ -32,11 +36,11 @@ class HelpModeScreen extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 100,
-            right: -30,
+            top: screenHeight * 0.1, // 画面サイズに基づく位置調整
+            right: -screenWidth * 0.1,
             child: Container(
-              width: 150,
-              height: 150,
+              width: screenWidth * 0.4,
+              height: screenWidth * 0.4,
               decoration: BoxDecoration(
                 color: Colors.greenAccent[100],
                 shape: BoxShape.circle,
@@ -45,14 +49,14 @@ class HelpModeScreen extends StatelessWidget {
           ),
           // メインコンテンツ（カテゴリー画面）
           Positioned(
-            top: screenSize.height * 0.2, // 画面上部に配置
+            top: screenHeight * 0.2, // 画面上部に配置
             left: 0,
             right: 0,
             child: Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                  child: const Text(
                     'もんだいをえらぼう！',
                     style: TextStyle(
                       fontSize: 24,
@@ -62,29 +66,29 @@ class HelpModeScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(height: 100),
+                SizedBox(height: screenHeight * 0.1),
                 CategoryButton(
                   categoryName: 'おかたづけ',
                   description: 'おかたづけをしよう！\nおへやをきれいにしよう',
-                  backgroundColor: const Color.fromARGB(255, 162, 243, 254),
+                  backgroundColor: const Color.fromARGB(255, 226, 199, 255),
                   icon: Icons.cleaning_services, // アイコン追加
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const CleaningScreen()),
+                      MaterialPageRoute(builder: (context) => const HelpCleaningListScreen()),
                     );
                   },
                 ),
-                const SizedBox(height: 50), // ボタン間の間隔を追加
+                SizedBox(height: screenHeight * 0.05), // ボタン間の間隔を画面サイズに基づく
                 CategoryButton(
                   categoryName: 'おつかい',
                   description: 'おつかいをしよう！\nおかねをまなべるよ',
-                  backgroundColor: const Color.fromARGB(255, 249, 255, 198),
+                  backgroundColor: const Color.fromARGB(255, 255, 212, 198),
                   icon: Icons.shopping_cart, // アイコン追加
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const CleaningScreen()),
+                      MaterialPageRoute(builder: (context) => const HelpErrandStartScreen()),
                     );
                   },
                 ),
@@ -93,8 +97,8 @@ class HelpModeScreen extends StatelessWidget {
           ),
           // 左下の戻るボタン
           Positioned(
-            bottom: 10,
-            left: 10,
+            bottom: screenHeight * 0.03, // 画面サイズに基づく位置調整
+            left: screenWidth * 0.05,
             child: FloatingActionButton(
               onPressed: () {
                 Navigator.pushReplacement(
@@ -116,9 +120,9 @@ class HelpModeScreen extends StatelessWidget {
 
 class CategoryButton extends StatelessWidget {
   final String categoryName;
-  final String description; // 説明文を追加
+  final String description;
   final Color backgroundColor;
-  final IconData icon; // アイコンを追加
+  final IconData icon;
   final VoidCallback onPressed;
 
   const CategoryButton({
@@ -126,67 +130,130 @@ class CategoryButton extends StatelessWidget {
     required this.categoryName,
     required this.description,
     required this.backgroundColor,
-    required this.icon, // アイコンを追加
+    required this.icon,
     required this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
+    final buttonHeight = screenSize.height * 0.2; // ボタンの高さを調整
+    final buttonWidth = screenSize.width * 0.9; // ボタンの幅を調整
+
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20), // ボタン間の余白
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20), // 内部余白
-        height: 150, // ボタンの高さ
+        height: buttonHeight,
+        width: buttonWidth,
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 8,
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 10,
               offset: const Offset(4, 6),
             ),
           ],
         ),
-        child: Row(
+        child: Stack(
           children: [
-            Icon(
-              icon, // アイコンを表示
-              size: 40, // アイコンの大きさ
-              color: Colors.black54,
+            // 縫い目を描画する CustomPaint
+            CustomPaint(
+              painter: StitchPainter(buttonWidth, buttonHeight),
+              child: Container(),
             ),
-            const SizedBox(width: 20), // アイコンとテキストの間隔
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  categoryName,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                    fontFamily: 'Comic Sans MS', // ポップなフォント
+            // ボタンのコンテンツ（アイコン、テキスト）
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05), // 左右のパディングを調整
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    icon,
+                    size: screenSize.width * 0.15, // アイコンのサイズ調整
+                    color: Colors.black54,
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(width: 20), // 説明文とタイトルの間隔
-            Expanded(
-              child: Text(
-                description,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.black54,
-                  fontFamily: 'Comic Sans MS',
-                ),
-                overflow: TextOverflow.ellipsis, // テキストが長くても切れるように
+                  const SizedBox(width: 20), // アイコンとテキストの間隔調整
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        categoryName,
+                        style: TextStyle(
+                          fontSize: screenSize.width * 0.06, // テキストサイズ調整
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        description,
+                        style: TextStyle(
+                          fontSize: screenSize.width * 0.03, // 説明文のサイズ調整
+                          color: Colors.black54,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],
         ),
       ),
     );
+  }
+}
+
+class StitchPainter extends CustomPainter {
+  final double buttonWidth;
+  final double buttonHeight;
+
+  StitchPainter(this.buttonWidth, this.buttonHeight);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint stitchPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0; // 縫い目の太さ
+
+    final double dashWidth = 10.0;
+    final double dashSpace = 6.0;
+
+    // ボタンの内側に収まるように調整
+    final double padding = 5.0; // 内側の余白を設定
+
+    final Path path = Path()
+      ..addRRect(RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+          padding, padding, // 余白を考慮して内側に合わせる
+          buttonWidth - padding * 2, // 内側に合わせて幅を調整
+          buttonHeight - padding * 2, // 内側に合わせて高さを調整
+        ),
+        Radius.circular(20), // 角丸の半径を調整
+      ));
+
+    // 破線を描画
+    for (PathMetric pathMetric in path.computeMetrics()) {
+      double distance = 0;
+      while (distance < pathMetric.length) {
+        final Path segment = pathMetric.extractPath(
+          distance,
+          distance + dashWidth,
+        );
+        canvas.drawPath(segment, stitchPaint);
+        distance += dashWidth + dashSpace;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false; // 再描画は不要
   }
 }
