@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'ShapeEducationScreen.dart';
-import 'ColorEducationScreen.dart';
-import 'LetterEducationScreen.dart';
-import 'CalcEducationScreen.dart';
 import '../MeneScreen/HomeScreen.dart';
+import 'Letter/LetterStartScreen.dart'; //もじスタート画面
+import 'Color/ColorStartScreen.dart'; //いろスタート画面
+import 'Calc/CalcStartScreen.dart'; //けいさんスタート画面
+import 'Shape/ShapeStartScreen.dart'; //かたちスタート画面
 
 // カテゴリーボタンのウィジェット
 class CategoryButton extends StatelessWidget {
@@ -150,14 +150,10 @@ class EducationModeScreen extends StatelessWidget {
                   backgroundColor: Colors.orange.shade100,
                   icon: Icons.star,
                   onPressed: () {
-                    int questionCount = 0; // 任意の値をセット
-                    int correctCount = 0;
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ShapeEducationScreen(
-                              questionCount: questionCount,
-                              correctCount: correctCount)),
+                          builder: (context) => const ShapeStartScreen()),
                     );
                   },
                 ),
@@ -167,14 +163,10 @@ class EducationModeScreen extends StatelessWidget {
                   backgroundColor: Colors.blue.shade100,
                   icon: Icons.palette,
                   onPressed: () {
-                    int questionCount = 0; // 任意の値をセット
-                    int correctCount = 0;
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ColorEducationScreen(
-                              questionCount: questionCount,
-                              correctCount: correctCount)),
+                          builder: (context) => const ColorStartScreen()),
                     );
                   },
                 ),
@@ -184,14 +176,10 @@ class EducationModeScreen extends StatelessWidget {
                   backgroundColor: Colors.green.shade100,
                   icon: Icons.text_fields,
                   onPressed: () {
-                    int questionCount = 0; // 任意の値をセット
-                    int correctCount = 0;
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => LetterEducationScreen(
-                              questionCount: questionCount,
-                              correctCount: correctCount)),
+                          builder: (context) => const LetterStartScreen()),
                     );
                   },
                 ),
@@ -201,14 +189,10 @@ class EducationModeScreen extends StatelessWidget {
                   backgroundColor: Colors.pink.shade100,
                   icon: Icons.calculate,
                   onPressed: () {
-                    int questionCount = 0; // 任意の値をセット
-                    int correctCount = 0;
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => CalcEducationScreen(
-                              questionCount: questionCount,
-                              correctCount: correctCount)),
+                          builder: (context) => const CalcStartScreen()),
                     );
                   },
                 ),

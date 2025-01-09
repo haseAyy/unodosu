@@ -6,7 +6,9 @@ class StartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height; // MediaQueryキャッシュ
+    final screenSize = MediaQuery.of(context).size;
+    final screenHeight = screenSize.height;
+    final screenWidth = screenSize.width;
 
     return GestureDetector(
       onTap: () {
@@ -26,11 +28,11 @@ class StartScreen extends StatelessWidget {
             ),
             // 上部のデコレーション（柔らかな雲のイメージ）
             Positioned(
-              top: -50,
-              left: -50,
+              top: -screenHeight * 0.07,
+              left: -screenWidth * 0.1,
               child: Container(
-                width: 200,
-                height: 200,
+                width: screenWidth * 0.4,
+                height: screenWidth * 0.4,
                 decoration: BoxDecoration(
                   color: Colors.blue[100],
                   shape: BoxShape.circle,
@@ -38,11 +40,11 @@ class StartScreen extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: 100,
-              right: -30,
+              top: screenHeight * 0.1,
+              right: -screenWidth * 0.1,
               child: Container(
-                width: 150,
-                height: 150,
+                width: screenWidth * 0.3,
+                height: screenWidth * 0.3,
                 decoration: BoxDecoration(
                   color: Colors.yellow[100],
                   shape: BoxShape.circle,
@@ -56,8 +58,8 @@ class StartScreen extends StatelessWidget {
                 children: [
                   // くまさんアイコン
                   Container(
-                    width: 220,
-                    height: 220,
+                    width: screenWidth * 0.55,
+                    height: screenWidth * 0.55,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.brown[200],
@@ -77,32 +79,32 @@ class StartScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  SizedBox(height: screenHeight * 0.04),
                   // タイトル
                   Text(
                     'ぼくとわたしの\n探検ワールド！',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.grey[800],
-                      fontSize: 28,
+                      fontSize: screenWidth * 0.07,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Comic Sans MS', // ポップで親しみやすいフォント
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: screenHeight * 0.02),
                   // サブタイトル
                   Text(
                     '画面をタップして次へ進もう',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: screenWidth * 0.045,
                       color: Colors.grey[600],
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  SizedBox(height: screenHeight * 0.03),
                   // 飾りのアイコン
                   Icon(
                     Icons.touch_app,
-                    size: 50,
+                    size: screenWidth * 0.13,
                     color: Colors.blue[300],
                   ),
                 ],
@@ -116,7 +118,7 @@ class StartScreen extends StatelessWidget {
               child: ClipPath(
                 clipper: WaveClipper(),
                 child: Container(
-                  height: 120,
+                  height: screenHeight * 0.15,
                   color: const Color.fromARGB(255, 250, 213, 148),
                 ),
               ),

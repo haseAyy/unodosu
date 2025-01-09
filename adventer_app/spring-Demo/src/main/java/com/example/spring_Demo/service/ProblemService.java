@@ -54,8 +54,12 @@ public class ProblemService {
                 }
         
                 // 問題オブジェクトに選択肢をセット
+                //randomQuestion.setOptions(shuffledOptions);
+                //return randomQuestion;  // 問題を返却
+
+                // 問題オブジェクトに選択肢をセット画像URLを返す
                 randomQuestion.setOptions(shuffledOptions);
-                return randomQuestion;  // 問題を返却
+                return randomQuestion;
             }
         
             // 回答を検証するメソッド

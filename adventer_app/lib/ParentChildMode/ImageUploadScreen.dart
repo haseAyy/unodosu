@@ -92,7 +92,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor:
-                      const Color.fromARGB(255, 68, 161, 14), // 緑色のボタン
+                      const Color.fromARGB(255, 68, 161, 14), // 赤色のボタン
                   minimumSize: Size(screenSize.width * 0.4,
                       screenSize.height * 0.07), // ボタンのサイズ
                 ),

@@ -24,6 +24,7 @@ class RectangularButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //final screenSize = MediaQuery.of(context).size; // MediaQueryキャッシュ
     return GestureDetector(
       onTap: onPressed,
       child: AnimatedContainer(

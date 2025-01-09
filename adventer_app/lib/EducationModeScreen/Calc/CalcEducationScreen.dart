@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
-import 'EducationCorrectScreen.dart'; // 正解画面
-import 'EducationIncorrectScreen.dart'; // 不正解画面
-import 'EducationModeScreen.dart'; // モード画面
-import 'EdcationResultScreen.dart'; // 結果画面
+import '../EducationCorrectScreen.dart'; // 正解画面
+import '../EducationIncorrectScreen.dart'; // 不正解画面
+import '../EducationModeScreen.dart'; // モード画面
+import '../EdcationResultScreen.dart'; // 結果画面
 
 // questionのデータモデル
 class Question {
@@ -123,30 +123,30 @@ class RectangularButton extends StatelessWidget {
   }
 }
 
-// 色問題出題画面
-class ColorEducationScreen extends StatefulWidget {
+// 計算問題出題画面
+class CalcEducationScreen extends StatefulWidget {
   final int questionCount;
   final int correctCount;
-  const ColorEducationScreen(
+  const CalcEducationScreen(
       {required this.questionCount, required this.correctCount});
 
   @override
-  _ColorEducationScreenState createState() =>
-      _ColorEducationScreenState(questionCount, correctCount);
+  _CalcEducationScreenState createState() =>
+      _CalcEducationScreenState(questionCount, correctCount);
 }
 
-class _ColorEducationScreenState extends State<ColorEducationScreen> {
+class _CalcEducationScreenState extends State<CalcEducationScreen> {
   late Future<Question?> questionFuture;
   late int questionCount; // このクラス内で管理する変数
   late int correctCount; // 正解数を追跡する変数
 
   // コンストラクタで初期値を設定
-  _ColorEducationScreenState(this.questionCount, this.correctCount);
+  _CalcEducationScreenState(this.questionCount, this.correctCount);
 
   @override
   void initState() {
     super.initState();
-    questionFuture = fetchQuestion("KMS002"); // questiontypeIdを指定
+    questionFuture = fetchQuestion("KMS004"); // questiontypeIdを指定
   }
 
   //やめるダイアログを表示
@@ -219,7 +219,8 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
                 builder: (context) => EducationIncorrectScreen(
                     message: 'もじ',
                     questionCount: questionCount,
-                    correctCount: correctCount)),
+                    correctCount: correctCount,
+                    correctAnswer: question.question_answer)),
           );
         }
         // 次の問題を取得する処理を呼び出す

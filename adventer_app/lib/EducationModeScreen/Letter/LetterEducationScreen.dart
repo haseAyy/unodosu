@@ -1,37 +1,40 @@
 import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
-import 'EducationCorrectScreen.dart'; // 正解画面
-import 'EducationIncorrectScreen.dart'; // 不正解画面
-import 'EducationModeScreen.dart'; // モード画面
-import 'EdcationResultScreen.dart'; // 結果画面
+import '../EducationCorrectScreen.dart'; // 正解画面
+import '../EducationIncorrectScreen.dart'; // 不正解画面
+import '../EducationModeScreen.dart'; // モード画面
+import '../EdcationResultScreen.dart'; // 結果画面
 
 // questionのデータモデル
 class Question {
-  final String question_id;
-  final String questiontype_id;
-  final String question_theme;
-  final String question_answer;
-  final String question_content;
+  final String questionId;
+  final String questionTypeid;
+  final String questionTheme;
+  final String questionAnswer;
+  final String questionContent;
+  final String questionImage;
   final Map<String, String> options;
 
   Question({
-    required this.question_id,
-    required this.questiontype_id,
-    required this.question_theme,
-    required this.question_answer,
-    required this.question_content,
+    required this.questionId,
+    required this.questionTypeid,
+    required this.questionTheme,
+    required this.questionAnswer,
+    required this.questionContent,
+    required this.questionImage,
     required this.options,
   });
 
   // JSONをQuestionオブジェクトに変換
   factory Question.fromJson(Map<String, dynamic> json) {
     return Question(
-      question_id: json['question_id'],
-      questiontype_id: json['questiontype_id'],
-      question_theme: json['question_theme'],
-      question_answer: json['question_answer'],
-      question_content: json['question_content'],
+      questionId: json['question_id'],
+      questionTypeid: json['questiontype_id'],
+      questionTheme: json['question_theme'],
+      questionAnswer: json['question_answer'],
+      questionContent: json['question_content'],
+      questionImage: json['question_image'],
       options: json['options'] != null && json['options'].isNotEmpty
           ? Map<String, String>.from(json['options'])
           : {'No options available': ''}, // デフォルト値
@@ -123,30 +126,30 @@ class RectangularButton extends StatelessWidget {
   }
 }
 
-// 計算問題出題画面
-class CalcEducationScreen extends StatefulWidget {
+// 文字問題出題画面
+class LetterEducationScreen extends StatefulWidget {
   final int questionCount;
   final int correctCount;
-  const CalcEducationScreen(
+  const LetterEducationScreen(
       {required this.questionCount, required this.correctCount});
 
   @override
-  _CalcEducationScreenState createState() =>
-      _CalcEducationScreenState(questionCount, correctCount);
+  _LetterEducationScreenState createState() =>
+      _LetterEducationScreenState(questionCount, correctCount);
 }
 
-class _CalcEducationScreenState extends State<CalcEducationScreen> {
+class _LetterEducationScreenState extends State<LetterEducationScreen> {
   late Future<Question?> questionFuture;
   late int questionCount; // このクラス内で管理する変数
   late int correctCount; // 正解数を追跡する変数
 
   // コンストラクタで初期値を設定
-  _CalcEducationScreenState(this.questionCount, this.correctCount);
+  _LetterEducationScreenState(this.questionCount, this.correctCount);
 
   @override
   void initState() {
     super.initState();
-    questionFuture = fetchQuestion("KMS004"); // questiontypeIdを指定
+    questionFuture = fetchQuestion("KMS003"); // questiontypeIdを指定
   }
 
   //やめるダイアログを表示
@@ -185,7 +188,7 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
       String selectedAnswerId, Question question, BuildContext context) async {
     try {
       final result =
-          await submitAnswer(question.question_id, selectedAnswerId); // 修正
+          await submitAnswer(question.questionId, selectedAnswerId); // 修正
 
       setState(() {
         questionCount++; // 問題数をカウント
@@ -219,7 +222,8 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
                 builder: (context) => EducationIncorrectScreen(
                     message: 'もじ',
                     questionCount: questionCount,
-                    correctCount: correctCount)),
+                    correctCount: correctCount,
+                    correctAnswer: question.questionAnswer)),
           );
         }
         // 次の問題を取得する処理を呼び出す
@@ -348,10 +352,11 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
                           shape: BoxShape.circle,
                         ),
                         child: Center(
-                          child: Text(
-                            question.question_theme, // question_theme（問題内容)を表示
-                            style: const TextStyle(fontSize: 40),
-                          ),
+                          child: Image.network(
+                            question.questionImage), // question_image（問題内容画像url)を表示
+                          //question.question_image,
+                          //style: const TextStyle(fontSize: 40),
+                          //),
                         ),
                       ),
                     ],

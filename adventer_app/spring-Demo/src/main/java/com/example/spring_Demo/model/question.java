@@ -2,7 +2,6 @@ package com.example.spring_Demo.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import java.util.List;
 import java.util.Map;
 
 import jakarta.persistence.Transient;
@@ -48,7 +47,7 @@ public class question{
     public String getQuestion_answer(){
         return question_answer;
     }
-    public String getquestion_image(){
+    public String getQuestion_image(){
         return question_image;
     }
 
