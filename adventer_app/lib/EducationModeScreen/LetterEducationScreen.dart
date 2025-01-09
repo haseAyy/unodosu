@@ -13,6 +13,7 @@ class Question {
   final String question_theme;
   final String question_answer;
   final String question_content;
+  final String question_image;
   final Map<String, String> options;
 
   Question({
@@ -21,6 +22,7 @@ class Question {
     required this.question_theme,
     required this.question_answer,
     required this.question_content,
+    required this.question_image,
     required this.options,
   });
 
@@ -32,6 +34,7 @@ class Question {
       question_theme: json['question_theme'],
       question_answer: json['question_answer'],
       question_content: json['question_content'],
+      question_image: json['question_image'],
       options: json['options'] != null && json['options'].isNotEmpty
           ? Map<String, String>.from(json['options'])
           : {'No options available': ''}, // デフォルト値
@@ -349,10 +352,11 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                           shape: BoxShape.circle,
                         ),
                         child: Center(
-                          child: Text(
-                            question.question_theme, // question_theme（問題内容)を表示
-                            style: const TextStyle(fontSize: 40),
-                          ),
+                          child: Image.network(question
+                              .question_image), // question_image（問題内容画像url)を表示
+                          //question.question_image,
+                          //style: const TextStyle(fontSize: 40),
+                          //),
                         ),
                       ),
                     ],
