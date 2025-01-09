@@ -10,7 +10,7 @@ import '../ShapePainter.dart'; // ShapePainter.dartをインポート
 // questionのデータモデル
 class Question {
   final String questionId;
-  final String questionTypeId;
+  final String questionTypeid;
   final String questionTheme;
   final String questionAnswer;
   final String questionContent;
@@ -18,7 +18,7 @@ class Question {
 
   Question({
     required this.questionId,
-    required this.questionTypeId,
+    required this.questionTypeid,
     required this.questionTheme,
     required this.questionAnswer,
     required this.questionContent,
@@ -28,7 +28,10 @@ class Question {
   // JSONをQuestionオブジェクトに変換
   factory Question.fromJson(Map<String, dynamic> json) {
     return Question(
-      questionId: json['question_id'], Answer: json['question_answer'],
+      questionId: json['question_id'],
+      questionTypeid: json['questiontype_id'],
+      questionTheme: json['question_theme'],
+      questionAnswer: json['question_answer'],
       questionContent: json['question_content'],
       options: json['options'] != null && json['options'].isNotEmpty
           ? Map<String, String>.from(json['options'])
@@ -225,7 +228,7 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
                     message: 'かたち',
                     questionCount: questionCount,
                     correctCount: correctCount,
-                    correctAnswer: question.question_answer)),
+                    correctAnswer: question.questionAnswer)),
           );
         }
         // 次の問題を取得する処理を呼び出す
