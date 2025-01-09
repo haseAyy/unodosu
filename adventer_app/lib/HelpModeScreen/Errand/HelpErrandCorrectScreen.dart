@@ -1,8 +1,5 @@
+import 'HelpErrandScreen.dart';
 import 'package:flutter/material.dart';
-import 'Shape/ShapeEducationScreen.dart';
-import 'Calc/CalcEducationScreen.dart';
-import 'Color/ColorEducationScreen.dart';
-import 'Letter/LetterEducationScreen.dart'; // 他の画面もインポート
 
 // 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
@@ -32,7 +29,7 @@ class RectangularButton extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           color: buttonColor,
-          borderRadius: BorderRadius.circular(20), // ボタンの角を丸く
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.4),
@@ -48,7 +45,7 @@ class RectangularButton extends StatelessWidget {
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: textColor,
-              fontFamily: 'Comic Sans MS', // フォントを統一
+              fontFamily: 'Comic Sans MS',
             ),
           ),
         ),
@@ -58,68 +55,23 @@ class RectangularButton extends StatelessWidget {
 }
 
 // 正解画面
-class EducationCorrectScreen extends StatelessWidget {
-  final int questionCount;
-  final int correctCount;
-  final String nextScreenFlag; // 遷移先の画面を指定（文字列）
-  
-
-  const EducationCorrectScreen({
-    required this.questionCount,
-    required this.correctCount,
-    required this.nextScreenFlag, // 必須パラメータに追加
-  });
+class HelpErrandCorrectScreen extends StatelessWidget {
+  const HelpErrandCorrectScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
 
-    // 遷移先の画面を取得するメソッド
-    Widget _getNextScreen() {
-      switch (nextScreenFlag) {
-        case 'shape':
-          return ShapeEducationScreen(
-            questionCount: questionCount,
-            correctCount: correctCount,
-          );
-        case 'calc':
-          return CalcEducationScreen(
-            questionCount: questionCount,
-            correctCount: correctCount,
-          );
-        case 'color':
-          return ColorEducationScreen(
-            questionCount: questionCount,
-            correctCount: correctCount,
-          );
-        case 'letter':
-          return LetterEducationScreen(
-            questionCount: questionCount,
-            correctCount: correctCount,
-          );
-        default:
-          // デフォルトケース
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('エラー'),
-            ),
-            body: const Center(
-              child: Text('次の画面が見つかりません。'),
-            ),
-          );
-      }
-    }
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false, // 戻るボタンを非表示にする
-        backgroundColor: const Color.fromARGB(255, 255, 182, 193), // ピンク色の背景
+        backgroundColor: const Color.fromARGB(255, 222, 94, 94),
         elevation: 0,
         title: const Text(
-          'せいかい！おめでとう！',
+          'せいかい',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
             fontFamily: 'Comic Sans MS',
           ),
@@ -160,33 +112,34 @@ class EducationCorrectScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                // アイコンのサイズを画面高さに基づいて調整
+                Icon(
                   Icons.check_circle_outline,
-                  size: 150,
+                  size: 0.2 * screenSize.height, // 画面高さに基づいてアイコンのサイズを決定
                   color: Colors.orange,
                 ),
-                const SizedBox(height: 20),
-                const Text(
-                  'せいかい！おめでとう！',
+                SizedBox(height: 0.05 * screenSize.height), // 高さに基づいて余白を調整
+                Text(
+                  'せいかいだよ！',
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 0.04 * screenSize.height, // 画面高さに基づいてフォントサイズを調整
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                     fontFamily: 'Comic Sans MS',
                   ),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 0.08 * screenSize.height), // 高さに基づいて余白を調整
                 RectangularButton(
                   text: 'つぎのもんだい',
-                  width: screenSize.width * 0.6,
-                  height: screenSize.height * 0.1,
+                  width: 0.6 * screenSize.width, // 幅を画面幅に基づいて調整
+                  height: 0.1 * screenSize.height, // 高さを画面高さに基づいて調整
                   buttonColor: const Color.fromARGB(255, 250, 240, 230),
                   textColor: Colors.black,
                   onPressed: () {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => _getNextScreen(), // 動的に遷移先を指定
+                        builder: (context) => const HelpErrandScreen(),
                       ),
                     );
                   },

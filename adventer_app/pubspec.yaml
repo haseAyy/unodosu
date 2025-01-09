@@ -90,3 +90,14 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+  #etsセクションで指定
+  assets:
+    - assets/images/ColorStartScreen.png
+    - assets/images/ShapeStartScreen.png
+    - assets/images/LetterStartScreen.png
+    - assets/images/CalcStartScreen.png
+    - assets/images/HelpBedStartScreen.png
+    - assets/images/HelpBathStartScreen.png
+    - assets/images/HelpTableStartScreen.png
+    - assets/images/HelpErrandStartScreen.png

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'ShapeEducationScreen.dart';
-import 'ColorEducationScreen.dart';
-import 'LetterEducationScreen.dart';
-import 'CalcEducationScreen.dart';
+import 'Shape/ShapeStartScreen.dart';
+import 'Color/ColorStartScreen.dart';
+import 'Letter/LetterStartScreen.dart';
+import 'Calc/CalcStartScreen.dart';
 import '../MeneScreen/HomeScreen.dart';
 
 // カテゴリーボタンのウィジェット
@@ -150,12 +150,11 @@ class EducationModeScreen extends StatelessWidget {
                   backgroundColor: Colors.orange.shade100,
                   icon: Icons.star,
                   onPressed: () {
-                    int questionCount = 0;  // 任意の値をセット
-                    int correctCount = 0;
+                    
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ShapeEducationScreen(questionCount: questionCount,correctCount: correctCount)),
+                          builder: (context) => const ShapeStartScreen()),
                     );
                   },
                 ),
@@ -170,7 +169,7 @@ class EducationModeScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ColorEducationScreen(questionCount: questionCount,correctCount: correctCount)),
+                          builder: (context) => const ColorStartScreen()),
                     );
                   },
                 ),
@@ -185,7 +184,7 @@ class EducationModeScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => LetterEducationScreen(questionCount: questionCount,correctCount: correctCount)),
+                          builder: (context) => const LetterStartScreen()),
                     );
                   },
                 ),
@@ -200,7 +199,7 @@ class EducationModeScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => CalcEducationScreen(questionCount: questionCount,correctCount: correctCount)),
+                          builder: (context) =>  const CalcStartScreen()),
                     );
                   },
                 ),

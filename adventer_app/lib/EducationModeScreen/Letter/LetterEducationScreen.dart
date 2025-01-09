@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
-import 'EducationCorrectScreen.dart'; //正解画面
-import 'EducationIncorrectScreen.dart'; //不正解画面
-import 'EdcationResultScreen.dart';//結果画面
-import 'EducationModeScreen.dart';
+import '../EducationCorrectScreen.dart'; //正解画面
+import '../EducationIncorrectScreen.dart'; //不正解画面
+import '../EdcationResultScreen.dart';//結果画面
+import '../EducationModeScreen.dart';
 
 
 // questionのデータモデル

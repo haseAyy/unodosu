@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
-import 'EducationCorrectScreen.dart'; //正解画面
-import 'EducationIncorrectScreen.dart'; //不正解画面
-import 'EdcationResultScreen.dart';//結果画面
-import 'EducationModeScreen.dart';
+import '../EducationCorrectScreen.dart'; //正解画面
+import '../EducationIncorrectScreen.dart'; //不正解画面
+import '../EdcationResultScreen.dart';//結果画面
+import '../EducationModeScreen.dart';
 import 'ShapePainter.dart'; // ShapePainter.dartをインポート
 import 'dart:math';  // cos, sinを使うためにインポート
 
@@ -190,14 +190,12 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
   }
 
   // ユーザーが答えを選んだときに呼び出すメソッド
-  void _handleAnswerSubmission(
-      String selectedAnswerId, Question question, BuildContext context) async {
-    try {
-      final result =
-          await submitAnswer(question.questionId, selectedAnswerId); // 修正
+ void _handleAnswerSubmission(
+    String selectedAnswerId, Question question, BuildContext context) async {
+  try {
+    final result =
+        await submitAnswer(question.questionId, selectedAnswerId); // 修正
 
-
-    
     debugPrint('問題数を増やす前: $questionCount');
     // 問題数をカウント
     setState(() {
@@ -209,41 +207,65 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
     debugPrint('問題数を増やした後: $questionCount');
     debugPrint('正解数: $correctCount');
 
-
-      if (questionCount >= 10) {
-        // 10問解いたあとは結果画面に遷移
+    if (questionCount >= 10) {
+      // 10問目を解いた場合
+      if (result == "correct") {
+        // 正解の場合は直接結果画面へ遷移
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => EdcationResultScreen(correctCount: correctCount)),
+          MaterialPageRoute(
+              builder: (context) =>
+                  EdcationResultScreen(correctCount: correctCount)),
         );
       } else {
-        if (result == "correct") {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => EducationCorrectScreen(questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'shape')),
-          );
-        } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => EducationIncorrectScreen(correctAnswer: "「${question.questionAnswer}」",questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'shape')),
-          );
-        }
-        // 次の問題を取得する処理を呼び出す
-        if (questionCount < 10) {
-          setState(() {
-            questionFuture = fetchQuestion("KMS001"); // 次の問題を取得
-          });
-        }
+        // 間違えた場合は不正解画面を経由して結果画面へ遷移
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => EducationIncorrectScreen(
+                  correctAnswer: "「${question.questionAnswer}」",
+                  questionCount: questionCount,
+                  correctCount: correctCount,
+                  nextScreenFlag: 'result')), // 'result' フラグを渡す
+        );
       }
-    } catch (e) {
-      print("エラー: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('エラーが発生しました')),
-      );
+    } else {
+      // 10問未満の場合
+      if (result == "correct") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => EducationCorrectScreen(
+                  questionCount: questionCount,
+                  correctCount: correctCount,
+                  nextScreenFlag: 'shape')),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => EducationIncorrectScreen(
+                  correctAnswer: "このかたちは \n「${question.questionAnswer}」だよ",
+                  questionCount: questionCount,
+                  correctCount: correctCount,
+                  nextScreenFlag: 'shape')), // 'shape' フラグを渡す
+        );
+      }
+      // 次の問題を取得する処理を呼び出す
+      if (questionCount < 10) {
+        setState(() {
+          questionFuture = fetchQuestion("KMS001"); // 次の問題を取得
+        });
+      }
     }
+  } catch (e) {
+    print("エラー: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('エラーが発生しました')),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

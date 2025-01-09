@@ -1,8 +1,6 @@
+import 'package:adventer_app/EducationModeScreen/EducationModeScreen.dart';
+import 'HelpCleaningListScreen.dart';
 import 'package:flutter/material.dart';
-import 'Shape/ShapeEducationScreen.dart';
-import 'Calc/CalcEducationScreen.dart';
-import 'Color/ColorEducationScreen.dart';
-import 'Letter/LetterEducationScreen.dart'; // 他の画面もインポート
 
 // 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
@@ -57,69 +55,24 @@ class RectangularButton extends StatelessWidget {
   }
 }
 
-// 正解画面
-class EducationCorrectScreen extends StatelessWidget {
-  final int questionCount;
-  final int correctCount;
-  final String nextScreenFlag; // 遷移先の画面を指定（文字列）
-  
-
-  const EducationCorrectScreen({
-    required this.questionCount,
-    required this.correctCount,
-    required this.nextScreenFlag, // 必須パラメータに追加
-  });
+// 結果画面
+class HelpCleaningResultScreen extends StatelessWidget {
+  const HelpCleaningResultScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
 
-    // 遷移先の画面を取得するメソッド
-    Widget _getNextScreen() {
-      switch (nextScreenFlag) {
-        case 'shape':
-          return ShapeEducationScreen(
-            questionCount: questionCount,
-            correctCount: correctCount,
-          );
-        case 'calc':
-          return CalcEducationScreen(
-            questionCount: questionCount,
-            correctCount: correctCount,
-          );
-        case 'color':
-          return ColorEducationScreen(
-            questionCount: questionCount,
-            correctCount: correctCount,
-          );
-        case 'letter':
-          return LetterEducationScreen(
-            questionCount: questionCount,
-            correctCount: correctCount,
-          );
-        default:
-          // デフォルトケース
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('エラー'),
-            ),
-            body: const Center(
-              child: Text('次の画面が見つかりません。'),
-            ),
-          );
-      }
-    }
-
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false, // 戻るボタンを非表示にする
-        backgroundColor: const Color.fromARGB(255, 255, 182, 193), // ピンク色の背景
+        automaticallyImplyLeading: false, // 戻るボタンを非表示
+        backgroundColor: const Color.fromARGB(255, 222, 94, 94),
         elevation: 0,
         title: const Text(
-          'せいかい！おめでとう！',
+          'けっか',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
             fontFamily: 'Comic Sans MS',
           ),
@@ -131,26 +84,26 @@ class EducationCorrectScreen extends StatelessWidget {
         children: [
           // 上部のソフトな装飾
           Positioned(
-            top: -50,
-            left: -50,
+            top: -0.1 * screenSize.height,
+            left: -0.1 * screenSize.width,
             child: Container(
-              width: 150,
-              height: 150,
+              width: 0.3 * screenSize.width,
+              height: 0.3 * screenSize.width,
               decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 255, 182, 193), // 薄いピンク
+                color: Color.fromARGB(50, 173, 216, 230), // 薄い水色
                 shape: BoxShape.circle,
               ),
             ),
           ),
           // 下部のソフトな装飾
           Positioned(
-            bottom: -50,
-            right: -50,
+            bottom: -0.1 * screenSize.height,
+            right: -0.1 * screenSize.width,
             child: Container(
-              width: 200,
-              height: 200,
+              width: 0.4 * screenSize.width,
+              height: 0.4 * screenSize.width,
               decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 173, 216, 230), // 薄い水色
+                color: Color.fromARGB(50, 255, 182, 193), // 薄いピンク
                 shape: BoxShape.circle,
               ),
             ),
@@ -160,33 +113,43 @@ class EducationCorrectScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.check_circle_outline,
-                  size: 150,
+                  size: 0.2 * screenSize.height, // アイコンのサイズを画面高さに基づいて調整
                   color: Colors.orange,
                 ),
-                const SizedBox(height: 20),
-                const Text(
-                  'せいかい！おめでとう！',
+                SizedBox(height: 0.05 * screenSize.height), // 高さに基づいて余白を調整
+                Text(
+                  'ぜんぶとけたね！',
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 0.04 * screenSize.height, // 画面高さに基づいてフォントサイズを調整
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                     fontFamily: 'Comic Sans MS',
                   ),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 0.05 * screenSize.height), // 高さに基づいて余白を調整
+                Text(
+                  '10もんちゅう8もんせいかい！', // 結果を表示
+                  style: TextStyle(
+                    fontSize: 0.03 * screenSize.height, // フォントサイズを調整
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                    fontFamily: 'Comic Sans MS',
+                  ),
+                ),
+                SizedBox(height: 0.08 * screenSize.height), // 高さに基づいて余白を調整
                 RectangularButton(
-                  text: 'つぎのもんだい',
-                  width: screenSize.width * 0.6,
-                  height: screenSize.height * 0.1,
+                  text: 'もんだいをえらぼう',
+                  width: 0.6 * screenSize.width, // 幅を画面幅に基づいて調整
+                  height: 0.1 * screenSize.height, // 高さを画面高さに基づいて調整
                   buttonColor: const Color.fromARGB(255, 250, 240, 230),
                   textColor: Colors.black,
                   onPressed: () {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => _getNextScreen(), // 動的に遷移先を指定
+                        builder: (context) => const HelpCleaningListScreen(),
                       ),
                     );
                   },

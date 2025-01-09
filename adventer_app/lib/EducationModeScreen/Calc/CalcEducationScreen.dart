@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
-import 'EducationCorrectScreen.dart'; //正解画面
-import 'EducationIncorrectScreen.dart'; //不正解画面
-import 'EdcationResultScreen.dart';//結果画面
-import 'EducationModeScreen.dart';
+import '../EducationCorrectScreen.dart'; //正解画面
+import '../EducationIncorrectScreen.dart'; //不正解画面
+import '../EdcationResultScreen.dart';//結果画面
+import '../EducationModeScreen.dart';
 import 'dart:math'; // ランダム生成のため
 
 // questionのデータモデル
@@ -46,7 +46,7 @@ class Question {
         num1 = num2;
         num2 = temp;
       }
-      questionContent = '$num1 - $num2';
+      questionContent = '$num1 ー $num2';
       questionAnswer = (num1 - num2).toString();
     }
 
@@ -58,21 +58,18 @@ class Question {
       incorrectAnswers.add(randomIncorrect);
     }
   }
-
   // 不正解の選択肢と正解をマップに追加
   options[questionAnswer] = 'correct';
   incorrectAnswers.forEach((answer) {
     options[answer] = 'incorrect';
   });
 
+
+
   // 選択肢の順番をランダムにするため、選択肢のリストをシャッフル
   List<String> optionKeys = options.keys.toList()..shuffle();
 
-    // 選択肢をランダムに生成
-    options['${random.nextInt(20)}'] = 'incorrect'; // 不正解の選択肢1
-    options['${random.nextInt(20)}'] = 'incorrect'; // 不正解の選択肢2
-    options['${random.nextInt(20)}'] = 'incorrect'; // 不正解の選択肢3
-    options[questionAnswer] = 'correct'; // 正解の選択肢
+    
 
     return Question(
       questionId: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -161,6 +158,9 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
     questionCount = widget.questionCount;
     correctCount = widget.correctCount;
     currentQuestion = Question.generateRandomQuestion(); // ランダムな問題を生成
+
+    debugPrint('生成された問題: ${currentQuestion.questionContent}, 正解: ${currentQuestion.questionAnswer}');
+  
   }
 
   // やめるダイアログを表示
@@ -196,53 +196,85 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
 
   // ユーザーが答えを選んだときに呼び出すメソッド
   void _handleAnswerSubmission(String selectedAnswerId) {
-    // 正解判定
-    final result = currentQuestion.options[selectedAnswerId];
+  String? result = currentQuestion.options[selectedAnswerId];
 
-    debugPrint('問題数を増やす前: $questionCount');
-    // 問題数をカウント
-    setState(() {
-      questionCount++; // 問題数をカウント
-      if (result == "correct") {
-        correctCount++; // 正解数をカウント
+  // 現在の正解を一時保存
+  final correctAnswer = currentQuestion.questionAnswer;
+  debugPrint('画面遷移前の正解: $correctAnswer');
 
+  setState(() {
+    questionCount++;
+    if (result == "correct") {
+      correctCount++;
+
+      if (questionCount >= 10) {
+        // 結果画面へ遷移
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EdcationResultScreen(
+              correctCount: correctCount
+            ),
+          ),
+        );
+      } else {
         // 正解画面に遷移
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => EducationCorrectScreen(questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'calc')),
-      );
-
-
-      }else{
-        // 不正解画面に遷移（正解も表示）
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => EducationIncorrectScreen(correctAnswer: currentQuestion.questionAnswer,questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'calc')),
-      );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EducationCorrectScreen(
+              questionCount: questionCount,
+              correctCount: correctCount,
+              nextScreenFlag: 'calc',
+            ),
+          ),
+        );
       }
-    });
-    debugPrint('問題数を増やした後: $questionCount');
-    debugPrint('正解数: $correctCount');
+    } else {
+      if (questionCount >= 10) {
+        // 10問目を間違えた場合、不正解画面を経由して結果画面へ遷移
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EducationIncorrectScreen(
+              correctAnswer: '${currentQuestion.questionContent}＝${correctAnswer}',
+              questionCount: questionCount,
+              correctCount: correctCount,
+              nextScreenFlag: 'result', // 結果画面へのフラグを設定
+            ),
+          ),
+        );
 
-
-
-    if (questionCount >= 10) {
-      // 10問解いた後は結果画面に遷移
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => EdcationResultScreen(correctCount: correctCount)),
-      );
-    
-    }else{
-      
+        debugPrint('correctAnswer: $correctAnswer');
+        debugPrint('currentQuestion.questionContent: ${currentQuestion.questionContent}');
+        
+      } else {
+        // 不正解画面に遷移
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EducationIncorrectScreen(
+              correctAnswer: '${currentQuestion.questionContent}＝${correctAnswer}',
+              questionCount: questionCount,
+              correctCount: correctCount,
+              nextScreenFlag: 'calc',
+            ),
+          ),
+        );
+      }
     }
-    if(questionCount < 10) {
-      // 次の問題を生成
-      setState(() {
-        currentQuestion = Question.generateRandomQuestion(); // 次の問題を生成
-      });
-    }
-  }
+  });
+
+  debugPrint('correctAnswer: $correctAnswer');
+  debugPrint('currentQuestion.questionContent: ${currentQuestion.questionContent}');
+
+/*
+  // 次の問題を生成
+  if (questionCount < 10) {
+    //currentQuestion = Question.generateRandomQuestion();
+    debugPrint('次の問題を生成: ${currentQuestion.questionContent}');
+  }*/
+}
 
   @override
   Widget build(BuildContext context) {
@@ -254,7 +286,7 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
         backgroundColor: const Color.fromARGB(141, 57, 154, 0),
         elevation: 0,
         title: const Text(
-          'かたちもんだい',
+          'けいさんもんだい',
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -330,10 +362,10 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
                 Text(
                   currentQuestion.questionContent,
                   style: const TextStyle(
-                    fontSize: 28,
+                    fontSize: 50,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
-                    fontFamily: 'Comic Sans MS',
+                    fontFamily: 'Arial Black',
                   ),
                 ),
                 SizedBox(
