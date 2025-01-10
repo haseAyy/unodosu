@@ -1,30 +1,31 @@
 package com.example.spring_Demo.controller;
 
 import java.util.ArrayList;
-import jakarta.servlet.http.HttpSession;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import com.example.spring_Demo.model.question;  // モデルクラス "question" をインポート
-import com.example.spring_Demo.service.ProblemService;  // サービスクラスをインポート
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import java.util.Map;  // リクエストボディをマップで受け取るために使用
-import java.util.List;  // Listインターフェースを使用
 
-@Controller
-public class unodosuController {
+import com.example.spring_Demo.model.question;
+import com.example.spring_Demo.service.ProblemService;
 
-  @Autowired
+import jakarta.servlet.http.HttpSession;
+
+public class helpquestionController {
+
+@Autowired
   private ProblemService problemService;
 
   // ランダムなテキスト問題を取得する
   @SuppressWarnings("unchecked")
-  @GetMapping(value = "/random-text-question", produces = "application/json;charset=UTF-8")
-  public ResponseEntity<question> getRandomTextQuestion(@RequestParam String questiontype_id, HttpSession session) {
+  @GetMapping(value = "/random-text-questionhelp", produces = "application/json;charset=UTF-8")
+  public ResponseEntity<question> getRandomTextQuestionTeme(@RequestParam String question_theme, HttpSession session) {
 
         // セッションから"solvedQuestions"のリストを取得
         List<String> solvedQuestions = (List<String>) session.getAttribute("solvedQuestions");
@@ -38,7 +39,7 @@ public class unodosuController {
         }
 
         // サービスクラスからランダムなテキスト問題を取得
-        question randomQuestion = problemService.getRandomTextQuestion(questiontype_id, solvedQuestions);
+        question randomQuestion = problemService.getRandomTextQuestion(question_theme, solvedQuestions);
         if (randomQuestion == null) {
             // 問題が存在しない場合はHTTPステータス204 (NO_CONTENT) を返す
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -93,5 +94,3 @@ public class unodosuController {
 
     
 }
-
-

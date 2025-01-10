@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:adventer_app/HelpModeScreen/Cleaning/HelpCleaningListScreen.dart';
-import '../HelpCleaningCorrectScreen.dart';
-import '../HelpCleaningIncorrectScreen.dart';
-import '../HelpCleaningResultScreen.dart';
-import 'dart:convert'; // JSONデータを扱うため
-import 'package:http/http.dart' as http;
 import '../HelpCleaningCorrectScreen.dart'; // 正解画面
 import '../HelpCleaningIncorrectScreen.dart'; // 不正解画面
 import '../HelpCleaningResultScreen.dart'; // 結果画面
+import 'dart:convert'; // JSONデータを扱うため
+import 'package:http/http.dart' as http;
 
 // questionのデータモデル
 class Question {
@@ -46,10 +43,10 @@ class Question {
 }
 
 // APIリクエストを送信して、問題を取得するメソッド
-Future<Question?> fetchQuestion(String questiontypeId) async {
+Future<Question?> fetchQuestion(String questionTheme) async {
   final response = await http.get(
     Uri.parse(
-        'http://10.24.110.65:8080/random-text-question?questiontype_id=$questiontypeId'),
+        'http://10.24.110.65:8080/random-text-questionhelp?question_theme=$questionTheme'),
   );
 
   if (response.statusCode == 200) {
@@ -153,7 +150,7 @@ class _HelpBedScreenState extends State<HelpBedScreen> {
   @override
   void initState() {
     super.initState();
-    questionFuture = fetchQuestion("KMS005"); // questiontypeIdを指定
+    questionFuture = fetchQuestion("ベッド"); // questiontypeTemeを指定
   }
 
   // ポップアップダイアログを表示する関数
@@ -341,10 +338,10 @@ class _HelpBedScreenState extends State<HelpBedScreen> {
                     right: 0,
                     child: Column(
                       children: [
-                        const Text(
-                          'ベッドのシーツを\nきれいにするには\nどうすればいい？',
+                        Text(
+                          question.questionContent,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
@@ -361,7 +358,18 @@ class _HelpBedScreenState extends State<HelpBedScreen> {
                             shape: BoxShape.circle,
                           ),
                           child: Center(
-                            child: Image.network(question.questionImage),
+                            child: Align(
+                              //alignment: const Alignment(0.0, 0.0), // 画像の中央配置
+                              child: Container(
+                                width:
+                                    screenSize.width * 2.0, // 画像の幅（画面サイズに基づく比率）
+                                height: screenSize.width * 0.4, // 画像の高さ（同上）
+                                child: Image.network(
+                                  question.questionImage, //画像表示
+                                  fit: BoxFit.cover, // 画像のフィット方法を指定
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -374,8 +382,10 @@ class _HelpBedScreenState extends State<HelpBedScreen> {
                     right: 0,
                     child: Column(
                       children: [
+                        SizedBox(height: 100), // 上の選択肢との間隔
                         for (int i = 0; i < question.options.length; i += 2)
                           Row(
+                            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               if (i < question.options.length)
@@ -397,7 +407,9 @@ class _HelpBedScreenState extends State<HelpBedScreen> {
                                         context); //選択したIdを送信して回答判定メソッドへ
                                   },
                                 ),
+                              SizedBox(height: 80), // 上の選択肢との間隔
                               if (i + 1 < question.options.length)
+                                //SizedBox(height: 20),
                                 RectangularButton(
                                   text: question.options.keys.toList()[i + 1],
                                   buttonColor:
@@ -405,6 +417,7 @@ class _HelpBedScreenState extends State<HelpBedScreen> {
                                   textColor: Colors.black,
                                   width: screenSize.width * 0.4, // 横幅調整
                                   height: 70, // 高さ調整
+
                                   onPressed: () {
                                     final selectedAnswerId =
                                         question.options.values.toList()[i + 1];
