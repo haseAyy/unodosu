@@ -40,11 +40,11 @@ public interface UnodosuRepository extends JpaRepository<question, String> {
     @Query(value = """
     SELECT question_id, question_answer 
     FROM question 
-    WHERE questiontype_id = :questiontype_id 
+    WHERE question_theme = :question_theme 
     AND question_id != :question_id 
     LIMIT 3
     """, nativeQuery = true)
-    List<Object[]> findDummyAnswersWithIdsHelp(@Param("question_id") String question_id, @Param("questiontype_id") String questiontype_id);
+    List<Object[]> findDummyAnswersWithIdsHelp(@Param("question_id") String question_id, @Param("question_theme") String question_theme);
 
 }
 
