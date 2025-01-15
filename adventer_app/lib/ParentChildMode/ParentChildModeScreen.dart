@@ -19,7 +19,7 @@ class ParentChildModeScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // 背景（白基調にアクセントカラーを追加）
+          // 背景（茶色基調にアクセントカラーを追加）
           Positioned.fill(
             child: Container(
               color: const Color.fromARGB(174, 250, 231, 213),
