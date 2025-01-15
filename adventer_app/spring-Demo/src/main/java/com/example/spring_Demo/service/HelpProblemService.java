@@ -1,16 +1,15 @@
 package com.example.spring_Demo.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import com.example.spring_Demo.factory.Unodosufactory;
 import com.example.spring_Demo.model.question;
 import com.example.spring_Demo.repository.UnodosuRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-
-public class HelpProblemService {
+@Service
+public class HelpProblemService implements Unodosufactory{
 
     @Autowired
     private UnodosuRepository unodosuRepository;
@@ -54,7 +53,7 @@ public class HelpProblemService {
                 for (Map.Entry<String, String> entry : entryList) {
                     shuffledOptions.put(entry.getKey(), entry.getValue());
                 }
-        
+
                 // 問題オブジェクトに選択肢をセット
                 //randomQuestion.setOptions(shuffledOptions);
                 //return randomQuestion;  // 問題を返却
@@ -63,6 +62,8 @@ public class HelpProblemService {
                 randomQuestion.setOptions(shuffledOptions);
                 return randomQuestion;
             }
+
+            
         
             // 回答を検証するメソッド
             public boolean checkAnswer(String questionId, String selectedAnswer) {
@@ -72,3 +73,5 @@ public class HelpProblemService {
             }
     
 }
+
+    
