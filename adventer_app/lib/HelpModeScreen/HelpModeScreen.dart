@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'Cleaning/HelpCleaningListScreen.dart';
-import '../MeneScreen/HomeScreen.dart';
 import 'Errand/HelpErrandStartScreen.dart';
 
 class HelpModeScreen extends StatelessWidget {
   const HelpModeScreen({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -57,7 +56,7 @@ class HelpModeScreen extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                   child: const Text(
-                    'もんだいをえらぼう！',
+                    'おてつだいをしてみよう！',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -75,7 +74,8 @@ class HelpModeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const HelpCleaningListScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const HelpCleaningListScreen()),
                     );
                   },
                 ),
@@ -88,28 +88,12 @@ class HelpModeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const HelpErrandStartScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const HelpErrandStartScreen()),
                     );
                   },
                 ),
               ],
-            ),
-          ),
-          // 左下の戻るボタン
-          Positioned(
-            bottom: screenHeight * 0.03, // 画面サイズに基づく位置調整
-            left: screenWidth * 0.05,
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HomeScreen(),
-                  ),
-                );
-              },
-              backgroundColor: Colors.grey[100],
-              child: const Icon(Icons.arrow_back),
             ),
           ),
         ],
@@ -166,7 +150,8 @@ class CategoryButton extends StatelessWidget {
             ),
             // ボタンのコンテンツ（アイコン、テキスト）
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05), // 左右のパディングを調整
+              padding: EdgeInsets.symmetric(
+                  horizontal: screenSize.width * 0.05), // 左右のパディングを調整
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [

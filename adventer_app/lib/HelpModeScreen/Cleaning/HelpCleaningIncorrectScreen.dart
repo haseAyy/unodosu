@@ -1,6 +1,9 @@
 import 'package:adventer_app/HelpModeScreen/Cleaning/Bed/HelpBedScreen.dart';
 import 'package:flutter/material.dart';
 import 'Bed/HelpBedScreen.dart'; // ベッドの画面
+import 'Bath/HelpBathScreen.dart'; // おふろの画面
+import 'package:http/http.dart' as http; // httpパッケージをインポート
+import 'dart:convert'; // jsonDecodeを使うためにインポート
 
 // 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
@@ -56,18 +59,55 @@ class RectangularButton extends StatelessWidget {
 }
 
 // 不正解画面
-class HelpCleaningIncorrectScreen extends StatelessWidget {
+class HelpCleaningIncorrectScreen extends StatefulWidget {
   final String message; // 受け取るメッセージ（いろ、もじなど）
   final int questionCount;
   final int correctCount;
   final String? correctAnswer; // 正解の答えを追加
+  final String selectedAnswerContent; // 選択した答え
+  final String questionId; //質問id
 
-  const HelpCleaningIncorrectScreen({
-    required this.message,
-    required this.questionCount,
-    required this.correctCount,
-    this.correctAnswer, //オプションにする
-  });
+  const HelpCleaningIncorrectScreen(
+      {Key? key,
+      required this.message,
+      required this.questionCount,
+      required this.correctCount,
+      this.correctAnswer,
+      required this.selectedAnswerContent, // 選択した答え
+      required this.questionId})
+      : super(key: key);
+
+  @override
+  _HelpCleaningIncorrectScreenState createState() =>
+      _HelpCleaningIncorrectScreenState();
+}
+
+class _HelpCleaningIncorrectScreenState
+    extends State<HelpCleaningIncorrectScreen> {
+  String? imageUrl; // 画像URLを保存する変数
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchGif();
+  }
+
+  // 選択した答えに基づいて画像URLを取得
+  Future<void> _fetchGif() async {
+    final response = await http.get(
+      Uri.parse(
+          'http://10.24.110.65:8080/api/getGifByAnswer?message=${widget.message}&selectedAnswer=${widget.selectedAnswerContent}&questionId=${widget.questionId}'),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        imageUrl = response.body; // 画像URLを設定
+        print("GIF URL: $imageUrl"); // デバッグ用にURLを表示 // JSON形式で返ってきた画像URLを設定
+      });
+    } else {
+      throw Exception('Failed to load Gif');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +119,7 @@ class HelpCleaningIncorrectScreen extends StatelessWidget {
         backgroundColor: const Color.fromARGB(255, 222, 94, 94),
         elevation: 0,
         title: const Text(
-          'ざんねん',
+          'おしい！',
           style: TextStyle(
             color: Colors.white,
             fontSize: 20,
@@ -130,15 +170,43 @@ class HelpCleaningIncorrectScreen extends StatelessWidget {
                   color: Colors.red,
                 ),
                 SizedBox(height: 0.05 * screenSize.height), // 高さに基づいて余白を調整
-                Text(
-                  'ざんねん！\nつぎもがんばろう！',
-                  style: TextStyle(
-                    fontSize: 0.04 * screenSize.height, // 画面高さに基づいてフォントサイズを調整
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    fontFamily: 'Comic Sans MS',
-                  ),
-                  textAlign: TextAlign.center,
+                // GIFの画像を表示（URLが取得できていれば）
+                // GIFを表示
+                Expanded(
+                  child: imageUrl != null
+                      ? Image.network(
+                          imageUrl!, // 取得したGIF URLを使用
+                          width: 0.5 * screenSize.width,
+                          height: 0.3 * screenSize.height,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) {
+                              return child; // 完全に読み込まれたら表示
+                            }
+                            return Center(
+                              child:
+                                  CircularProgressIndicator(), // 読み込み中にインジケーターを表示
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.error,
+                                      color: Colors.red, size: 50), // エラーアイコン
+                                  Text("画像を読み込めませんでした",
+                                      style: TextStyle(
+                                          color: Colors.red, fontSize: 18)),
+                                  Text("URL: $imageUrl",
+                                      style: TextStyle(
+                                          fontSize: 14, color: Colors.black)),
+                                ],
+                              ),
+                            );
+                          },
+                        )
+                      : const SizedBox.shrink(), // 画像URLがない場合、空のウィジェットを表示
                 ),
                 SizedBox(height: 0.08 * screenSize.height), // 高さに基づいて余白を調整
                 // 解説部分
@@ -163,10 +231,9 @@ class HelpCleaningIncorrectScreen extends StatelessWidget {
                     ],
                   ),
                   child: Text(
-                    correctAnswer != null
-                        ? '解説: このもんだいの答えは「$correctAnswer」だよ。次回はもっとがんばろう！'
+                    widget.correctAnswer != null
+                        ? '解説: このもんだいの答えは「${widget.correctAnswer}」だよ。次回はもっとがんばろう！'
                         : '次回もがんばろう！', //correctAnswerがない場合
-
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -185,37 +252,37 @@ class HelpCleaningIncorrectScreen extends StatelessWidget {
                     textColor: Colors.black,
                     onPressed: () {
                       // 遷移前にデバッグ出力
-                      print("遷移先画面: $message");
+                      print("遷移先画面: ${widget.message}");
                       print(
-                          "遷移前: questionCount: $questionCount, correctCount: $correctCount");
+                          "遷移前: questionCount: ${widget.questionCount}, correctCount: ${widget.correctCount}");
                       // メッセージに基づいて遷移先を変更
-                      if (message == "ベッド") {
+                      if (widget.message == "ベッド") {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) => HelpBedScreen(
-                              questionCount: questionCount,
-                              correctCount: correctCount,
+                              questionCount: widget.questionCount,
+                              correctCount: widget.correctCount,
                             ),
                           ),
                         );
-                      } else if (message == "おふろ") {
+                      } else if (widget.message == "おふろ") {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => HelpBedScreen(
-                              questionCount: questionCount,
-                              correctCount: correctCount,
+                            builder: (context) => HelpBathScreen(
+                              questionCount: widget.questionCount,
+                              correctCount: widget.correctCount,
                             ),
                           ),
                         );
-                      } else if (message == "つくえ") {
+                      } else if (widget.message == "つくえ") {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) => HelpBedScreen(
-                              questionCount: questionCount,
-                              correctCount: correctCount,
+                              questionCount: widget.questionCount,
+                              correctCount: widget.correctCount,
                             ),
                           ),
                         );

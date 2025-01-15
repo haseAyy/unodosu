@@ -1,7 +1,7 @@
 import 'package:adventer_app/HelpModeScreen/Cleaning/Bed/HelpBedStartScreen.dart';
+import 'package:adventer_app/MeneScreen/HomeScreen.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import '../HelpModeScreen.dart';
 import 'Bath/HelpBathStartScreen.dart';
 import 'Table/HelpTableStartScreen.dart';
 
@@ -59,7 +59,7 @@ class HelpCleaningListScreen extends StatelessWidget {
                 border: Border.all(color: Colors.orange, width: 2),
               ),
               child: const Text(
-                'どこからおかたづけする？',
+                'どのへやをおかたづけする？',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 18,
@@ -135,7 +135,8 @@ class HelpCleaningListScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const HelpModeScreen()),
+                    builder: (context) => const HomeScreen(initialIndex: 2),
+                  ),
                 );
               },
               backgroundColor: Colors.grey[100],

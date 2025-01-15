@@ -35,9 +35,7 @@ class Question {
       questionAnswer: json['question_answer'],
       questionContent: json['question_content'],
       questionImage: json['question_image'],
-      options: json['options'] != null && json['options'].isNotEmpty
-          ? Map<String, String>.from(json['options'])
-          : {'No options available': ''}, // デフォルト値
+      options: Map<String, String>.from(json['options']),
     );
   }
 }
@@ -49,25 +47,41 @@ Future<Question?> fetchQuestion(String questionTheme) async {
         'http://10.24.110.65:8080/random-text-questionhelp?question_theme=$questionTheme'),
   );
 
+//確認
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');
+
   if (response.statusCode == 200) {
     return Question.fromJson(jsonDecode(response.body));
   } else {
-    throw Exception('Failed to load question');
+    //throw Exception('Failed to load question');
   }
 }
 
-Future<String> submitAnswer(String questionId, String selectedAnswer) async {
+Future<String> submitAnswer(
+    String questionId, String selectedAnswerId, selectedAnswerContent) async {
   final response = await http.post(
     Uri.parse('http://10.24.110.65:8080/submit-answer'),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({
       'questionId': questionId,
-      'answer': selectedAnswer,
+      'answer': selectedAnswerId,
+      'answerContent': selectedAnswerContent,
     }),
   );
 
+  print('Response body: ${response.body}'); // レスポンスボディを確認
+
   if (response.statusCode == 200) {
-    return response.body; // "correct" または "incorrect"
+    // レスポンスが単なる文字列であれば、そのまま扱う
+    if (response.body == 'incorrect') {
+      return 'incorrect'; // 不正解
+    } else if (response.body == 'correct') {
+      return 'correct'; // 正解
+    } else {
+      print('Unexpected response body: ${response.body}');
+      return 'Unexpected response';
+    }
   } else {
     throw Exception('回答の送信に失敗しました');
   }
@@ -185,11 +199,11 @@ class _HelpBedScreenState extends State<HelpBedScreen> {
   }
 
   //ユーザが答えを選んだ時に呼び出すメソッド
-  void _handleAnswerSubmission(
-      String selectedAnswerId, Question question, BuildContext context) async {
+  void _handleAnswerSubmission(String selectedAnswerId, selectedAnswerContent,
+      Question question, BuildContext context) async {
     try {
-      final result =
-          await submitAnswer(question.questionId, selectedAnswerId); // 修正
+      final result = await submitAnswer(
+          question.questionId, selectedAnswerId, selectedAnswerContent); // 修正
 
       setState(() {
         questionCount++; // 問題数をカウント
@@ -221,10 +235,13 @@ class _HelpBedScreenState extends State<HelpBedScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => HelpCleaningIncorrectScreen(
-                    message: 'ベッド',
-                    questionCount: questionCount,
-                    correctCount: correctCount,
-                    correctAnswer: question.questionAnswer)),
+                      message: 'ベッド',
+                      questionCount: questionCount,
+                      correctCount: correctCount,
+                      correctAnswer: question.questionAnswer,
+                      selectedAnswerContent: selectedAnswerContent,
+                      questionId: question.questionId, // questionIdを渡す
+                    )),
           );
         }
         // 次の問題を取得する処理を呼び出す
@@ -351,12 +368,12 @@ class _HelpBedScreenState extends State<HelpBedScreen> {
                         const SizedBox(height: 60),
                         // 問題の丸
                         Container(
-                          width: screenSize.width * 0.4, // 比率調整
+                          width: screenSize.width * 0.8, // 比率調整
                           height: screenSize.width * 0.4, // 比率調整
                           decoration: const BoxDecoration(
-                            color: Color.fromARGB(255, 154, 208, 255),
-                            shape: BoxShape.circle,
-                          ),
+                              //color: Color.fromARGB(255, 154, 208, 255),
+                              //shape: BoxShape.circle,
+                              ),
                           child: Center(
                             child: Align(
                               //alignment: const Alignment(0.0, 0.0), // 画像の中央配置
@@ -401,8 +418,12 @@ class _HelpBedScreenState extends State<HelpBedScreen> {
                                     final selectedAnswerId = question
                                         .options.values
                                         .toList()[i]; //question.idを送信
+                                    final selectedAnswerContent = question
+                                        .options.keys
+                                        .toList()[i]; //question.idを送信
                                     _handleAnswerSubmission(
                                         selectedAnswerId,
+                                        selectedAnswerContent,
                                         question,
                                         context); //選択したIdを送信して回答判定メソッドへ
                                   },
@@ -421,8 +442,14 @@ class _HelpBedScreenState extends State<HelpBedScreen> {
                                   onPressed: () {
                                     final selectedAnswerId =
                                         question.options.values.toList()[i + 1];
-                                    _handleAnswerSubmission(selectedAnswerId,
-                                        question, context); //回答判定メソッドへ
+                                    final selectedAnswerContent = question
+                                        .options.keys
+                                        .toList()[i + 1]; //question.idを送信
+                                    _handleAnswerSubmission(
+                                        selectedAnswerId,
+                                        selectedAnswerContent,
+                                        question,
+                                        context); //回答判定メソッドへ
                                   },
                                 ),
                             ],

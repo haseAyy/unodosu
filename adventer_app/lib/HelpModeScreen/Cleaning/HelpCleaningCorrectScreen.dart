@@ -1,4 +1,5 @@
 import 'package:adventer_app/HelpModeScreen/Cleaning/Bed/HelpBedScreen.dart';
+import 'package:adventer_app/HelpModeScreen/Cleaning/Bath/HelpBathScreen.dart';
 import 'package:flutter/material.dart';
 
 // 四角いボタンを定義
