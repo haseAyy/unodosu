@@ -223,6 +223,7 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => EducationCorrectScreen(
+              correctAnswer: '${currentQuestion.questionContent}＝${correctAnswer}',
               questionCount: questionCount,
               correctCount: correctCount,
               nextScreenFlag: 'calc',

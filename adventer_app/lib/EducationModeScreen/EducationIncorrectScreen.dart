@@ -60,71 +60,107 @@ class RectangularButton extends StatelessWidget {
 }
 
 // 不正解画面
-class EducationIncorrectScreen extends StatelessWidget {
+class EducationIncorrectScreen extends StatefulWidget {
   final String correctAnswer;
   final int questionCount;
   final int correctCount;
+  final String? questionImage;
   final String nextScreenFlag; // 追加: 遷移先を指定するフラグ
 
   const EducationIncorrectScreen({
     required this.correctAnswer,
     required this.questionCount,
     required this.correctCount,
+    this.questionImage,
     required this.nextScreenFlag,
   });
+
+  @override
+  _EducationIncorrectScreenState createState() =>
+      _EducationIncorrectScreenState();
+}
+
+class _EducationIncorrectScreenState extends State<EducationIncorrectScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _opacityAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    // アニメーションのコントローラーとフェードインの設定
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2), // フェードインの速度
+      vsync: this,
+    );
+    _opacityAnimation =
+        Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
+    );
+
+    // アニメーションを開始
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  // 遷移先の画面を取得するメソッド
+  Widget _getNextScreen() {
+    switch (widget.nextScreenFlag) {
+      case 'shape':
+        return ShapeEducationScreen(
+          questionCount: widget.questionCount,
+          correctCount: widget.correctCount,
+        );
+      case 'calc':
+        return CalcEducationScreen(
+          questionCount: widget.questionCount,
+          correctCount: widget.correctCount,
+        );
+      case 'color':
+        return ColorEducationScreen(
+          questionCount: widget.questionCount,
+          correctCount: widget.correctCount,
+        );
+      case 'letter':
+        return LetterEducationScreen(
+          questionCount: widget.questionCount,
+          correctCount: widget.correctCount,
+        );
+      case 'result':
+        return EdcationResultScreen(
+          correctCount: widget.correctCount,
+        );
+      default:
+        // デフォルトケース
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('エラー'),
+          ),
+          body: const Center(
+            child: Text('次の画面が見つかりません。'),
+          ),
+        );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
 
-    // 遷移先の画面を取得するメソッド
-    Widget _getNextScreen() {
-      switch (nextScreenFlag) {
-        case 'shape':
-          return ShapeEducationScreen(
-            questionCount: questionCount,
-            correctCount: correctCount,
-          );
-        case 'calc':
-          return CalcEducationScreen(
-            questionCount: questionCount,
-            correctCount: correctCount,
-          );
-        case 'color':
-          return ColorEducationScreen(
-            questionCount: questionCount,
-            correctCount: correctCount,
-          );
-        case 'letter':
-          return LetterEducationScreen(
-            questionCount: questionCount,
-            correctCount: correctCount,
-          );
-          case 'result':
-          return EdcationResultScreen(
-            correctCount: correctCount,
-          );
-        default:
-          // デフォルトケース
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('エラー'),
-            ),
-            body: const Center(
-              child: Text('次の画面が見つかりません。'),
-            ),
-          );
-      }
-    }
-    
-  debugPrint('遷移先で受け取った正解: $correctAnswer'); // 正しく受け取れているか確認
+    debugPrint('遷移先で受け取った正解: ${widget.correctAnswer}'); // 正しく受け取れているか確認
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false, // 戻るボタンを非表示
-        backgroundColor: const Color.fromARGB(255, 255, 182, 193), // ピンク色の背景
+        backgroundColor: const Color.fromARGB(255, 250, 60, 60), // ピンク色の背景
         elevation: 0,
         title: const Text(
-          'ざんねん！',
+          'おしい！',
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -168,11 +204,6 @@ class EducationIncorrectScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.cancel_outlined,
-                  size: 150,
-                  color: Colors.red,
-                ),
                 const SizedBox(height: 20),
                 const Text(
                   'ざんねん！\nつぎもがんばろう！',
@@ -184,19 +215,42 @@ class EducationIncorrectScreen extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 40),
+                FadeTransition(
+                  opacity: _opacityAnimation,
+                  child: const Icon(
+                    Icons.cancel_outlined,
+                    size: 150,
+                    color: Colors.red,
+                  ),
+                ),
+
+                const SizedBox(height: 0.5),
+                if (widget.questionImage != null)
+                  SizedBox(
+                    width: 120,
+                    height: 120,
+                    child: Image.network(
+                      widget.questionImage!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Text('画像を読み込めませんでした');
+                      },
+                    ),
+                  ),
+
+
+                const SizedBox(height: 1),
                 // 解説部分
                 Container(
-                  
-                  padding: const EdgeInsets.all(32),  //内部の余白大きく
-                  margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),  //外部の余白大きく
+                  padding: const EdgeInsets.all(10), // 内部の余白大きく
+                  margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 20), // 外部の余白大きく
                   decoration: BoxDecoration(
                     color: Colors.transparent, // 背景色を透明に設定
                     border: Border.all(
                       color: const Color.fromARGB(255, 205, 205, 205), // 枠の色
                       width: 4, // 枠の太さ
                     ),
-                    borderRadius: BorderRadius.circular(16),  //角野間の丸みを大きく
+                    borderRadius: BorderRadius.circular(16), // 角の丸みを大きく
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.2),
@@ -208,24 +262,23 @@ class EducationIncorrectScreen extends StatelessWidget {
                   child: Text.rich(
                     TextSpan(
                       text: 'ただしいこたえ: \n',
-                      style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      fontFamily: 'Comic Sans MS',
-                    
-                    ),
-                    children:[
-                      TextSpan(
-                        text: '$correctAnswer',  // $correctAnswerだけのスタイル
-                        style: TextStyle(
-                        fontSize: 25,  // 文字サイズを大きく
+                      style: const TextStyle(
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 0, 0, 0),  // 色も変えたい場合
+                        color: Colors.black,
                         fontFamily: 'Comic Sans MS',
                       ),
-                    ),
-                   ],
+                      children: [
+                        TextSpan(
+                          text: widget.correctAnswer, // 正解の答え
+                          style: const TextStyle(
+                            fontSize: 25, // 文字サイズを大きく
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 0, 0, 0), // 色も変えたい場合
+                            fontFamily: 'Comic Sans MS',
+                          ),
+                        ),
+                      ],
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -241,7 +294,7 @@ class EducationIncorrectScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => _getNextScreen(), // () を付けて実行
+                        builder: (context) => _getNextScreen(), // 遷移先の画面
                       ),
                     );
                   },

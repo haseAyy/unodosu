@@ -14,6 +14,7 @@ class Question {
   final String questionTheme;
   final String questionAnswer;
   final String questionContent;
+  final String questionImage;
   final Map<String, String> options;
 
   Question({
@@ -22,6 +23,7 @@ class Question {
     required this.questionTheme,
     required this.questionAnswer,
     required this.questionContent,
+    required this.questionImage,
     required this.options,
   });
 
@@ -33,6 +35,7 @@ class Question {
       questionTheme: json['question_theme'],
       questionAnswer: json['question_answer'],
       questionContent: json['question_content'],
+      questionImage: json['question_image'],
       options: json['options'] != null && json['options'].isNotEmpty
           ? Map<String, String>.from(json['options'])
           : {'No options available': ''}, // デフォルト値
@@ -219,7 +222,7 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => EducationCorrectScreen(questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'letter')),
+                builder: (context) => EducationCorrectScreen(correctAnswer: currentQuestion.questionAnswer,questionImage: question.questionImage,questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'letter')),
           );
         } else {
           Navigator.pushReplacement(
@@ -347,9 +350,11 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                       SizedBox(
                         width: screenSize.width * 0.6,
                         height: screenSize.height * 0.15,
-                        child: CustomPaint(
-                          //painter: ShapePainter(question.questionTheme),
-                        ),
+                        
+                        child: Center(
+                          child: Image.network(
+                            question.questionImage),
+                        )
                       ),
                     ],
                   ),
