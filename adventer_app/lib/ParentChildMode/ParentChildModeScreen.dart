@@ -52,7 +52,7 @@ class ParentChildModeScreen extends StatelessWidget {
             alignment: const Alignment(0.0, 0.8),
             child: CategoryButton(
               categoryName: 'ミッション設定',
-              backgroundColor: const Color.fromARGB(255, 159, 246, 252),
+              backgroundColor: const Color.fromARGB(255, 166, 232, 237),
               onPressed: () {
                 Navigator.push(
                   context,
