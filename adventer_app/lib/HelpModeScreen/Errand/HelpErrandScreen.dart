@@ -1,4 +1,4 @@
-import 'package:adventer_app/HelpModeScreen/HelpModeScreen.dart';
+import '../../MeneScreen/HomeScreen.dart';
 import 'package:flutter/material.dart';
 import 'HelpErrandCorrectScreen.dart';
 import 'HelpErrandIncrrectScreen.dart';
@@ -73,12 +73,12 @@ class HelpErrandScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context); // ダイアログを閉じる
               },
-              child: const Text('キャンセル'),
+              child: const Text('つづける'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // ダイアログを閉じて、問題一覧画面に戻る
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpModeScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const HomeScreen(initialIndex: 2),));
               },
               child: const Text('やめる'),
             ),

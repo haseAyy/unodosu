@@ -42,6 +42,24 @@ class ShapeStartScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
+                const SizedBox(height: 20),
+                // 遊び方説明文
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: const Color.fromARGB(255, 147, 203, 209), width: 1),
+                    borderRadius: BorderRadius.circular(6),
+                    color: Colors.white,
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  child: const Text(
+                    'もんだいとおなじかたちを\nこたえからえらぼう', // 説明文
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
                 const SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () {

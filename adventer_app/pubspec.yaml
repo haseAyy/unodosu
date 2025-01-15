@@ -99,3 +99,17 @@ flutter:
     - assets/images/HelpBathStartScreen.png
     - assets/images/HelpTableStartScreen.png
     - assets/images/HelpErrandStartScreen.png
+
+  fonts:
+    - family: MPLUS1
+      fonts:
+        - asset: assets/fonts/MPLUS1-VariableFont_wght.ttf
+    - family: MochiyPopOne
+      fonts:
+        - asset: assets/fonts/MochiyPopOne-Regular.ttf
+    - family: Murecho
+      fonts:
+        - asset: assets/fonts/Murecho-VariableFont_wght.ttf
+    - family: DotGothic16
+      fonts:
+        - asset: assets/fonts/DotGothic16-Regular.ttf

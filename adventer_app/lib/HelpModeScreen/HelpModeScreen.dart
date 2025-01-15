@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'Cleaning/HelpCleaningListScreen.dart';
-import '../MeneScreen/HomeScreen.dart';
 import 'Errand/HelpErrandStartScreen.dart';
 
 class HelpModeScreen extends StatelessWidget {
@@ -57,7 +56,7 @@ class HelpModeScreen extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                   child: const Text(
-                    'もんだいをえらぼう！',
+                    'おてつだいをしてみよう！',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -93,23 +92,6 @@ class HelpModeScreen extends StatelessWidget {
                   },
                 ),
               ],
-            ),
-          ),
-          // 左下の戻るボタン
-          Positioned(
-            bottom: screenHeight * 0.03, // 画面サイズに基づく位置調整
-            left: screenWidth * 0.05,
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HomeScreen(),
-                  ),
-                );
-              },
-              backgroundColor: Colors.grey[100],
-              child: const Icon(Icons.arrow_back),
             ),
           ),
         ],

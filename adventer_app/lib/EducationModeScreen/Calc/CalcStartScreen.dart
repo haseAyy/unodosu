@@ -43,6 +43,24 @@ class CalcStartScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
+                const SizedBox(height: 20),
+                // 遊び方説明文
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: const Color.fromARGB(255, 147, 203, 209), width: 1),
+                    borderRadius: BorderRadius.circular(6),
+                    color: Colors.white,
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  child: const Text(
+                    'たしざんかひきざんをえらんで\nけいさんもんだいにちょうせんしよう', // 説明文
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
                 const SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () {
@@ -58,16 +76,45 @@ class CalcStartScreen extends StatelessWidget {
                       horizontal: screenWidth * 0.2,
                       vertical: screenHeight * 0.02,
                     ),
-                    backgroundColor: const Color.fromARGB(255, 255, 123, 0),
+                    backgroundColor: const Color.fromARGB(255, 255, 153, 58),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                     elevation: 5,
                   ),
                   child: const Text(
-                    'スタート',
+                    'たしざんスタート',
                     style: TextStyle(
-                      fontSize: 30,
+                      fontSize: 25,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CalcEducationScreen(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.2,
+                      vertical: screenHeight * 0.02,
+                    ),
+                    backgroundColor: const Color.fromARGB(255, 255, 88, 88),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    elevation: 5,
+                  ),
+                  child: const Text(
+                    'ひきざんスタート',
+                    style: TextStyle(
+                      fontSize: 25,
                       color: Colors.white,
                     ),
                   ),

@@ -1,4 +1,4 @@
-import 'package:adventer_app/HelpModeScreen/Cleaning/HelpCleaningListScreen.dart';
+import '../../MeneScreen/HomeScreen.dart';
 import 'package:flutter/material.dart';
 
 // 四角いボタンを定義
@@ -148,7 +148,7 @@ class HelpCleaningResultScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const HelpCleaningListScreen(),
+                        builder: (context) => const HomeScreen(initialIndex: 2),
                       ),
                     );
                   },

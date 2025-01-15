@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import '../MeneScreen/HomeScreen.dart';
 import 'Calc/CalcStartScreen.dart';
 import 'Color/ColorStartScreen.dart';
 import 'Letter/LetterStartScreen.dart';
@@ -16,40 +15,15 @@ class EducationModeScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // 背景（白基調にアクセントカラーを追加）
+          // 背景（ノート風の罫線デザイン）
           Positioned.fill(
-            child: Container(
-              color: Colors.white,
-            ),
-          ),
-          // 上部デコレーション（柔らかい円形の装飾）
-          Positioned(
-            top: -50,
-            left: -50,
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 116, 253, 201),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          Positioned(
-            top: 100,
-            right: -30,
-            child: Container(
-              width: 150,
-              height: 150,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 226, 180, 255),
-                shape: BoxShape.circle,
-              ),
+            child: CustomPaint(
+              painter: SchoolBackgroundPainter(),
             ),
           ),
           // メインコンテンツ（カテゴリー画面）
           Positioned(
-            top: screenSize.height * 0.13, // 画面上部に配置
+            top: screenSize.height * 0.1,
             left: 0,
             right: 0,
             child: Column(
@@ -57,21 +31,22 @@ class EducationModeScreen extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    'もんだいをえらぼう！',
+                    'おべんきょうをはじめよう！',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
+                      backgroundColor: Color.fromARGB(255, 255, 248, 248),
                     ),
                     textAlign: TextAlign.center,
                   ),
                 ),
-                SizedBox(height: screenSize.height * 0.03), // ボタン間の間隔を画面サイズに基づく
+                SizedBox(height: screenSize.height * 0.03),
                 CategoryButton(
                   categoryName: 'かたち',
                   description: 'かたちをまなぼう！\nいろんなかたちをさがそう',
                   backgroundColor: Colors.blue.shade100,
-                  icon: Icons.star, // アイコン追加
+                  icon: Icons.star,
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -79,12 +54,12 @@ class EducationModeScreen extends StatelessWidget {
                     );
                   },
                 ),
-                SizedBox(height: screenSize.height * 0.03), // ボタン間の間隔を画面サイズに基づく
+                SizedBox(height: screenSize.height * 0.03),
                 CategoryButton(
                   categoryName: 'いろ',
                   description: 'いろをまなぼう！\nカラフルなせかいがひろがるよ',
                   backgroundColor: Colors.orange.shade100,
-                  icon: Icons.palette, // アイコン追加
+                  icon: Icons.palette,
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -92,12 +67,12 @@ class EducationModeScreen extends StatelessWidget {
                     );
                   },
                 ),
-                SizedBox(height: screenSize.height * 0.03), // ボタン間の間隔を画面サイズに基づく
+                SizedBox(height: screenSize.height * 0.03),
                 CategoryButton(
                   categoryName: 'もじ',
                   description: 'もじをまなぼう！\nたのしくもじをおぼえよう',
                   backgroundColor: Colors.green.shade100,
-                  icon: Icons.text_fields, // アイコン追加
+                  icon: Icons.text_fields,
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -105,12 +80,12 @@ class EducationModeScreen extends StatelessWidget {
                     );
                   },
                 ),
-                SizedBox(height: screenSize.height * 0.03), // ボタン間の間隔を画面サイズに基づく
+                SizedBox(height: screenSize.height * 0.03),
                 CategoryButton(
                   categoryName: 'けいさん',
                   description: 'けいさんをまなぼう！\nけいさんをといてみよう',
                   backgroundColor: Colors.pink.shade100,
-                  icon: Icons.calculate, // アイコン追加
+                  icon: Icons.calculate,
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -121,28 +96,42 @@ class EducationModeScreen extends StatelessWidget {
               ],
             ),
           ),
-          // 左下の戻るボタン
-          Positioned(
-            bottom: 10,
-            left: 10,
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HomeScreen(),
-                  ),
-                );
-              },
-              backgroundColor: Colors.grey[100],
-              child: const Icon(Icons.arrow_back),
-            ),
-          ),
         ],
       ),
     );
   }
 }
+
+class SchoolBackgroundPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint linePaint = Paint()
+      ..color = Colors.grey.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+
+    final double lineSpacing = 40.0;
+
+    // ノート風の横罫線を描画
+    for (double y = 0; y < size.height; y += lineSpacing) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), linePaint);
+    }
+
+    // 左側の赤い縦線を描画
+    final Paint marginPaint = Paint()
+      ..color = Colors.red.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    canvas.drawLine(const Offset(50, 0), Offset(50, size.height), marginPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false; // 再描画は不要
+  }
+}
+
 
 class CategoryButton extends StatelessWidget {
   final String categoryName;
@@ -283,5 +272,3 @@ class StitchPainter extends CustomPainter {
     return false; // 再描画は不要
   }
 }
-
-

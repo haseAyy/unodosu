@@ -1,4 +1,4 @@
-import 'package:adventer_app/HelpModeScreen/HelpModeScreen.dart';
+import '../../MeneScreen/HomeScreen.dart';
 import 'package:flutter/material.dart';
 
 // 四角いボタンを定義
@@ -148,7 +148,7 @@ class HelpErrandResultScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const HelpModeScreen(),
+                        builder: (context) => const HomeScreen(initialIndex: 2),
                       ),
                     );
                   },

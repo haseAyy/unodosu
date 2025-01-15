@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:adventer_app/HelpModeScreen/Cleaning/HelpCleaningListScreen.dart';
+import '../../../MeneScreen/HomeScreen.dart';
 import '../HelpCleaningCorrectScreen.dart';
 import '../HelpCleaningIncorrectScreen.dart';
 import '../HelpCleaningResultScreen.dart';
@@ -74,12 +74,12 @@ class HelpBedScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context); // ダイアログを閉じる
               },
-              child: const Text('キャンセル'),
+              child: const Text('つづける'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // ダイアログを閉じて、問題一覧画面に戻る
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpCleaningListScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const HomeScreen(initialIndex: 2),));
               },
               child: const Text('やめる'),
             ),

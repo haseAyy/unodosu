@@ -1,4 +1,4 @@
-import 'package:adventer_app/EducationModeScreen/EducationModeScreen.dart';
+import 'package:adventer_app/MeneScreen/HomeScreen.dart';
 import 'package:flutter/material.dart';
 
 // 四角いボタンを定義
@@ -148,7 +148,7 @@ class EducationResultScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const EducationModeScreen(),
+                        builder: (context) => const HomeScreen(initialIndex: 1),
                       ),
                     );
                   },

@@ -1,7 +1,7 @@
+import 'package:adventer_app/MeneScreen/HomeScreen.dart';
 import 'package:flutter/material.dart';
 import '../EducationCorrectScreen.dart';
 import '../EducationIncorrectScreen.dart';
-import '../EducationModeScreen.dart';
 
 // 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
@@ -73,12 +73,12 @@ class CalcEducationScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context); // ダイアログを閉じる
               },
-              child: const Text('キャンセル'),
+              child: const Text('つづける'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // ダイアログを閉じて、問題一覧画面に戻る
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationModeScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const HomeScreen(initialIndex: 1),));
               },
               child: const Text('やめる'),
             ),
@@ -111,30 +111,10 @@ class CalcEducationScreen extends StatelessWidget {
       backgroundColor: Colors.white, // 背景を白に統一
       body: Stack(
         children: [
-          // 上部のソフトな装飾
-          Positioned(
-            top: -50,
-            left: -50,
-            child: Container(
-              width: 150,
-              height: 150,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 255, 182, 193), // 薄いピンク
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          // 下部のソフトな装飾
-          Positioned(
-            bottom: -50,
-            right: -50,
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 173, 216, 230), // 薄い水色
-                shape: BoxShape.circle,
-              ),
+          // 背景（ノート風の罫線デザイン）
+          Positioned.fill(
+            child: CustomPaint(
+              painter: SchoolBackgroundPainter(),
             ),
           ),
           // 問題中断ボタン（左下）
@@ -168,26 +148,17 @@ class CalcEducationScreen extends StatelessWidget {
             top: screenSize.height * 0.15,
             left: 0,
             right: 0,
-            child: Column(
+            child: const Column(
               children: [
-                const Text(
+                Text(
                   'このもんだいをといてみよう！',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
+                    backgroundColor: Colors.white,
                     fontFamily: 'Comic Sans MS',
-                  ),
-                ),
-                const SizedBox(height: 60),
-                // 問題の丸
-                Container(
-                  width: screenSize.width * 0.4, // 比率調整
-                  height: screenSize.width * 0.4, // 比率調整
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 154, 208, 255),
-                    shape: BoxShape.circle,
                   ),
                 ),
               ],
@@ -257,5 +228,35 @@ class CalcEducationScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class SchoolBackgroundPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint linePaint = Paint()
+      ..color = Colors.grey.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+
+    final double lineSpacing = 40.0;
+
+    // ノート風の横罫線を描画
+    for (double y = 0; y < size.height; y += lineSpacing) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), linePaint);
+    }
+
+    // 左側の赤い縦線を描画
+    final Paint marginPaint = Paint()
+      ..color = Colors.red.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    canvas.drawLine(const Offset(50, 0), Offset(50, size.height), marginPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false; // 再描画は不要
   }
 }

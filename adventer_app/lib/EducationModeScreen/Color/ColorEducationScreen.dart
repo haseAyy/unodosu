@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../EducationCorrectScreen.dart';
 import '../EducationIncorrectScreen.dart';
-import '../EducationModeScreen.dart';
+import '../../MeneScreen/HomeScreen.dart';
 import '../EdcationResultScreen.dart';
 
 // 四角いボタンを定義
@@ -74,14 +74,14 @@ class ColorEducationScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context); // ダイアログを閉じる
               },
-              child: const Text('キャンセル'),
+              child: const Text('つづける'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // ダイアログを閉じて、問題一覧画面に戻る
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const EducationModeScreen()),
+                  MaterialPageRoute(builder: (_) => const HomeScreen(initialIndex: 1),),
                 );
               },
               child: const Text('やめる'),
@@ -117,30 +117,10 @@ class ColorEducationScreen extends StatelessWidget {
       backgroundColor: Colors.white, // 背景を白に統一
       body: Stack(
         children: [
-          // 上部のソフトな装飾
-          Positioned(
-            top: -screenHeight * 0.1,
-            left: -screenWidth * 0.1,
-            child: Container(
-              width: screenWidth * 0.4,
-              height: screenWidth * 0.4,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 255, 182, 193), // 薄いピンク
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          // 下部のソフトな装飾
-          Positioned(
-            bottom: -screenHeight * 0.1,
-            right: -screenWidth * 0.1,
-            child: Container(
-              width: screenWidth * 0.5,
-              height: screenWidth * 0.5,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 173, 216, 230), // 薄い水色
-                shape: BoxShape.circle,
-              ),
+          // 背景（ノート風の罫線デザイン）
+          Positioned.fill(
+            child: CustomPaint(
+              painter: SchoolBackgroundPainter(),
             ),
           ),
           // 問題中断ボタン（左下）
@@ -175,26 +155,17 @@ class ColorEducationScreen extends StatelessWidget {
             top: screenHeight * 0.15,
             left: 0,
             right: 0,
-            child: Column(
+            child: const Column(
               children: [
-                const Text(
+               Text(
                   'このいろと\nおなじいろをみつけよう！',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
+                    backgroundColor: Colors.white,
                     fontFamily: 'Comic Sans MS',
-                  ),
-                ),
-                SizedBox(height: screenHeight * 0.1),
-                // 問題の丸
-                Container(
-                  width: screenWidth * 0.4, // 比率調整
-                  height: screenWidth * 0.4, // 比率調整
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 154, 208, 255),
-                    shape: BoxShape.circle,
                   ),
                 ),
               ],
@@ -276,5 +247,35 @@ class ColorEducationScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class SchoolBackgroundPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint linePaint = Paint()
+      ..color = Colors.grey.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+
+    final double lineSpacing = 40.0;
+
+    // ノート風の横罫線を描画
+    for (double y = 0; y < size.height; y += lineSpacing) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), linePaint);
+    }
+
+    // 左側の赤い縦線を描画
+    final Paint marginPaint = Paint()
+      ..color = Colors.red.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    canvas.drawLine(const Offset(50, 0), Offset(50, size.height), marginPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false; // 再描画は不要
   }
 }
