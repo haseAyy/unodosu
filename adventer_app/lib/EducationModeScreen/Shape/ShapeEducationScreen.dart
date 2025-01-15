@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
-import 'EducationCorrectScreen.dart'; //正解画面
-import 'EducationIncorrectScreen.dart'; //不正解画面
-import 'EdcationResultScreen.dart';//結果画面
-import 'EducationModeScreen.dart';
-import 'ShapePainter.dart'; // ShapePainter.dartをインポート
-import 'dart:math';  // cos, sinを使うためにインポート
+import '../EducationCorrectScreen.dart'; //正解画面
+import '../EducationIncorrectScreen.dart'; //不正解画面
+import '../EdcationResultScreen.dart'; //結果画面
+import '../EducationModeScreen.dart';
+import '../ShapePainter.dart'; // ShapePainter.dartをインポート
 
 // questionのデータモデル
 class Question {
   final String questionId;
-  final String questionTypeId;
+  final String questionTypeid;
   final String questionTheme;
   final String questionAnswer;
   final String questionContent;
@@ -19,7 +18,7 @@ class Question {
 
   Question({
     required this.questionId,
-    required this.questionTypeId,
+    required this.questionTypeid,
     required this.questionTheme,
     required this.questionAnswer,
     required this.questionContent,
@@ -30,7 +29,7 @@ class Question {
   factory Question.fromJson(Map<String, dynamic> json) {
     return Question(
       questionId: json['question_id'],
-      questionTypeId: json['questiontype_id'],
+      questionTypeid: json['questiontype_id'],
       questionTheme: json['question_theme'],
       questionAnswer: json['question_answer'],
       questionContent: json['question_content'],
@@ -129,26 +128,24 @@ class RectangularButton extends StatelessWidget {
 class ShapeEducationScreen extends StatefulWidget {
   final int questionCount;
   final int correctCount;
-  const ShapeEducationScreen({required this.questionCount,required this.correctCount});
-
+  const ShapeEducationScreen(
+      {required this.questionCount, required this.correctCount});
 
   @override
-  _ShapeEducationScreenState createState() => _ShapeEducationScreenState(questionCount,correctCount);
-
+  _ShapeEducationScreenState createState() =>
+      _ShapeEducationScreenState(questionCount, correctCount);
 }
 
 class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
   late Future<Question?> questionFuture;
   late int questionCount; // このクラス内で管理する変数
-  late int correctCount; // 正解数を追跡する変数 
-
+  late int correctCount; // 正解数を追跡する変数
 
   // コンストラクタで初期値を設定
-  _ShapeEducationScreenState(this.questionCount,this.correctCount);
+  _ShapeEducationScreenState(this.questionCount, this.correctCount);
 
   //gpt
   //List<String> solvedQuestions = []; // 解いた問題を保存するリスト
-  
 
   @override
   void initState() {
@@ -194,41 +191,44 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
       final result =
           await submitAnswer(question.questionId, selectedAnswerId); // 修正
 
-
-    
-    debugPrint('問題数を増やす前: $questionCount');
-    // 問題数をカウント
-    setState(() {
-      questionCount++; // 問題数をカウント
-      if (result == "correct") {
-        correctCount++; // 正解数をカウント
-      }
-    });
-    debugPrint('問題数を増やした後: $questionCount');
-    debugPrint('正解数: $correctCount');
-
+      debugPrint('問題数を増やす前: $questionCount');
+      // 問題数をカウント
+      setState(() {
+        questionCount++; // 問題数をカウント
+        if (result == "correct") {
+          correctCount++; // 正解数をカウント
+        }
+      });
+      debugPrint('問題数を増やした後: $questionCount');
+      debugPrint('正解数: $correctCount');
 
       if (questionCount >= 10) {
         // 10問解いたあとは結果画面に遷移
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => EdcationResultScreen(correctCount: correctCount)),
+          MaterialPageRoute(
+              builder: (context) =>
+                  EdcationResultScreen(correctCount: correctCount)),
         );
       } else {
         if (result == "correct") {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => EducationCorrectScreen
-                (message: 'かたち',
-                  questionCount: questionCount,
-                correctCount: correctCount)),
+                builder: (context) => EducationCorrectScreen(
+                    message: 'かたち',
+                    questionCount: questionCount,
+                    correctCount: correctCount)),
           );
         } else {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => EducationIncorrectScreen(questionCount: questionCount,correctCount: correctCount)),
+                builder: (context) => EducationIncorrectScreen(
+                    message: 'かたち',
+                    questionCount: questionCount,
+                    correctCount: correctCount,
+                    correctAnswer: question.questionAnswer)),
           );
         }
         // 次の問題を取得する処理を呼び出す
@@ -371,7 +371,8 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
                             if (i < question.options.length)
                               SizedBox(height: 90),
                             RectangularButton(
-                              text: question.options.keys.toList()[i], // 選択肢のテキスト
+                              text:
+                                  question.options.keys.toList()[i], // 選択肢のテキスト
                               buttonColor:
                                   const Color.fromARGB(255, 250, 240, 230),
                               textColor: Colors.black,

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
-import 'EducationCorrectScreen.dart'; // 正解画面
-import 'EducationIncorrectScreen.dart'; // 不正解画面
-import 'EducationModeScreen.dart'; // モード画面
-import 'EdcationResultScreen.dart'; // 結果画面
+import '../EducationCorrectScreen.dart'; //正解画面
+import '../EducationIncorrectScreen.dart'; //不正解画面
+import '../EdcationResultScreen.dart';
+import '../EducationModeScreen.dart';
+import 'dart:math'; // cos, sinを使うためにインポート
 
 // questionのデータモデル
 class Question {
@@ -49,7 +50,7 @@ Future<Question?> fetchQuestion(String questiontypeId) async {
   if (response.statusCode == 200) {
     return Question.fromJson(jsonDecode(response.body));
   } else {
-    throw Exception('Failed to load question');
+    throw Exception('問題の取得に失敗しました');
   }
 }
 
@@ -66,7 +67,7 @@ Future<String> submitAnswer(String questionId, String selectedAnswer) async {
   if (response.statusCode == 200) {
     return response.body; // "correct" または "incorrect"
   } else {
-    throw Exception('回答の送信に失敗しました');
+    throw Exception('Failed to submit answer');
   }
 }
 
@@ -123,33 +124,51 @@ class RectangularButton extends StatelessWidget {
   }
 }
 
-// 文字問題出題画面
-class LetterEducationScreen extends StatefulWidget {
+// 色問題出題画面
+class ColorEducationScreen extends StatefulWidget {
   final int questionCount;
   final int correctCount;
-  const LetterEducationScreen(
+  const ColorEducationScreen(
       {required this.questionCount, required this.correctCount});
 
   @override
-  _LetterEducationScreenState createState() =>
-      _LetterEducationScreenState(questionCount, correctCount);
+  _ColorEducationScreenState createState() =>
+      _ColorEducationScreenState(questionCount, correctCount);
 }
 
-class _LetterEducationScreenState extends State<LetterEducationScreen> {
+class _ColorEducationScreenState extends State<ColorEducationScreen> {
   late Future<Question?> questionFuture;
   late int questionCount; // このクラス内で管理する変数
   late int correctCount; // 正解数を追跡する変数
 
   // コンストラクタで初期値を設定
-  _LetterEducationScreenState(this.questionCount, this.correctCount);
+  _ColorEducationScreenState(this.questionCount, this.correctCount);
+
+  //gpt
+  //List<String> solvedQuestions = []; // 解いた問題を保存するリスト
 
   @override
   void initState() {
     super.initState();
-    questionFuture = fetchQuestion("KMS003"); // questiontypeIdを指定
+    questionFuture = fetchQuestion("KMS002"); // questiontypeIdを指定
   }
 
-  //やめるダイアログを表示
+// 答えによって色変えるよんカスタム関数の追加
+  Color _getColorFromAnswer(String answer) {
+    switch (answer.toLowerCase()) {
+      case "あか":
+        return Colors.red;
+      case "あお":
+        return Colors.blue;
+      case "みどり":
+        return Colors.green;
+      case "きいろ":
+        return Colors.yellow;
+      default:
+        return Colors.grey;
+    }
+  }
+
   void _showQuitDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -186,14 +205,16 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
     try {
       final result =
           await submitAnswer(question.question_id, selectedAnswerId); // 修正
-
+      debugPrint('問題数を増やす前: $questionCount');
+      // 問題数をカウント
       setState(() {
         questionCount++; // 問題数をカウント
         if (result == "correct") {
           correctCount++; // 正解数をカウント
         }
       });
-
+      debugPrint('問題数を増やした後: $questionCount');
+      debugPrint('正解数: $correctCount');
       if (questionCount >= 10) {
         // 10問解いたあとは結果画面に遷移
         Navigator.pushReplacement(
@@ -208,7 +229,7 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => EducationCorrectScreen(
-                    message: 'もじ',
+                    message: 'いろ',
                     questionCount: questionCount,
                     correctCount: correctCount)),
           );
@@ -217,13 +238,16 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => EducationIncorrectScreen(
-                    questionCount: questionCount, correctCount: correctCount)),
+                    message: 'いろ',
+                    questionCount: questionCount,
+                    correctCount: correctCount,
+                    correctAnswer: question.question_answer)),
           );
         }
         // 次の問題を取得する処理を呼び出す
         if (questionCount < 5) {
           setState(() {
-            questionFuture = fetchQuestion("KMS003"); // 次の問題を取得
+            questionFuture = fetchQuestion("KMS001"); // 次の問題を取得
           });
         }
       }
@@ -245,7 +269,7 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
         backgroundColor: const Color.fromARGB(141, 57, 154, 0),
         elevation: 0,
         title: const Text(
-          'もじもんだい',
+          'いろもんだい',
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -265,7 +289,6 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData) {
             final question = snapshot.data!;
-
             return Stack(
               children: [
                 // 背景装飾
@@ -328,7 +351,7 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                   child: Column(
                     children: [
                       const Text(
-                        'このもじと\nおなじもじをみつけよう！',
+                        'このいろと\nおなじいろをみつけよう！',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 24,
@@ -341,25 +364,21 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                       Container(
                         width: 160,
                         height: 160,
-                        decoration: const BoxDecoration(
-                          color: Color.fromARGB(255, 154, 208, 255),
+                        decoration: BoxDecoration(
+                          color: _getColorFromAnswer(
+                              question.question_answer), // メソッド呼び出しを許可
                           shape: BoxShape.circle,
                         ),
-                        child: Center(
-                          child: Text(
-                            question.question_theme, // question_theme（問題内容)を表示
-                            style: const TextStyle(fontSize: 40),
-                          ),
-                        ),
+                        child: Center(),
                       ),
                     ],
                   ),
                 ),
                 // 選択肢ボタンエリア
                 Positioned(
-                  bottom: screenSize.height * 0.20,
+                  bottom: screenSize.height * 0.18,
                   left: 0,
-                  right: 0,
+                  right: 20,
                   child: Column(
                     children: [
                       for (int i = 0; i < question.options.length; i += 2)
@@ -367,21 +386,22 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             if (i < question.options.length)
-                              RectangularButton(
-                                text: question.options.keys.toList()[i], //選択肢表示
-                                buttonColor:
-                                    const Color.fromARGB(255, 250, 240, 230),
-                                textColor: Colors.black,
-                                width: screenSize.width * 0.4,
-                                height: 70,
-                                onPressed: () {
-                                  final selectedAnswerId = question
-                                      .options.values
-                                      .toList()[i]; //question.idを送信
-                                  _handleAnswerSubmission(selectedAnswerId,
-                                      question, context); // 修正箇所
-                                },
-                              ),
+                              SizedBox(height: 90),
+                            RectangularButton(
+                              text:
+                                  question.options.keys.toList()[i], // 選択肢のテキスト
+                              buttonColor:
+                                  const Color.fromARGB(255, 250, 240, 230),
+                              textColor: Colors.black,
+                              width: screenSize.width * 0.4,
+                              height: 70,
+                              onPressed: () {
+                                final selectedAnswerId = question.options.values
+                                    .toList()[i]; // question_idを送信
+                                _handleAnswerSubmission(
+                                    selectedAnswerId, question, context);
+                              },
+                            ),
                             if (i + 1 < question.options.length)
                               RectangularButton(
                                 text: question.options.keys.toList()[i + 1],
@@ -393,8 +413,8 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                                 onPressed: () {
                                   final selectedAnswerId =
                                       question.options.values.toList()[i + 1];
-                                  _handleAnswerSubmission(selectedAnswerId,
-                                      question, context); // 修正箇所
+                                  _handleAnswerSubmission(
+                                      selectedAnswerId, question, context);
                                 },
                               ),
                           ],

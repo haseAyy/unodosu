@@ -1,8 +1,7 @@
+import 'HelpErrandScreen.dart';
 import 'package:flutter/material.dart';
-import 'Shape/ShapeEducationScreen.dart';
-import 'Color/ColorEducationScreen.dart'; // いろの画面
-import 'Letter/LetterEducationScreen.dart'; // もじの画面
-import 'Calc/CalcEducationScreen.dart';
+import 'HelpErrandScreen.dart';
+
 
 // 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
@@ -58,13 +57,12 @@ class RectangularButton extends StatelessWidget {
 }
 
 // 不正解画面
-class EducationIncorrectScreen extends StatelessWidget {
-  final String message; // 受け取るメッセージ（いろ、もじなど）
+class HelpErrandIncorrectScreen extends StatelessWidget {
+    final String message; // 受け取るメッセージ（いろ、もじなど）
   final int questionCount;
   final int correctCount;
   final String? correctAnswer; // 正解の答えを追加
-
-  const EducationIncorrectScreen({
+  const HelpErrandIncorrectScreen({
     required this.message,
     required this.questionCount,
     required this.correctCount,
@@ -78,13 +76,13 @@ class EducationIncorrectScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false, // 戻るボタンを非表示
-        backgroundColor: const Color.fromARGB(255, 255, 182, 193), // ピンク色の背景
+        backgroundColor: const Color.fromARGB(255, 222, 94, 94),
         elevation: 0,
         title: const Text(
-          'ざんねん！',
+          'ざんねん',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
             fontFamily: 'Comic Sans MS',
           ),
@@ -96,11 +94,11 @@ class EducationIncorrectScreen extends StatelessWidget {
         children: [
           // 上部のソフトな装飾
           Positioned(
-            top: -50,
-            left: -50,
+            top: -0.1 * screenSize.height,
+            left: -0.1 * screenSize.width,
             child: Container(
-              width: 150,
-              height: 150,
+              width: 0.3 * screenSize.width,
+              height: 0.3 * screenSize.width,
               decoration: const BoxDecoration(
                 color: Color.fromARGB(50, 255, 182, 193), // 薄いピンク
                 shape: BoxShape.circle,
@@ -109,11 +107,11 @@ class EducationIncorrectScreen extends StatelessWidget {
           ),
           // 下部のソフトな装飾
           Positioned(
-            bottom: -50,
-            right: -50,
+            bottom: -0.1 * screenSize.height,
+            right: -0.1 * screenSize.width,
             child: Container(
-              width: 200,
-              height: 200,
+              width: 0.4 * screenSize.width,
+              height: 0.4 * screenSize.width,
               decoration: const BoxDecoration(
                 color: Color.fromARGB(50, 173, 216, 230), // 薄い水色
                 shape: BoxShape.circle,
@@ -125,27 +123,28 @@ class EducationIncorrectScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                // アイコンのサイズを画面の高さに基づいて調整
+                Icon(
                   Icons.cancel_outlined,
-                  size: 150,
+                  size: 0.2 * screenSize.height, // 画面高さに基づいてアイコンのサイズを決定
                   color: Colors.red,
                 ),
-                const SizedBox(height: 20),
-                const Text(
+                SizedBox(height: 0.05 * screenSize.height), // 高さに基づいて余白を調整
+                Text(
                   'ざんねん！\nつぎもがんばろう！',
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 0.04 * screenSize.height, // 画面高さに基づいてフォントサイズを調整
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                     fontFamily: 'Comic Sans MS',
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 0.08 * screenSize.height), // 高さに基づいて余白を調整
                 // 解説部分
                 Container(
                   padding: const EdgeInsets.all(16),
-                  margin: const EdgeInsets.symmetric(horizontal: 30),
+                  margin: EdgeInsets.symmetric(horizontal: 0.1 * screenSize.width), // ここを修正
                   decoration: BoxDecoration(
                     color: Colors.transparent, // 背景色を透明に設定
                     border: Border.all(
@@ -155,19 +154,16 @@ class EducationIncorrectScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: const Color.fromARGB(255, 182, 182, 182).withOpacity(0.2),
                         blurRadius: 6,
                         offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-                  child: Text(
-                    correctAnswer != null
-                        ? '解説: このもんだいの答えは「$correctAnswer」だよ。次回はもっとがんばろう！'
-                        : '次回もがんばろう！', //correctAnswerがない場合
-
-                    style: const TextStyle(
-                      fontSize: 18,
+                  child: const Text(
+                    '解説: この問題は形を正しく識別することが求められました。次回はもっとがんばろう！',
+                    style: TextStyle(
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                       fontFamily: 'Comic Sans MS',
@@ -175,62 +171,23 @@ class EducationIncorrectScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 0.08 * screenSize.height), // 高さに基づいて余白を調整
                 RectangularButton(
-                    text: 'つぎのもんだい',
-                    width: screenSize.width * 0.6,
-                    height: screenSize.height * 0.1,
-                    buttonColor: const Color.fromARGB(255, 250, 240, 230),
-                    textColor: Colors.black,
-                    onPressed: () {
-                      // 遷移前にデバッグ出力
-                      print("遷移先画面: $message");
-                      print(
-                          "遷移前: questionCount: $questionCount, correctCount: $correctCount");
-                      // メッセージに基づいて遷移先を変更
-                      if (message == "いろ") {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ColorEducationScreen(
-                              questionCount: questionCount,
-                              correctCount: correctCount,
-                            ), // いろの画面
-                          ),
-                        );
-                      } else if (message == "もじ") {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LetterEducationScreen(
-                              questionCount: questionCount,
-                              correctCount: correctCount,
-                            ), // もじの画面
-                          ),
-                        );
-                      } else if (message == "けいさん") {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CalcEducationScreen(
-                              questionCount: questionCount,
-                              correctCount: correctCount,
-                            ), // けいさんの画面
-                          ),
-                        );
-                      } else {
-                        // デフォルトの遷移
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ShapeEducationScreen(
-                              questionCount: questionCount,
-                              correctCount: correctCount,
-                            ),
-                          ),
-                        );
-                      }
-                    }),
+                  text: 'つぎのもんだい',
+                  width: 0.6 * screenSize.width, // 幅を画面幅に基づいて調整
+                  height: 0.1 * screenSize.height, // 高さを画面高さに基づいて調整
+                  buttonColor: const Color.fromARGB(255, 250, 240, 230),
+                  textColor: Colors.black,
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>  HelpErrandScreen(questionCount: questionCount,
+                              correctCount: correctCount,),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),

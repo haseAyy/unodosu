@@ -1,36 +1,40 @@
-/*import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
-import 'EducationCorrectScreen.dart'; //正解画面
-import 'EducationIncorrectScreen.dart'; //不正解画面
-import 'EducationModeScreen.dart';
+import '../EducationCorrectScreen.dart'; // 正解画面
+import '../EducationIncorrectScreen.dart'; // 不正解画面
+import '../EducationModeScreen.dart'; // モード画面
+import '../EdcationResultScreen.dart'; // 結果画面
 
 // questionのデータモデル
 class Question {
-  final String question_id;
-  final String questiontype_id;
-  final String question_theme;
-  final String question_answer;
-  final String question_content;
+  final String questionId;
+  final String questionTypeid;
+  final String questionTheme;
+  final String questionAnswer;
+  final String questionContent;
+  final String questionImage;
   final Map<String, String> options;
 
   Question({
-    required this.question_id,
-    required this.questiontype_id,
-    required this.question_theme,
-    required this.question_answer,
-    required this.question_content,
+    required this.questionId,
+    required this.questionTypeid,
+    required this.questionTheme,
+    required this.questionAnswer,
+    required this.questionContent,
+    required this.questionImage,
     required this.options,
   });
 
   // JSONをQuestionオブジェクトに変換
   factory Question.fromJson(Map<String, dynamic> json) {
     return Question(
-      question_id: json['question_id'],
-      questiontype_id: json['questiontype_id'],
-      question_theme: json['question_theme'],
-      question_answer: json['question_answer'],
-      question_content: json['question_content'],
+      questionId: json['question_id'],
+      questionTypeid: json['questiontype_id'],
+      questionTheme: json['question_theme'],
+      questionAnswer: json['question_answer'],
+      questionContent: json['question_content'],
+      questionImage: json['question_image'],
       options: json['options'] != null && json['options'].isNotEmpty
           ? Map<String, String>.from(json['options'])
           : {'No options available': ''}, // デフォルト値
@@ -65,7 +69,7 @@ Future<String> submitAnswer(String questionId, String selectedAnswer) async {
   if (response.statusCode == 200) {
     return response.body; // "correct" または "incorrect"
   } else {
-    throw Exception('Failed to submit answer');
+    throw Exception('回答の送信に失敗しました');
   }
 }
 
@@ -121,23 +125,34 @@ class RectangularButton extends StatelessWidget {
     );
   }
 }
-// 計算問題出題画面
-class CalcEducationScreen extends StatefulWidget {
-  const CalcEducationScreen({super.key});
 
-    @override
-  _CalcEducationScreenState createState() => _CalcEducationScreenState();
+// 文字問題出題画面
+class LetterEducationScreen extends StatefulWidget {
+  final int questionCount;
+  final int correctCount;
+  const LetterEducationScreen(
+      {required this.questionCount, required this.correctCount});
+
+  @override
+  _LetterEducationScreenState createState() =>
+      _LetterEducationScreenState(questionCount, correctCount);
 }
 
-class _CalcEducationScreenState extends State<CalcEducationScreen> {
+class _LetterEducationScreenState extends State<LetterEducationScreen> {
   late Future<Question?> questionFuture;
+  late int questionCount; // このクラス内で管理する変数
+  late int correctCount; // 正解数を追跡する変数
+
+  // コンストラクタで初期値を設定
+  _LetterEducationScreenState(this.questionCount, this.correctCount);
 
   @override
   void initState() {
     super.initState();
-    questionFuture = fetchQuestion("KMS004"); // questiontypeIdを指定
+    questionFuture = fetchQuestion("KMS003"); // questiontypeIdを指定
   }
 
+  //やめるダイアログを表示
   void _showQuitDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -173,22 +188,53 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
       String selectedAnswerId, Question question, BuildContext context) async {
     try {
       final result =
-          await submitAnswer(question.question_id, selectedAnswerId); // 修正
-      if (result == "correct") {
+          await submitAnswer(question.questionId, selectedAnswerId); // 修正
+
+      setState(() {
+        questionCount++; // 問題数をカウント
+        if (result == "correct") {
+          correctCount++; // 正解数をカウント
+        }
+      });
+
+      if (questionCount >= 10) {
+        // 10問解いたあとは結果画面に遷移
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => const EducationCorrectScreen(message: 'けいさん')),
+              builder: (context) =>
+                  EdcationResultScreen(correctCount: correctCount)),
         );
       } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const EducationIncorrectScreen()),
-        );
+        if (result == "correct") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EducationCorrectScreen(
+                    message: 'もじ',
+                    questionCount: questionCount,
+                    correctCount: correctCount)),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EducationIncorrectScreen(
+                    message: 'もじ',
+                    questionCount: questionCount,
+                    correctCount: correctCount,
+                    correctAnswer: question.questionAnswer)),
+          );
+        }
+        // 次の問題を取得する処理を呼び出す
+        if (questionCount < 5) {
+          setState(() {
+            questionFuture = fetchQuestion("KMS003"); // 次の問題を取得
+          });
+        }
       }
     } catch (e) {
-      print("Error: $e");
+      print("エラー: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('エラーが発生しました')),
       );
@@ -205,7 +251,7 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
         backgroundColor: const Color.fromARGB(141, 57, 154, 0),
         elevation: 0,
         title: const Text(
-          'けいさんもんだい',
+          'もじもんだい',
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -225,6 +271,7 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData) {
             final question = snapshot.data!;
+
             return Stack(
               children: [
                 // 背景装飾
@@ -287,9 +334,8 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
                   child: Column(
                     children: [
                       const Text(
-                        'けいさんしてみよう！',
+                        'このもじと\nおなじもじをみつけよう！',
                         textAlign: TextAlign.center,
-                      
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -297,29 +343,30 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
                           fontFamily: 'Comic Sans MS',
                         ),
                       ),
-                     
-                     Positioned(
-                          top: screenSize.height * 0.25, // 上から25%の位置に配置
-                          left: 0,
-                          right: 0,
-                        child: Center(
-                          
-                          child: Text(
-                            question.question_theme, // question_theme（問題内容)を表示
-                            style: const TextStyle(fontSize: 50),
-                            softWrap: false, // 自動的な改行を無効にする
-                          ),
+                      const SizedBox(height: 60),
+                      Container(
+                        width: 160,
+                        height: 160,
+                        decoration: const BoxDecoration(
+                          color: Color.fromARGB(255, 154, 208, 255),
+                          shape: BoxShape.circle,
                         ),
-                     ),
-                      
+                        child: Center(
+                          child: Image.network(
+                            question.questionImage), // question_image（問題内容画像url)を表示
+                          //question.question_image,
+                          //style: const TextStyle(fontSize: 40),
+                          //),
+                        ),
+                      ),
                     ],
                   ),
                 ),
                 // 選択肢ボタンエリア
                 Positioned(
-                  bottom: screenSize.height * 0.18,
+                  bottom: screenSize.height * 0.20,
                   left: 0,
-                  right: 20,
+                  right: 0,
                   child: Column(
                     children: [
                       for (int i = 0; i < question.options.length; i += 2)
@@ -327,22 +374,21 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             if (i < question.options.length)
-                              SizedBox(height: 90),
-                            RectangularButton(
-                              text:
-                                  question.options.keys.toList()[i], // 選択肢のテキスト
-                              buttonColor:
-                                  const Color.fromARGB(255, 250, 240, 230),
-                              textColor: Colors.black,
-                              width: screenSize.width * 0.4,
-                              height: 70,
-                              onPressed: () {
-                                final selectedAnswerId = question.options.values
-                                    .toList()[i]; // question_idを送信
-                                _handleAnswerSubmission(
-                                    selectedAnswerId, question, context);
-                              },
-                            ),
+                              RectangularButton(
+                                text: question.options.keys.toList()[i], //選択肢表示
+                                buttonColor:
+                                    const Color.fromARGB(255, 250, 240, 230),
+                                textColor: Colors.black,
+                                width: screenSize.width * 0.4,
+                                height: 70,
+                                onPressed: () {
+                                  final selectedAnswerId = question
+                                      .options.values
+                                      .toList()[i]; //question.idを送信
+                                  _handleAnswerSubmission(selectedAnswerId,
+                                      question, context); // 修正箇所
+                                },
+                              ),
                             if (i + 1 < question.options.length)
                               RectangularButton(
                                 text: question.options.keys.toList()[i + 1],
@@ -354,8 +400,8 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
                                 onPressed: () {
                                   final selectedAnswerId =
                                       question.options.values.toList()[i + 1];
-                                  _handleAnswerSubmission(
-                                      selectedAnswerId, question, context);
+                                  _handleAnswerSubmission(selectedAnswerId,
+                                      question, context); // 修正箇所
                                 },
                               ),
                           ],
@@ -373,4 +419,3 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
     );
   }
 }
-*/

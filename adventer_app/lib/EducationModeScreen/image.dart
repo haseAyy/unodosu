@@ -14,6 +14,7 @@ class Question {
   final String question_theme;
   final String question_answer;
   final String question_content;
+  final String question_image;
   final Map<String, String> options;
 
   Question({
@@ -22,6 +23,7 @@ class Question {
     required this.question_theme,
     required this.question_answer,
     required this.question_content,
+    required this.question_image,
     required this.options,
   });
 
@@ -33,6 +35,7 @@ class Question {
       question_theme: json['question_theme'],
       question_answer: json['question_answer'],
       question_content: json['question_content'],
+       question_image: json['question_image'],
       options: json['options'] != null && json['options'].isNotEmpty
           ? Map<String, String>.from(json['options'])
           : {'No options available': ''}, // デフォルト値
@@ -236,7 +239,7 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => EducationIncorrectScreen(questionCount: questionCount,correctCount: correctCount)),
+                builder: (context) => EducationIncorrectScreen(message: 'いろ',questionCount: questionCount,correctCount: correctCount,correctAnswer: question.question_answer)),
           );
         }
         // 次の問題を取得する処理を呼び出す
@@ -341,38 +344,47 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
                   ),
                 ),
                 // 問題テキストと選択肢
-                Positioned(
-                  top: screenSize.height * 0.15,
-                  left: 0,
-                  right: 0,
-                  child: Column(
-                    children: [
-                      const Text(
-                        'このいろと\nおなじいろをみつけよう！',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          fontFamily: 'Comic Sans MS',
-                        ),
-                      ),
-                      const SizedBox(height: 60),
-                        Container(
-                          width: 160,
-                          height: 160,
-                          decoration: BoxDecoration(
-                            color: _getColorFromAnswer(question.question_answer), // メソッド呼び出しを許可
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            
-                          ),
-                        ),
+                // 問題テキストと選択肢
+Positioned(
+  top: screenSize.height * 0.15,
+  left: 0,
+  right: 0,
+  child: Column(
+    children: [
+      const Text(
+        'このいろと\nおなじいろをみつけよう！',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+          fontFamily: 'Comic Sans MS',
+        ),
+      ),
+      const SizedBox(height: 60),
+      // 画像表示
+      if (question.question_image.isNotEmpty) 
+        Image.network(
+          question.question_image,  // question_imageのURLを指定
+          width: 160,                 // 画像の幅
+          height: 160,                // 画像の高さ
+          fit: BoxFit.cover,          // 画像が枠に収まるように調整
+        ),
+      const SizedBox(height: 20),
+      // 色の表示（円形）
+      Container(
+        width: 160,
+        height: 160,
+        decoration: BoxDecoration(
+          color: _getColorFromAnswer(question.question_answer),
+          shape: BoxShape.circle,
+        ),
+        child: Center(),
+      ),
+    ],
+  ),
+),
 
-                    ],
-                  ),
-                ),
                 // 選択肢ボタンエリア
                 Positioned(
                   bottom: screenSize.height * 0.18,
