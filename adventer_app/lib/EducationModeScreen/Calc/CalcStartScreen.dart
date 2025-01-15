@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'CalcEducationScreen.dart'; // 計算問題出題画面
+import 'CalcSubtractionScreen.dart'; // 計算問題出題画面
+import 'CalcadditionScreen.dart'; // 足し算問題出題画面
+import 'CalcSubtractionScreen.dart';//引き算問題出題画面
 
 // 計算問題スタート画面
 class CalcStartScreen extends StatelessWidget {
@@ -39,6 +41,26 @@ class CalcStartScreen extends StatelessWidget {
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
+                      fontFamily: 'Dancing Script', // フォントを変更
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // 遊び方説明文
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: const Color.fromARGB(255, 147, 203, 209), width: 1),
+                    borderRadius: BorderRadius.circular(6),
+                    color: Colors.white,
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  child: const Text(
+                    'たしざんかひきざんをえらんで\nけいさんもんだいにちょうせんしよう', // 説明文
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.black,
+                      fontFamily: 'Dancing Script', // フォントを変更
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -51,7 +73,7 @@ class CalcStartScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CalcEducationScreen(questionCount: questionCount,correctCount: correctCount),
+                        builder: (context) => CalcadditionScreen(questionCount: questionCount, correctCount: correctCount),
                       ),
                     );
                   },
@@ -60,17 +82,54 @@ class CalcStartScreen extends StatelessWidget {
                       horizontal: screenWidth * 0.2,
                       vertical: screenHeight * 0.02,
                     ),
-                    backgroundColor: const Color.fromARGB(255, 255, 123, 0),
+                    backgroundColor: Colors.pink.shade200, // 可愛らしい色に変更
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    elevation: 5,
+                    elevation: 10, // 影を強調
+                    side: BorderSide(width: 2, color: Colors.white), // ボーダー追加
                   ),
                   child: const Text(
-                    'スタート',
+                    'たしざんスタート',
                     style: TextStyle(
-                      fontSize: 30,
+                      fontSize: 25,
                       color: Colors.white,
+                      fontFamily: 'Dancing Script', // フォントを変更
+                      fontWeight: FontWeight.bold, // 太字
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed: () {
+                    int questionCount = 0;  // 任意の値をセット
+                    int correctCount = 0;
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CalcSubtractionScreen(questionCount: questionCount, correctCount: correctCount),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.2,
+                      vertical: screenHeight * 0.02,
+                    ),
+                    backgroundColor: Colors.blue.shade300, // 可愛らしい色に変更
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    elevation: 10, // 影を強調
+                    side: BorderSide(width: 2, color: Colors.white), // ボーダー追加
+                  ),
+                  child: const Text(
+                    'ひきざんスタート',
+                    style: TextStyle(
+                      fontSize: 25,
+                      color: Colors.white,
+                      fontFamily: 'Dancing Script', // フォントを変更
+                      fontWeight: FontWeight.bold, // 太字
                     ),
                   ),
                 ),

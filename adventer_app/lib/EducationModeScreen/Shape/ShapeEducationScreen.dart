@@ -210,6 +210,7 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
     debugPrint('問題数を増やした後: $questionCount');
     debugPrint('正解数: $correctCount');
 
+
     if (questionCount >= 10) {
       // 10問目を解いた場合
       if (result == "correct") {
@@ -280,7 +281,7 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+        backgroundColor: Colors.blue.shade100,
         elevation: 0,
         title: const Text(
           'かたちもんだい',
@@ -339,7 +340,7 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
                       _showQuitDialog(context); // ダイアログを表示
                     },
                     style: TextButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+                      backgroundColor: Colors.blue.shade100,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20), // 角丸
                       ),

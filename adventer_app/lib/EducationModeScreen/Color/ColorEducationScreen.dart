@@ -156,7 +156,7 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
   @override
   void initState() {
     super.initState();
-    questionFuture = fetchQuestion("KMS003"); // questiontypeIdを指定
+    questionFuture = fetchQuestion("KMS002"); // questiontypeIdを指定
   }
 
   // やめるダイアログを表示
@@ -253,10 +253,10 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+        backgroundColor: Colors.orange.shade100,
         elevation: 0,
         title: const Text(
-          'かたちもんだい',
+          'いろもんだい',
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -312,7 +312,7 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
                       _showQuitDialog(context); // ダイアログを表示
                     },
                     style: TextButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+                      backgroundColor: Colors.orange.shade100,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20), // 角丸
                       ),

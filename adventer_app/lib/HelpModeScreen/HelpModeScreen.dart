@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'Cleaning/HelpCleaningListScreen.dart';
-import '../MeneScreen/HomeScreen.dart';
+import '../MenuScreen/HomeScreen.dart';
 import 'Errand/HelpErrandStartScreen.dart';
 
 class HelpModeScreen extends StatelessWidget {

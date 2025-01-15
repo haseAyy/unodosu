@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'ImageUploadScreen.dart';
 import 'MissionSettingsScreen.dart';
-import '../MeneScreen/HomeScreen.dart';
+import '../MenuScreen/HomeScreen.dart';
 
 // 四角のボタンを定義
 class RectangularButton extends StatelessWidget {

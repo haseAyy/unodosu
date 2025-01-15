@@ -1,3 +1,4 @@
+import 'package:adventer_app/EducationModeScreen/Calc/CalcStartScreen.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
@@ -25,56 +26,44 @@ class Question {
     required this.options,
   });
 
-  // ランダムに計算問題を生成
-  factory Question.generateRandomQuestion() {
+  // 引き算専用の問題を生成
+  factory Question.generateSubtractionQuestion() {
     final random = Random();
     late int num1 = random.nextInt(10);
     late int num2 = random.nextInt(10);
-    final isAddition = random.nextBool(); // 足し算か引き算かを決定
 
-    String questionContent;
-    String questionAnswer;
+    // 引き算の場合、num1がnum2より大きくなるように調整
+    if (num1 < num2) {
+      final temp = num1;
+      num1 = num2;
+      num2 = temp;
+    }
+
+    String questionContent = '$num1 ー $num2';
+    String questionAnswer = (num1 - num2).toString();
     Map<String, String> options = {};
 
-    if (isAddition) {
-      questionContent = '$num1 + $num2';
-      questionAnswer = (num1 + num2).toString();
-    } else {
-      // 引き算の場合、num1がnum2より大きくなるように調整
-      if (num1 < num2) {
-        final temp = num1;
-        num1 = num2;
-        num2 = temp;
-      }
-      questionContent = '$num1 ー $num2';
-      questionAnswer = (num1 - num2).toString();
-    }
-
     // Setを使って一意な不正解を生成（正解を除いた3つ）
-  Set<String> incorrectAnswers = {};
-  while (incorrectAnswers.length < 3) {
-    final randomIncorrect = random.nextInt(16).toString();  // ランダムな誤答
-    if (randomIncorrect != questionAnswer) {
-      incorrectAnswers.add(randomIncorrect);
+    Set<String> incorrectAnswers = {};
+    while (incorrectAnswers.length < 3) {
+      final randomIncorrect = random.nextInt(16).toString(); // ランダムな誤答
+      if (randomIncorrect != questionAnswer) {
+        incorrectAnswers.add(randomIncorrect);
+      }
     }
-  }
-  // 不正解の選択肢と正解をマップに追加
-  options[questionAnswer] = 'correct';
-  incorrectAnswers.forEach((answer) {
-    options[answer] = 'incorrect';
-  });
+    // 不正解の選択肢と正解をマップに追加
+    options[questionAnswer] = 'correct';
+    incorrectAnswers.forEach((answer) {
+      options[answer] = 'incorrect';
+    });
 
-
-
-  // 選択肢の順番をランダムにするため、選択肢のリストをシャッフル
-  List<String> optionKeys = options.keys.toList()..shuffle();
-
-    
+    // 選択肢の順番をランダムにするため、選択肢のリストをシャッフル
+    List<String> optionKeys = options.keys.toList()..shuffle();
 
     return Question(
       questionId: DateTime.now().millisecondsSinceEpoch.toString(),
       questionTypeId: 'basic_math',
-      questionTheme: 'addition_subtraction',
+      questionTheme: 'subtraction',
       questionAnswer: questionAnswer,
       questionContent: questionContent,
       options: Map.fromIterable(optionKeys, key: (e) => e, value: (e) => options[e]!),
@@ -134,33 +123,28 @@ class RectangularButton extends StatelessWidget {
   }
 }
 
-// 計算問題出題画面
-class CalcEducationScreen extends StatefulWidget {
+// 引き算問題出題画面
+class CalcSubtractionScreen extends StatefulWidget {
   final int questionCount;
   final int correctCount;
-  const CalcEducationScreen({required this.questionCount,required this.correctCount});
+  const CalcSubtractionScreen({required this.questionCount, required this.correctCount});
 
   @override
-  _CalcEducationScreenState createState() => _CalcEducationScreenState();
+  _CalcSubtractionScreenState createState() => _CalcSubtractionScreenState();
 }
 
-class _CalcEducationScreenState extends State<CalcEducationScreen> {
+class _CalcSubtractionScreenState extends State<CalcSubtractionScreen> {
   late int questionCount;
   late int correctCount;
   late Question currentQuestion; // 現在の問題
-
-  // コンストラクタで初期値を設定
-  _CalcEducationScreenState();
 
   @override
   void initState() {
     super.initState();
     questionCount = widget.questionCount;
     correctCount = widget.correctCount;
-    currentQuestion = Question.generateRandomQuestion(); // ランダムな問題を生成
-
+    currentQuestion = Question.generateSubtractionQuestion(); // 引き算専用の問題を生成
     debugPrint('生成された問題: ${currentQuestion.questionContent}, 正解: ${currentQuestion.questionAnswer}');
-  
   }
 
   // やめるダイアログを表示
@@ -184,7 +168,7 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (_) => const EducationModeScreen()));
+                        builder: (_) => const CalcStartScreen()));
               },
               child: const Text('やめる'),
             ),
@@ -196,86 +180,75 @@ class _CalcEducationScreenState extends State<CalcEducationScreen> {
 
   // ユーザーが答えを選んだときに呼び出すメソッド
   void _handleAnswerSubmission(String selectedAnswerId) {
-  String? result = currentQuestion.options[selectedAnswerId];
+    String? result = currentQuestion.options[selectedAnswerId];
 
-  // 現在の正解を一時保存
-  final correctAnswer = currentQuestion.questionAnswer;
-  debugPrint('画面遷移前の正解: $correctAnswer');
+    // 現在の正解を一時保存
+    final correctAnswer = currentQuestion.questionAnswer;
+    debugPrint('画面遷移前の正解: $correctAnswer');
 
-  setState(() {
-    questionCount++;
-    if (result == "correct") {
-      correctCount++;
+    setState(() {
+      questionCount++;
+      if (result == "correct") {
+        correctCount++;
 
-      if (questionCount >= 10) {
-        // 結果画面へ遷移
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => EdcationResultScreen(
-              correctCount: correctCount
+        if (questionCount >= 10) {
+          // 結果画面へ遷移
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EdcationResultScreen(
+                correctCount: correctCount,
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          // 正解画面に遷移
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EducationCorrectScreen(
+                correctAnswer: '${currentQuestion.questionContent}＝${correctAnswer}',
+                questionCount: questionCount,
+                correctCount: correctCount,
+                nextScreenFlag: 'subtraction',
+              ),
+            ),
+          );
+        }
       } else {
-        // 正解画面に遷移
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => EducationCorrectScreen(
-              correctAnswer: '${currentQuestion.questionContent}＝${correctAnswer}',
-              questionCount: questionCount,
-              correctCount: correctCount,
-              nextScreenFlag: 'calc',
+        if (questionCount >= 10) {
+          // 10問目を間違えた場合、不正解画面を経由して結果画面へ遷移
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EducationIncorrectScreen(
+                correctAnswer: '${currentQuestion.questionContent}＝${correctAnswer}',
+                questionCount: questionCount,
+                correctCount: correctCount,
+                nextScreenFlag: 'result', // 結果画面へのフラグを設定
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          // 不正解画面に遷移
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EducationIncorrectScreen(
+                correctAnswer: '${currentQuestion.questionContent}＝${correctAnswer}',
+                questionCount: questionCount,
+                correctCount: correctCount,
+                nextScreenFlag: 'subtraction',
+              ),
+            ),
+          );
+        }
       }
-    } else {
-      if (questionCount >= 10) {
-        // 10問目を間違えた場合、不正解画面を経由して結果画面へ遷移
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => EducationIncorrectScreen(
-              correctAnswer: '${currentQuestion.questionContent}＝${correctAnswer}',
-              questionCount: questionCount,
-              correctCount: correctCount,
-              nextScreenFlag: 'result', // 結果画面へのフラグを設定
-            ),
-          ),
-        );
+    });
 
-        debugPrint('correctAnswer: $correctAnswer');
-        debugPrint('currentQuestion.questionContent: ${currentQuestion.questionContent}');
-        
-      } else {
-        // 不正解画面に遷移
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => EducationIncorrectScreen(
-              correctAnswer: '${currentQuestion.questionContent}＝${correctAnswer}',
-              questionCount: questionCount,
-              correctCount: correctCount,
-              nextScreenFlag: 'calc',
-            ),
-          ),
-        );
-      }
-    }
-  });
-
-  debugPrint('correctAnswer: $correctAnswer');
-  debugPrint('currentQuestion.questionContent: ${currentQuestion.questionContent}');
-
-/*
-  // 次の問題を生成
-  if (questionCount < 10) {
-    //currentQuestion = Question.generateRandomQuestion();
-    debugPrint('次の問題を生成: ${currentQuestion.questionContent}');
-  }*/
-}
+    debugPrint('correctAnswer: $correctAnswer');
+    debugPrint('currentQuestion.questionContent: ${currentQuestion.questionContent}');
+  }
 
   @override
   Widget build(BuildContext context) {

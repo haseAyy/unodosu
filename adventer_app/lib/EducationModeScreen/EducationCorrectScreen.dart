@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Shape/ShapeEducationScreen.dart';
-import 'Calc/CalcEducationScreen.dart';
+import 'Calc/CalcadditionScreen.dart';
+import 'Calc/CalcSubtractionScreen.dart';
 import 'Color/ColorEducationScreen.dart';
 import 'Letter/LetterEducationScreen.dart'; // 他の画面もインポート
 
@@ -121,8 +122,14 @@ class _EducationCorrectScreenState extends State<EducationCorrectScreen>
           questionCount: widget.questionCount,
           correctCount: widget.correctCount,
         );
-      case 'calc':
-        return CalcEducationScreen(
+      case 'addition':
+        return CalcadditionScreen(
+          questionCount: widget.questionCount,
+          correctCount: widget.correctCount,
+        );
+
+      case 'subtraction':
+        return CalcSubtractionScreen(
           questionCount: widget.questionCount,
           correctCount: widget.correctCount,
         );

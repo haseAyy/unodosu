@@ -1,6 +1,7 @@
 import 'package:adventer_app/EducationModeScreen/Shape/ShapeEducationScreen.dart';
 import 'Color/ColorEducationScreen.dart';
-import 'Calc/CalcEducationScreen.dart';
+import 'Calc/CalcadditionScreen.dart';
+import 'Calc/CalcSubtractionScreen.dart';
 import 'Letter/LetterEducationScreen.dart';
 import 'EdcationResultScreen.dart';
 
@@ -116,8 +117,14 @@ class _EducationIncorrectScreenState extends State<EducationIncorrectScreen>
           questionCount: widget.questionCount,
           correctCount: widget.correctCount,
         );
-      case 'calc':
-        return CalcEducationScreen(
+      case 'addition':
+        return CalcadditionScreen(
+          questionCount: widget.questionCount,
+          correctCount: widget.correctCount,
+        );
+
+      case 'subtraction':
+        return CalcSubtractionScreen(
           questionCount: widget.questionCount,
           correctCount: widget.correctCount,
         );
