@@ -58,12 +58,12 @@ class RectangularButton extends StatelessWidget {
 
 // 不正解画面
 class HelpErrandIncorrectScreen extends StatelessWidget {
-    final String message; // 受け取るメッセージ（いろ、もじなど）
+    //final String message; // 受け取るメッセージ（いろ、もじなど）
   final int questionCount;
   final int correctCount;
   final String? correctAnswer; // 正解の答えを追加
   const HelpErrandIncorrectScreen({
-    required this.message,
+    //required this.message,
     required this.questionCount,
     required this.correctCount,
     this.correctAnswer, //オプションにする
@@ -160,9 +160,12 @@ class HelpErrandIncorrectScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: const Text(
-                    '解説: この問題は形を正しく識別することが求められました。次回はもっとがんばろう！',
-                    style: TextStyle(
+                  child:  Text(
+                     correctAnswer != null
+                        ? '解説: このもんだいの答えは「$correctAnswer」だよ。次回はもっとがんばろう！'
+                        : '次回もがんばろう！', //correctAnswerがない場合
+                    
+                    style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,

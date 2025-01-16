@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'HelpErrandCorrectScreen.dart';
 import 'HelpErrandIncrrectScreen.dart';
 import 'HelpErrandResult.dart';
+import 'dart:developer';
 
 // questionのデータモデル
 class Question {
@@ -42,6 +43,8 @@ class Question {
   }
 }
 
+  
+
 // APIリクエストを送信して、問題を取得するメソッド
 Future<Question?> fetchQuestion(String questiontypeId) async {
   final response = await http.get(
@@ -53,8 +56,10 @@ Future<Question?> fetchQuestion(String questiontypeId) async {
     return Question.fromJson(jsonDecode(response.body));
   } else {
     throw Exception('Failed to load question');
+  
   }
 }
+
 
 Future<String> submitAnswer(String questionId, String selectedAnswer) async {
   final response = await http.post(
@@ -65,6 +70,7 @@ Future<String> submitAnswer(String questionId, String selectedAnswer) async {
       'answer': selectedAnswer,
     }),
   );
+  log('Response body: ${response.body}');
 
   if (response.statusCode == 200) {
     return response.body; // "correct" または "incorrect"
@@ -193,6 +199,7 @@ class _HelpErrandScreenState extends State<HelpErrandScreen> {
       },
     );
   }
+  
   // ユーザーが答えを選んだときに呼び出すメソッド
   void _handleAnswerSubmission(
       String selectedAnswerId, Question question, BuildContext context) async {
@@ -221,7 +228,7 @@ class _HelpErrandScreenState extends State<HelpErrandScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => HelpErrandCorrectScreen(
-                    message: 'おかね',
+                    
                     questionCount: questionCount,
                     correctCount: correctCount)),
           );
@@ -230,18 +237,20 @@ class _HelpErrandScreenState extends State<HelpErrandScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => HelpErrandIncorrectScreen(
-                    message: 'おかね',
+                 
                     questionCount: questionCount,
                     correctCount: correctCount,
                     correctAnswer: question.questionAnswer)),
           );
         }
         // 次の問題を取得する処理を呼び出す
-        if (questionCount < 5) {
-          setState(() {
-            questionFuture = fetchQuestion("KMS001"); // 次の問題を取得
-          });
-        }
+       if (questionCount < 5) {
+            // 必要なときのみ setState を呼ぶ
+            setState(() {
+                questionFuture = fetchQuestion("KMS006");
+            });
+          }
+
       }
     } catch (e) {
       print("エラー: $e");
@@ -488,51 +497,49 @@ class _HelpErrandScreenState extends State<HelpErrandScreen> {
               ],
             ),
           ),
-          // ボタンエリア
+          // 選択ボタンエリア
           Positioned(
-            bottom: screenSize.height * 0.15, // 位置調整
+            bottom: screenSize.height * 0.18, // 位置調整
             left: 0,
             right: 0,
            
              child: Column(
-                    children: [
-                      for (int i = 0; i < question.options.length; i += 2)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            if (i < question.options.length)
-                              RectangularButton(
-                                text: question.options.keys.toList()[i], //選択肢表示
-                                buttonColor:
-                                    const Color.fromARGB(255, 250, 240, 230),
-                                textColor: Colors.black,
-                                width: screenSize.width * 0.4,
-                                height: 70,
-                                onPressed: () {
-                                  final selectedAnswerId = question
-                                      .options.values
-                                      .toList()[i]; //question.idを送信
-                                  _handleAnswerSubmission(selectedAnswerId,
-                                      question, context); // 修正箇所
-                                },
-                              ),
-                            if (i + 1 < question.options.length)
-                              RectangularButton(
-                                text: question.options.keys.toList()[i + 1],
-                                buttonColor:
-                                    const Color.fromARGB(255, 250, 240, 230),
-                                textColor: Colors.black,
-                                width: screenSize.width * 0.4,
-                                height: 70,
-                                onPressed: () {
-                                  final selectedAnswerId =
-                                      question.options.values.toList()[i + 1];
-                                  _handleAnswerSubmission(selectedAnswerId,
-                                      question, context); // 修正箇所
-                                },
-                              ),
-                          ],
-                        ),
+  children: [
+    for (int i = 0; i < question.options.length; i += 2) ...[
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          if (i < question.options.length)
+            RectangularButton(
+              text: question.options.keys.toList()[i],
+              buttonColor: const Color.fromARGB(255, 250, 240, 230),
+              textColor: Colors.black,
+              width: screenSize.width * 0.4,
+              height: 70,
+              onPressed: () {
+                final selectedAnswerId = question.options.values.toList()[i];
+                _handleAnswerSubmission(selectedAnswerId, question, context);
+              },
+            ),
+          if (i + 1 < question.options.length)
+            RectangularButton(
+              text: question.options.keys.toList()[i + 1],
+              buttonColor: const Color.fromARGB(255, 250, 240, 230),
+              textColor: Colors.black,
+              width: screenSize.width * 0.4,
+              height: 70,
+              onPressed: () {
+                final selectedAnswerId =
+                    question.options.values.toList()[i + 1];
+                _handleAnswerSubmission(selectedAnswerId, question, context);
+              },
+            ),
+        ],
+      ),
+    
+                        if (i + 2 < question.options.length) // 最後の行には間隔を追加しない
+                                const SizedBox(height: 10), // 上下の間隔を設定
+    ],
                     ],
                   ),
                 ),

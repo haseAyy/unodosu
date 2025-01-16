@@ -57,12 +57,12 @@ class RectangularButton extends StatelessWidget {
 
 // 正解画面
 class HelpErrandCorrectScreen extends StatelessWidget {
-  final String message; // 受け取るメッセージ（いろ、もじなど）
+  
 
   final int questionCount;
   final int correctCount;
   const HelpErrandCorrectScreen({
-    required this.message,
+   
     required this.questionCount,
     required this.correctCount,
   });
