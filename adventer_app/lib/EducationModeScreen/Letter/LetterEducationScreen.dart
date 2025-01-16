@@ -1,80 +1,59 @@
-import 'package:flutter/material.dart';
-import 'dart:convert'; // JSONデータを扱うため
-import 'package:http/http.dart' as http;
-import '../EducationCorrectScreen.dart'; //正解画面
-import '../EducationIncorrectScreen.dart'; //不正解画面
-import '../EdcationResultScreen.dart';//結果画面
+import 'package:adventer_app/EducationModeScreen/Color/ColorEducationScreen.dart';
 import '../EducationModeScreen.dart';
+import 'package:flutter/material.dart';
+import 'dart:math';
+import '../EducationCorrectScreen.dart'; // 正解画面
+import '../EducationIncorrectScreen.dart'; // 不正解画面
+import '../EdcationResultScreen.dart'; // 結果画面
 
-
-// questionのデータモデル
 class Question {
-  final String questionId;
-  final String questionTypeId;
-  final String questionTheme;
-  final String questionAnswer;
-  final String questionContent;
-  final String questionImage;
-  final Map<String, String> options;
+  final String question_content; // 問題の内容（例：ひらがな）
+  final String correct_answer;
+  final List<String> options; // 選択肢
 
   Question({
-    required this.questionId,
-    required this.questionTypeId,
-    required this.questionTheme,
-    required this.questionAnswer,
-    required this.questionContent,
-    required this.questionImage,
+    required this.question_content,
+    required this.correct_answer,
     required this.options,
   });
 
-  // JSONをQuestionオブジェクトに変換
-  factory Question.fromJson(Map<String, dynamic> json) {
+  factory Question.generateHiraganaQuestion() {
+    final random = Random();
+    final hiraganaList = [
+      'あ', 'い', 'う', 'え', 'お',
+      'か', 'き', 'く', 'け', 'こ',
+      'さ', 'し', 'す', 'せ', 'そ',
+      'た', 'ち', 'つ', 'て', 'と',
+      'な', 'に', 'ぬ', 'ね', 'の',
+      'は', 'ひ', 'ふ', 'へ', 'ほ',
+      'ま', 'み', 'む', 'め', 'も',
+      'や', 'ゆ', 'よ',
+      'ら', 'り', 'る', 'れ', 'ろ',
+      'わ', 'を', 'ん'
+    ];
+
+    // 問題と正解を生成
+    final questionAnswer = hiraganaList[random.nextInt(hiraganaList.length)];
+    final incorrectAnswers = <String>{};
+
+    while (incorrectAnswers.length < 3) {
+      final choice = hiraganaList[random.nextInt(hiraganaList.length)];
+      if (choice != questionAnswer) {
+        incorrectAnswers.add(choice);
+      }
+    }
+
+    final options = [questionAnswer, ...incorrectAnswers.toList()];
+    options.shuffle();
+
     return Question(
-      questionId: json['question_id'],
-      questionTypeId: json['questiontype_id'],
-      questionTheme: json['question_theme'],
-      questionAnswer: json['question_answer'],
-      questionContent: json['question_content'],
-      questionImage: json['question_image'],
-      options: json['options'] != null && json['options'].isNotEmpty
-          ? Map<String, String>.from(json['options'])
-          : {'No options available': ''}, // デフォルト値
+      question_content: 'このひらがなは何？',
+      correct_answer: questionAnswer,
+      options: options,
     );
   }
 }
 
-// APIリクエストを送信して、問題を取得するメソッド
-Future<Question?> fetchQuestion(String questionTypeId) async {
-  final response = await http.get(
-    Uri.parse(
-        'http://10.24.108.170:8080/random-text-question?questiontype_id=$questionTypeId'),
-  );
-
-  if (response.statusCode == 200) {
-    return Question.fromJson(jsonDecode(response.body));
-  } else {
-    throw Exception('問題の取得に失敗しました');
-  }
-}
-
-Future<String> submitAnswer(String questionId, String selectedAnswer) async {
-  final response = await http.post(
-    Uri.parse('http://10.24.108.170:8080/submit-answer'),
-    headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'questionId': questionId,
-      'answer': selectedAnswer,
-    }),
-  );
-
-  if (response.statusCode == 200) {
-    return response.body; // "correct" または "incorrect"
-  } else {
-    throw Exception('回答の送信に失敗しました');
-  }
-}
-
-// 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
@@ -127,122 +106,104 @@ class RectangularButton extends StatelessWidget {
   }
 }
 
-// 文字問題出題画面
 class LetterEducationScreen extends StatefulWidget {
   final int questionCount;
   final int correctCount;
-  const LetterEducationScreen({required this.questionCount,required this.correctCount});
 
+  const LetterEducationScreen({required this.questionCount, required this.correctCount});
 
   @override
-  _LetterEducationScreenState createState() => _LetterEducationScreenState(questionCount,correctCount);
-
+  _LetterEducationScreenState createState() => _LetterEducationScreenState();
 }
 
 class _LetterEducationScreenState extends State<LetterEducationScreen> {
-  late Future<Question?> questionFuture;
-  late int questionCount; // このクラス内で管理する変数
-  late int correctCount; // 正解数を追跡する変数 
+  late int questionCount;
+  late int correctCount;
   late Question currentQuestion;
-
-
-  // コンストラクタで初期値を設定
-  _LetterEducationScreenState(this.questionCount,this.correctCount);
-
-  //gpt
-  //List<String> solvedQuestions = []; // 解いた問題を保存するリスト
-  
 
   @override
   void initState() {
     super.initState();
-    questionFuture = fetchQuestion("KMS003"); // questiontypeIdを指定
+    questionCount = widget.questionCount;
+    correctCount = widget.correctCount;
+    currentQuestion = Question.generateHiraganaQuestion();
   }
 
-  // やめるダイアログを表示
-  void _showQuitDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('ほんとうにやめる？'),
-          content: const Text('もんだいをおわってもいいですか？'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // ダイアログを閉じる
-              },
-              child: const Text('キャンセル'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // ダイアログを閉じて、問題一覧画面に戻る
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const EducationModeScreen()));
-              },
-              child: const Text('やめる'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  void _handleAnswerSubmission(String selectedAnswer) {
+    final correctAnswer = currentQuestion.correct_answer;
 
-  // ユーザーが答えを選んだときに呼び出すメソッド
-  void _handleAnswerSubmission(
-      String selectedAnswerId, Question question, BuildContext context) async {
-    try {
-      final result =
-          await submitAnswer(question.questionId, selectedAnswerId); // 修正
-
-
-    
-    debugPrint('問題数を増やす前: $questionCount');
-    // 問題数をカウント
     setState(() {
-      questionCount++; // 問題数をカウント
-      if (result == "correct") {
-        correctCount++; // 正解数をカウント
+      questionCount++;
+      if (selectedAnswer == correctAnswer) {
+        correctCount++;
       }
     });
-    debugPrint('問題数を増やした後: $questionCount');
-    debugPrint('正解数: $correctCount');
+    
 
-
-      if (questionCount >= 10) {
-        // 10問解いたあとは結果画面に遷移
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => EdcationResultScreen(correctCount: correctCount)),
-        );
-      } else {
-        if (result == "correct") {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => EducationCorrectScreen(correctAnswer: currentQuestion.questionAnswer,questionImage: question.questionImage,questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'letter')),
+        if (questionCount >= 10) {
+          //１０問目を解いた場合
+          if (selectedAnswer == correctAnswer) {
+            //正解の場合は正解画面に遷移
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                  EducationCorrectScreen(
+                  correctAnswer: " \n「${currentQuestion.question_content}」",
+                  questionCount: questionCount,
+                  correctCount: correctCount,
+                  nextScreenFlag: 'result')),
+          ).then((_){
+            //正解画面が閉じられた後に結果画面へ遷移
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                 builder: (context) => 
+                  EdcationResultScreen(correctCount: correctCount),
+            ),
           );
+          
+          }); 
         } else {
+          // 間違えた場合は不正解画面を経由して結果画面へ遷移
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => EducationIncorrectScreen(correctAnswer: currentQuestion.questionAnswer,questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'letter')),
+              builder: (context) => EducationIncorrectScreen(
+                correctAnswer: correctAnswer,
+                questionCount: questionCount,
+                correctCount: correctCount,
+                nextScreenFlag: 'letter',
+              ),
+            ),
           );
         }
-        // 次の問題を取得する処理を呼び出す
-        if (questionCount < 10) {
-          setState(() {
-            questionFuture = fetchQuestion("KMS003"); // 次の問題を取得
-          });
+      } else {
+        //10問未満の場合
+        if(selectedAnswer == correctAnswer){
+          Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EducationCorrectScreen(
+              correctAnswer: '${currentQuestion.question_content}=${correctAnswer}',
+              questionCount: questionCount,
+              correctCount: correctCount,
+              nextScreenFlag: 'letter')),
+          );
+        }else{
+          Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => EducationIncorrectScreen(
+                  correctAnswer: correctAnswer,
+                  questionCount: questionCount,
+                  correctCount: correctCount,
+                  nextScreenFlag: 'letter')), // 'shape' フラグを渡す
+        );
         }
-      }
-    } catch (e) {
-      print("エラー: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('エラーが発生しました')),
-      );
+        
+        
+
     }
   }
 
@@ -256,7 +217,7 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
         backgroundColor: const Color.fromARGB(141, 57, 154, 0),
         elevation: 0,
         title: const Text(
-          'かたちもんだい',
+          'ひらがなもんだい',
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -267,152 +228,174 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
         centerTitle: true,
       ),
       backgroundColor: Colors.white,
-      body: FutureBuilder<Question?>(
-        future: questionFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('エラー: ${snapshot.error}'));
-          } else if (snapshot.hasData) {
-            final question = snapshot.data!;
-            return Stack(
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: CustomPaint(
+              painter: SchoolBackgroundPainter(),
+            ),
+          ),
+
+          Positioned(
+            bottom: 30,
+            left: 10,
+            child: TextButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('ほんとうにやめる？'),
+                    content: const Text('もんだいをおわってもいいですか？'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('キャンセル'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const EducationModeScreen(),
+                          ),
+                        ),
+                        child: const Text('やめる'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+              ),
+              child: const Text(
+                'やめる',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontFamily: 'Comic Sans MS',
+                ),
+              ),
+            ),
+          ),
+
+          Positioned(
+            top: screenSize.height * 0.1,
+            left: 20,
+            right: 20,
+            child: Column(
               children: [
-                // 背景装飾
-                Positioned(
-                  top: -50,
-                  left: -50,
-                  child: Container(
-                    width: 150,
-                    height: 150,
-                    decoration: const BoxDecoration(
-                      color: Color.fromARGB(50, 255, 182, 193),
-                      shape: BoxShape.circle,
-                    ),
+                Text(
+                  currentQuestion.question_content,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontFamily: 'Comic Sans MS',
                   ),
-                ),
-                Positioned(
-                  bottom: -50,
-                  right: -50,
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    decoration: const BoxDecoration(
-                      color: Color.fromARGB(50, 173, 216, 230),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-                // 問題中断ボタン（左下）
-                Positioned(
-                  bottom: 30,
-                  left: 10,
-                  child: TextButton(
-                    onPressed: () {
-                      _showQuitDialog(context); // ダイアログを表示
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(141, 57, 154, 0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20), // 角丸
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 25),
-                    ),
-                    child: const Text(
-                      'やめる',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white, // テキストカラー（白）
-                        fontFamily: 'Comic Sans MS', // フォント
-                      ),
-                    ),
-                  ),
-                ),
-                // 問題テキストと選択肢
-                Positioned(
-                  top: screenSize.height * 0.15,
-                  left: 0,
-                  right: 0,
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 60),
-                      Text(
-                        question.questionContent,
-                        style: const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          fontFamily: 'Comic Sans MS',
-                        ),
-                      ),
-                      SizedBox(
-                        width: screenSize.width * 0.6,
-                        height: screenSize.height * 0.15,
-                        
-                        child: Center(
-                          child: Image.network(
-                            question.questionImage),
-                        )
-                      ),
-                    ],
-                  ),
-                ),
-                // 選択肢ボタンエリア
-                Positioned(
-                  bottom: screenSize.height * 0.18,
-                  left: 0,
-                  right: 20,
-                  child: Column(
-                    children: [
-                      for (int i = 0; i < question.options.length; i += 2)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            if (i < question.options.length)
-                              SizedBox(height: 90),
-                            RectangularButton(
-                              text: question.options.keys.toList()[i], // 選択肢のテキスト
-                              buttonColor:
-                                  const Color.fromARGB(255, 250, 240, 230),
-                              textColor: Colors.black,
-                              width: screenSize.width * 0.4,
-                              height: 70,
-                              onPressed: () {
-                                final selectedAnswerId =
-                                    question.options.values.toList()[i];
-                                _handleAnswerSubmission(
-                                    selectedAnswerId, question, context);
-                              },
-                            ),
-                            if (i + 1 < question.options.length)
-                              RectangularButton(
-                                text: question.options.keys.toList()[i + 1],
-                                buttonColor:
-                                    const Color.fromARGB(255, 250, 240, 230),
-                                textColor: Colors.black,
-                                width: screenSize.width * 0.4,
-                                height: 70,
-                                onPressed: () {
-                                  final selectedAnswerId =
-                                      question.options.values.toList()[i + 1];
-                                  _handleAnswerSubmission(
-                                      selectedAnswerId, question, context);
-                                },
-                              ),
-                          ],
-                        ),
-                    ],
-                  ),
+                  textAlign: TextAlign.center,
                 ),
               ],
-            );
-          } else {
-            return const Center(child: Text('データがありません。'));
-          }
-        },
+            ),
+          ),
+
+          Positioned(
+            top: screenSize.height * 0.25,
+            left: 0,
+            right: 0,
+            child: Center(
+            child: Text(
+              currentQuestion.correct_answer,
+              style: const TextStyle(
+                fontSize: 64, // 大きく表示
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                fontFamily: 'Comic Sans MS',
+              ),
+            ),
+          ),
+        ),
+
+
+          // 選択肢ボタンエリア
+          Positioned(
+            bottom: screenSize.height * 0.18,
+            left: 0,
+            right: 20,
+            child: Column(
+              children: [
+                for (int i = 0; i < currentQuestion.options.length; i += 2)
+                Row(
+                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      if (i < currentQuestion.options.length)
+                        SizedBox(height: 90),
+                
+                  RectangularButton(
+                    text: currentQuestion.options[i], // 選択肢のテキスト
+                    buttonColor: const Color.fromARGB(255, 250, 240, 230),
+                    textColor: Colors.black,
+                    width: screenSize.width * 0.4,
+                    height: 70,
+                    onPressed: () {
+                         // currentQuestion.options.keys.toList()[i];
+                      _handleAnswerSubmission(currentQuestion.options[i]);
+                    },
+                  ),
+                   if (i + 1 < currentQuestion.options.length)
+                        RectangularButton(
+                          text: currentQuestion.options[i + 1],
+                          buttonColor: const Color.fromARGB(255, 250, 240, 230),
+                          textColor: Colors.black,
+                          width: screenSize.width * 0.4,
+                          height: 70,
+                          onPressed: () {
+                            final selectedAnswerId =
+                                currentQuestion.options[i + 1];
+                            _handleAnswerSubmission(selectedAnswerId);
+                          },
+                        ),
+                    ],
+            ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
+  }
+}
+
+class SchoolBackgroundPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint linePaint = Paint()
+      ..color = Colors.grey.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+
+    final double lineSpacing = 40.0;
+
+    // ノート風の横罫線を描画
+    for (double y = 0; y < size.height; y += lineSpacing) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), linePaint);
+    }
+
+    // 左側の赤い縦線を描画
+    final Paint marginPaint = Paint()
+      ..color = Colors.red.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    canvas.drawLine(const Offset(50, 0), Offset(50, size.height), marginPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false; // 再描画は不要
   }
 }

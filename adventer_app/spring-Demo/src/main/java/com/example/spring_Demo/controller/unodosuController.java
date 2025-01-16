@@ -18,22 +18,13 @@ import java.util.List;  // Listインターフェースを使用
 @Controller
 public class unodosuController {
 
-    @Autowired
-    private ProblemService problemService;
+  @Autowired
+  private ProblemService problemService;
 
-    // ホームページへのGETリクエストを処理
-    @GetMapping("/")
-    public String homePage(HttpSession session) {
-        // セッションに保存されている過去の問題履歴をリセット
-        session.removeAttribute("solvedQuestions");
-        session.setAttribute("solvedCount", 0); // 解答数をリセット
-        return "home"; // home.htmlを返してビューを表示
-    }
-
-    // ランダムなテキスト問題を取得する
-    @SuppressWarnings("unchecked")
-    @GetMapping(value = "/random-text-question", produces = "application/json;charset=UTF-8")
-    public ResponseEntity<question> getRandomTextQuestion(@RequestParam String questiontype_id, HttpSession session) {
+  // ランダムなテキスト問題を取得する
+  @SuppressWarnings("unchecked")
+  @GetMapping(value = "/random-text-question", produces = "application/json;charset=UTF-8")
+  public ResponseEntity<question> getRandomTextQuestion(@RequestParam String questiontype_id, HttpSession session) {
 
         // セッションから"solvedQuestions"のリストを取得
         List<String> solvedQuestions = (List<String>) session.getAttribute("solvedQuestions");
@@ -81,6 +72,7 @@ public class unodosuController {
         System.out.println("Received questionId: " + questionId);
         System.out.println("Selected answerId: " + selectedAnswerId);
 
+
         // 出題された問題のIDと選択されたIDが一致している場合は「正解」、異なる場合は「不正解」としてレスポンスを返す
         if (questionId.equals(selectedAnswerId)) {
             return ResponseEntity.ok("correct");  // 正解の場合
@@ -98,4 +90,7 @@ public class unodosuController {
         }
         return "redirect:/"; // 5問解いていない場合はホームページにリダイレクト
     }
+
+    
 }
+

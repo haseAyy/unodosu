@@ -1,4 +1,4 @@
-import 'package:adventer_app/EducationModeScreen/Calc/CalcStartScreen.dart';
+import 'CalcStartScreen.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
@@ -10,19 +10,19 @@ import 'dart:math'; // ランダム生成のため
 
 // questionのデータモデル
 class Question {
-  final String questionId;
-  final String questionTypeId;
-  final String questionTheme;
-  final String questionAnswer;
-  final String questionContent;
+  final String question_id;
+  final String questiontype_id;
+  final String question_theme;
+  final String question_answer;
+  final String question_content;
   final Map<String, String> options;
 
   Question({
-    required this.questionId,
-    required this.questionTypeId,
-    required this.questionTheme,
-    required this.questionAnswer,
-    required this.questionContent,
+    required this.question_id,
+    required this.questiontype_id,
+    required this.question_theme,
+    required this.question_answer,
+    required this.question_content,
     required this.options,
   });
 
@@ -59,11 +59,11 @@ class Question {
     
 
     return Question(
-      questionId: DateTime.now().millisecondsSinceEpoch.toString(),
-      questionTypeId: 'basic_math',
-      questionTheme: 'addition',//足し算問題のテーマ
-      questionAnswer: questionAnswer,
-      questionContent: questionContent,
+      question_id: DateTime.now().millisecondsSinceEpoch.toString(),
+      questiontype_id: 'basic_math',
+      question_theme: 'addition',//足し算問題のテーマ
+      question_answer: questionAnswer,
+      question_content: questionContent,
       options: Map.fromIterable(optionKeys, key: (e) => e, value: (e) => options[e]!),
     );
   }
@@ -146,7 +146,7 @@ class _CalcadditionScreenState extends State<CalcadditionScreen> {
     correctCount = widget.correctCount;
     currentQuestion = Question.generateRandomQuestion(); // ランダムな問題を生成
 
-    debugPrint('生成された問題: ${currentQuestion.questionContent}, 正解: ${currentQuestion.questionAnswer}');
+    debugPrint('生成された問題: ${currentQuestion.question_content}, 正解: ${currentQuestion.question_answer}');
   
   }
 
@@ -186,7 +186,7 @@ class _CalcadditionScreenState extends State<CalcadditionScreen> {
   String? result = currentQuestion.options[selectedAnswerId];
 
   // 現在の正解を一時保存
-  final correctAnswer = currentQuestion.questionAnswer;
+  final correctAnswer = currentQuestion.question_answer;
   debugPrint('画面遷移前の正解: $correctAnswer');
 
   setState(() {
@@ -210,7 +210,7 @@ class _CalcadditionScreenState extends State<CalcadditionScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => EducationCorrectScreen(
-              correctAnswer: '${currentQuestion.questionContent}＝${correctAnswer}',
+              correctAnswer: '${currentQuestion.question_content}＝${correctAnswer}',
               questionCount: questionCount,
               correctCount: correctCount,
               nextScreenFlag: 'addition',
@@ -225,7 +225,7 @@ class _CalcadditionScreenState extends State<CalcadditionScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => EducationIncorrectScreen(
-              correctAnswer: '${currentQuestion.questionContent}＝${correctAnswer}',
+              correctAnswer: '${currentQuestion.question_content}＝${correctAnswer}',
               questionCount: questionCount,
               correctCount: correctCount,
               nextScreenFlag: 'result', // 結果画面へのフラグを設定
@@ -234,7 +234,7 @@ class _CalcadditionScreenState extends State<CalcadditionScreen> {
         );
 
         debugPrint('correctAnswer: $correctAnswer');
-        debugPrint('currentQuestion.questionContent: ${currentQuestion.questionContent}');
+        debugPrint('currentQuestion.questionContent: ${currentQuestion.question_content}');
         
       } else {
         // 不正解画面に遷移
@@ -242,7 +242,7 @@ class _CalcadditionScreenState extends State<CalcadditionScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => EducationIncorrectScreen(
-              correctAnswer: '${currentQuestion.questionContent}＝${correctAnswer}',
+              correctAnswer: '${currentQuestion.question_content}＝${correctAnswer}',
               questionCount: questionCount,
               correctCount: correctCount,
               nextScreenFlag: 'addition',
@@ -254,7 +254,7 @@ class _CalcadditionScreenState extends State<CalcadditionScreen> {
   });
 
   debugPrint('correctAnswer: $correctAnswer');
-  debugPrint('currentQuestion.questionContent: ${currentQuestion.questionContent}');
+  debugPrint('currentQuestion.questionContent: ${currentQuestion.question_content}');
 
 /*
   // 次の問題を生成
@@ -287,31 +287,12 @@ class _CalcadditionScreenState extends State<CalcadditionScreen> {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // 背景装飾
-          Positioned(
-            top: -50,
-            left: -50,
-            child: Container(
-              width: 150,
-              height: 150,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 255, 182, 193),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: -50,
-            right: -50,
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 173, 216, 230),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
+          //背景(ノート風の罫線デザイン)
+                Positioned.fill(
+            child: CustomPaint(
+              painter: SchoolBackgroundPainter(),
+                 ),
+                ),
           // 問題中断ボタン（左下）
           Positioned(
             bottom: 30,
@@ -348,7 +329,7 @@ class _CalcadditionScreenState extends State<CalcadditionScreen> {
               children: [
                 const SizedBox(height: 60),
                 Text(
-                  currentQuestion.questionContent,
+                  currentQuestion.question_content,
                   style: const TextStyle(
                     fontSize: 50,
                     fontWeight: FontWeight.bold,
@@ -412,5 +393,34 @@ class _CalcadditionScreenState extends State<CalcadditionScreen> {
         ],
       ),
     );
+  }
+}
+class SchoolBackgroundPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint linePaint = Paint()
+      ..color = Colors.grey.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+
+    final double lineSpacing = 40.0;
+
+    // ノート風の横罫線を描画
+    for (double y = 0; y < size.height; y += lineSpacing) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), linePaint);
+    }
+
+    // 左側の赤い縦線を描画
+    final Paint marginPaint = Paint()
+      ..color = Colors.red.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    canvas.drawLine(const Offset(50, 0), Offset(50, size.height), marginPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false; // 再描画は不要
   }
 }

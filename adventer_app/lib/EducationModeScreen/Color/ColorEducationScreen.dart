@@ -3,39 +3,39 @@ import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
 import '../EducationCorrectScreen.dart'; //正解画面
 import '../EducationIncorrectScreen.dart'; //不正解画面
-import '../EdcationResultScreen.dart';//結果画面
+import '../EdcationResultScreen.dart';
 import '../EducationModeScreen.dart';
-
+//import 'dart:math'; // cos, sinを使うためにインポート
 
 // questionのデータモデル
 class Question {
-  final String questionId;
-  final String questionTypeId;
-  final String questionTheme;
-  final String questionAnswer;
-  final String questionContent;
-  final String questionImage;
+  final String question_id;
+  final String questiontype_id;
+  final String question_theme;
+  final String question_answer;
+  final String question_content;
+  final String question_image;
   final Map<String, String> options;
 
   Question({
-    required this.questionId,
-    required this.questionTypeId,
-    required this.questionTheme,
-    required this.questionAnswer,
-    required this.questionContent,
-    required this.questionImage,
+    required this.question_id,
+    required this.questiontype_id,
+    required this.question_theme,
+    required this.question_answer,
+    required this.question_content,
+    required this.question_image,
     required this.options,
   });
 
   // JSONをQuestionオブジェクトに変換
   factory Question.fromJson(Map<String, dynamic> json) {
     return Question(
-      questionId: json['question_id'],
-      questionTypeId: json['questiontype_id'],
-      questionTheme: json['question_theme'],
-      questionAnswer: json['question_answer'],
-      questionContent: json['question_content'],
-      questionImage: json['question_image'],
+      question_id: json['question_id'],
+      questiontype_id: json['questiontype_id'],
+      question_theme: json['question_theme'],
+      question_answer: json['question_answer'],
+      question_content: json['question_content'],
+      question_image: json['question_image'],
       options: json['options'] != null && json['options'].isNotEmpty
           ? Map<String, String>.from(json['options'])
           : {'No options available': ''}, // デフォルト値
@@ -44,10 +44,10 @@ class Question {
 }
 
 // APIリクエストを送信して、問題を取得するメソッド
-Future<Question?> fetchQuestion(String questionTypeId) async {
+Future<Question?> fetchQuestion(String questiontypeId) async {
   final response = await http.get(
     Uri.parse(
-        'http://10.24.108.170:8080/random-text-question?questiontype_id=$questionTypeId'),
+        'http://10.24.108.170:8080/random-text-question?questiontype_id=$questiontypeId'),
   );
 
   if (response.statusCode == 200) {
@@ -70,7 +70,7 @@ Future<String> submitAnswer(String questionId, String selectedAnswer) async {
   if (response.statusCode == 200) {
     return response.body; // "correct" または "incorrect"
   } else {
-    throw Exception('回答の送信に失敗しました');
+    throw Exception('Failed to submit answer');
   }
 }
 
@@ -127,31 +127,28 @@ class RectangularButton extends StatelessWidget {
   }
 }
 
-// 文字問題出題画面
+// 色問題出題画面
 class ColorEducationScreen extends StatefulWidget {
   final int questionCount;
   final int correctCount;
-  const ColorEducationScreen({required this.questionCount,required this.correctCount});
-
+  const ColorEducationScreen(
+      {required this.questionCount, required this.correctCount});
 
   @override
-  _ColorEducationScreenState createState() => _ColorEducationScreenState(questionCount,correctCount);
-
+  _ColorEducationScreenState createState() =>
+      _ColorEducationScreenState(questionCount, correctCount);
 }
 
 class _ColorEducationScreenState extends State<ColorEducationScreen> {
   late Future<Question?> questionFuture;
   late int questionCount; // このクラス内で管理する変数
-  late int correctCount; // 正解数を追跡する変数 
-  late Question currentQuestion;
-
+  late int correctCount; // 正解数を追跡する変数
 
   // コンストラクタで初期値を設定
-  _ColorEducationScreenState(this.questionCount,this.correctCount);
+  _ColorEducationScreenState(this.questionCount, this.correctCount);
 
   //gpt
   //List<String> solvedQuestions = []; // 解いた問題を保存するリスト
-  
 
   @override
   void initState() {
@@ -159,7 +156,23 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
     questionFuture = fetchQuestion("KMS002"); // questiontypeIdを指定
   }
 
-  // やめるダイアログを表示
+/*
+// 答えによって色変えるよんカスタム関数の追加
+  Color _getColorFromAnswer(String answer) {
+    switch (answer.toLowerCase()) {
+      case "あか":
+        return Colors.red;
+      case "あお":
+        return Colors.blue;
+      case "みどり":
+        return Colors.green;
+      case "きいろ":
+        return Colors.yellow;
+      default:
+        return Colors.grey;
+    }
+  }
+*/
   void _showQuitDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -195,44 +208,51 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
       String selectedAnswerId, Question question, BuildContext context) async {
     try {
       final result =
-          await submitAnswer(question.questionId, selectedAnswerId); // 修正
-
-
-    
-    debugPrint('問題数を増やす前: $questionCount');
-    // 問題数をカウント
-    setState(() {
-      questionCount++; // 問題数をカウント
-      if (result == "correct") {
-        correctCount++; // 正解数をカウント
-      }
-    });
-    debugPrint('問題数を増やした後: $questionCount');
-    debugPrint('正解数: $correctCount');
-
-
+          await submitAnswer(question.question_id, selectedAnswerId); // 修正
+      debugPrint('問題数を増やす前: $questionCount');
+      // 問題数をカウント
+      setState(() {
+        questionCount++; // 問題数をカウント
+        if (result == "correct") {
+          correctCount++; // 正解数をカウント
+        }
+      });
+      debugPrint('問題数を増やした後: $questionCount');
+      debugPrint('正解数: $correctCount');
       if (questionCount >= 10) {
         // 10問解いたあとは結果画面に遷移
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => EdcationResultScreen(correctCount: correctCount)),
+          MaterialPageRoute(
+              builder: (context) =>
+                  EdcationResultScreen(correctCount: correctCount)),
         );
       } else {
         if (result == "correct") {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => EducationCorrectScreen(correctAnswer: currentQuestion.questionAnswer,questionImage: question.questionImage,questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'color')),
+                builder: (context) => EducationCorrectScreen(            
+                    correctAnswer: "\n「${question.question_answer}」",
+                    questionImage:  question.question_image,
+                    questionCount: questionCount,
+                    correctCount: correctCount,
+                    nextScreenFlag: 'color')),
           );
         } else {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => EducationIncorrectScreen(correctAnswer: currentQuestion.questionAnswer,questionCount: questionCount,correctCount: correctCount,nextScreenFlag: 'color')),
+                builder: (context) => EducationIncorrectScreen(
+                    correctAnswer: "このいろは \n 「${question.question_answer}」",
+                    questionImage: question.question_image,
+                    questionCount: questionCount,
+                    correctCount: correctCount,
+                    nextScreenFlag: 'color',)),
           );
         }
         // 次の問題を取得する処理を呼び出す
-        if (questionCount < 10) {
+        if (questionCount < 5) {
           setState(() {
             questionFuture = fetchQuestion("KMS002"); // 次の問題を取得
           });
@@ -253,7 +273,7 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.orange.shade100,
+        backgroundColor: const Color.fromARGB(141, 57, 154, 0),
         elevation: 0,
         title: const Text(
           'いろもんだい',
@@ -273,35 +293,16 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('エラー: ${snapshot.error}'));
+            return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData) {
             final question = snapshot.data!;
             return Stack(
               children: [
-                // 背景装飾
-                Positioned(
-                  top: -50,
-                  left: -50,
-                  child: Container(
-                    width: 150,
-                    height: 150,
-                    decoration: const BoxDecoration(
-                      color: Color.fromARGB(50, 255, 182, 193),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: -50,
-                  right: -50,
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    decoration: const BoxDecoration(
-                      color: Color.fromARGB(50, 173, 216, 230),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
+                //背景(ノート風の罫線デザイン)
+                Positioned.fill(
+            child: CustomPaint(
+              painter: SchoolBackgroundPainter(),
+                 ),
                 ),
                 // 問題中断ボタン（左下）
                 Positioned(
@@ -312,7 +313,7 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
                       _showQuitDialog(context); // ダイアログを表示
                     },
                     style: TextButton.styleFrom(
-                      backgroundColor: Colors.orange.shade100,
+                      backgroundColor: const Color.fromARGB(141, 57, 154, 0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20), // 角丸
                       ),
@@ -332,27 +333,33 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
                 ),
                 // 問題テキストと選択肢
                 Positioned(
-                  top: screenSize.height * 0.15,
+                  top: screenSize.height * 0.10,
                   left: 0,
                   right: 0,
                   child: Column(
                     children: [
                       const SizedBox(height: 60),
                       Text(
-                        question.questionContent,
-                        style: const TextStyle(
+                        question.question_content,
+                        style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                           fontFamily: 'Comic Sans MS',
                         ),
                       ),
-                      SizedBox(
-                        width: screenSize.width * 0.6,
-                        height: screenSize.height * 0.15,
-                        child: CustomPaint(
-                          //painter: ShapePainter(question.questionTheme),
+                      
+                SizedBox(
+                  
+                        width: screenSize.width * 7.0,
+                        height: screenSize.height * 0.35,
+                        child: Center(
+                          child: Image.network(
+                            question.question_image),
                         ),
+                   
+                       // )
+                      
                       ),
                     ],
                   ),
@@ -371,15 +378,16 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
                             if (i < question.options.length)
                               SizedBox(height: 90),
                             RectangularButton(
-                              text: question.options.keys.toList()[i], // 選択肢のテキスト
+                              text:
+                                  question.options.keys.toList()[i], // 選択肢のテキスト
                               buttonColor:
                                   const Color.fromARGB(255, 250, 240, 230),
                               textColor: Colors.black,
                               width: screenSize.width * 0.4,
                               height: 70,
                               onPressed: () {
-                                final selectedAnswerId =
-                                    question.options.values.toList()[i];
+                                final selectedAnswerId = question.options.values
+                                    .toList()[i]; // question_idを送信
                                 _handleAnswerSubmission(
                                     selectedAnswerId, question, context);
                               },
@@ -407,10 +415,40 @@ class _ColorEducationScreenState extends State<ColorEducationScreen> {
               ],
             );
           } else {
-            return const Center(child: Text('データがありません。'));
+            return const Center(child: Text('No data available.'));
           }
         },
       ),
     );
+  }
+}
+
+class SchoolBackgroundPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint linePaint = Paint()
+      ..color = Colors.grey.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+
+    final double lineSpacing = 40.0;
+
+    // ノート風の横罫線を描画
+    for (double y = 0; y < size.height; y += lineSpacing) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), linePaint);
+    }
+
+    // 左側の赤い縦線を描画
+    final Paint marginPaint = Paint()
+      ..color = Colors.red.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    canvas.drawLine(const Offset(50, 0), Offset(50, size.height), marginPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false; // 再描画は不要
   }
 }

@@ -11,33 +11,33 @@ import 'dart:math';  // cos, sinを使うためにインポート
 
 // questionのデータモデル
 class Question {
-  final String questionId;
-  final String questionTypeId;
-  final String questionTheme;
-  final String questionAnswer;
-  final String questionContent;
-   final String questionImage;
+  final String question_id;
+  final String questiontype_id;
+  final String question_theme;
+  final String question_answer;
+  final String question_content;
+  final String question_image;
   final Map<String, String> options;
 
   Question({
-    required this.questionId,
-    required this.questionTypeId,
-    required this.questionTheme,
-    required this.questionAnswer,
-    required this.questionContent,
-    required this.questionImage,
+    required this.question_id,
+    required this.questiontype_id,
+    required this.question_theme,
+    required this.question_answer,
+    required this.question_content,
+    required this.question_image,
     required this.options,
   });
 
   // JSONをQuestionオブジェクトに変換
   factory Question.fromJson(Map<String, dynamic> json) {
     return Question(
-      questionId: json['question_id'],
-      questionTypeId: json['questiontype_id'],
-      questionTheme: json['question_theme'],
-      questionAnswer: json['question_answer'],
-      questionContent: json['question_content'],
-      questionImage: json['question_image'],
+      question_id: json['question_id'],
+      questiontype_id: json['questiontype_id'],
+      question_theme: json['question_theme'],
+      question_answer: json['question_answer'],
+      question_content: json['question_content'],
+      question_image: json['question_image'],
       options: json['options'] != null && json['options'].isNotEmpty
           ? Map<String, String>.from(json['options'])
           : {'No options available': ''}, // デフォルト値
@@ -197,7 +197,7 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
     String selectedAnswerId, Question question, BuildContext context) async {
   try {
     final result =
-        await submitAnswer(question.questionId, selectedAnswerId); // 修正
+        await submitAnswer(question.question_id, selectedAnswerId); // 修正
 
     debugPrint('問題数を増やす前: $questionCount');
     // 問題数をカウント
@@ -214,20 +214,34 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
     if (questionCount >= 10) {
       // 10問目を解いた場合
       if (result == "correct") {
-        // 正解の場合は直接結果画面へ遷移
-        Navigator.pushReplacement(
+        // 正解の場合は正解画面に遷移
+        Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  EdcationResultScreen(correctCount: correctCount)),
-        );
+                  EducationCorrectScreen(
+                  correctAnswer: " \n「${question.question_answer}」",
+                  questionImage: question.question_image,
+                  questionCount: questionCount,
+                  correctCount: correctCount,
+                  nextScreenFlag: 'result')),
+        ).then((_){
+          // 正解画面が閉じられた後に結果画面へ遷移
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              EdcationResultScreen(correctCount: correctCount),
+        ),
+      );
+    });
       } else {
         // 間違えた場合は不正解画面を経由して結果画面へ遷移
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (context) => EducationIncorrectScreen(
-                  correctAnswer: "「${question.questionAnswer}」",
+                  correctAnswer: "「${question.question_answer}」",
                   questionCount: questionCount,
                   correctCount: correctCount,
                   nextScreenFlag: 'result')), // 'result' フラグを渡す
@@ -240,8 +254,8 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
           context,
           MaterialPageRoute(
               builder: (context) => EducationCorrectScreen(
-                  correctAnswer: " \n「${question.questionAnswer}」",
-                  questionImage: question.questionImage,
+                  correctAnswer: " \n「${question.question_answer}」",
+                  questionImage: question.question_image,
                   questionCount: questionCount,
                   correctCount: correctCount,
                   nextScreenFlag: 'shape')),
@@ -251,8 +265,8 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
           context,
           MaterialPageRoute(
               builder: (context) => EducationIncorrectScreen(
-                  correctAnswer: "このかたちは \n「${question.questionAnswer}」だよ",
-                  questionImage: question.questionImage,
+                  correctAnswer: "このかたちは \n「${question.question_answer}」だよ",
+                  questionImage: question.question_image,
                   questionCount: questionCount,
                   correctCount: correctCount,
                   nextScreenFlag: 'shape')), // 'shape' フラグを渡す
@@ -306,31 +320,14 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
             final question = snapshot.data!;
             return Stack(
               children: [
-                // 背景装飾
-                Positioned(
-                  top: -50,
-                  left: -50,
-                  child: Container(
-                    width: 150,
-                    height: 150,
-                    decoration: const BoxDecoration(
-                      color: Color.fromARGB(50, 255, 182, 193),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
+
+                //背景(ノート風の罫線デザイン)
+                Positioned.fill(
+            child: CustomPaint(
+              painter: SchoolBackgroundPainter(),
+                 ),
                 ),
-                Positioned(
-                  bottom: -50,
-                  right: -50,
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    decoration: const BoxDecoration(
-                      color: Color.fromARGB(50, 173, 216, 230),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
+
                 // 問題中断ボタン（左下）
                 Positioned(
                   bottom: 30,
@@ -360,14 +357,14 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
                 ),
                 // 問題テキストと選択肢
                 Positioned(
-                  top: screenSize.height * 0.15,
+                  top: screenSize.height * 0.10,
                   left: 0,
                   right: 0,
                   child: Column(
                     children: [
                       const SizedBox(height: 60),
                       Text(
-                        question.questionContent,
+                        question.question_content,
                         style: const TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -380,7 +377,7 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
                         height: screenSize.height * 0.20,
                         child: Center(
                           child: Image.network(
-                            question.questionImage),
+                            question.question_image),
                         )
                       ),
                     ],
@@ -443,3 +440,34 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
     );
   }
 }
+
+class SchoolBackgroundPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint linePaint = Paint()
+      ..color = Colors.grey.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+
+    final double lineSpacing = 40.0;
+
+    // ノート風の横罫線を描画
+    for (double y = 0; y < size.height; y += lineSpacing) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), linePaint);
+    }
+
+    // 左側の赤い縦線を描画
+    final Paint marginPaint = Paint()
+      ..color = Colors.red.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    canvas.drawLine(const Offset(50, 0), Offset(50, size.height), marginPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false; // 再描画は不要
+  }
+}
+
