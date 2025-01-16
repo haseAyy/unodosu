@@ -352,8 +352,8 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                           shape: BoxShape.circle,
                         ),
                         child: Center(
-                          child: Image.network(
-                            question.questionImage), // question_image（問題内容画像url)を表示
+                          child: Image.network(question
+                              .questionImage), // question_image（問題内容画像url)を表示
                           //question.question_image,
                           //style: const TextStyle(fontSize: 40),
                           //),
