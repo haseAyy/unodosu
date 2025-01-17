@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
+import 'package:adventer_app/MenuScreen/HomeScreen.dart';
 import '../EducationCorrectScreen.dart'; //正解画面
 import '../EducationIncorrectScreen.dart'; //不正解画面
 import '../EdcationResultScreen.dart';//結果画面
@@ -182,7 +183,7 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (_) => const EducationModeScreen()));
+                        builder: (context) => const HomeScreen(initialIndex: 1)));
               },
               child: const Text('やめる'),
             ),
@@ -242,6 +243,7 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
           MaterialPageRoute(
               builder: (context) => EducationIncorrectScreen(
                   correctAnswer: "「${question.question_answer}」",
+                  questionImage: question.question_image,
                   questionCount: questionCount,
                   correctCount: correctCount,
                   nextScreenFlag: 'result')), // 'result' フラグを渡す
@@ -254,7 +256,7 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
           context,
           MaterialPageRoute(
               builder: (context) => EducationCorrectScreen(
-                  correctAnswer: " \n「${question.question_answer}」",
+                  correctAnswer: " 「${question.question_answer}」",
                   questionImage: question.question_image,
                   questionCount: questionCount,
                   correctCount: correctCount,
@@ -265,7 +267,7 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
           context,
           MaterialPageRoute(
               builder: (context) => EducationIncorrectScreen(
-                  correctAnswer: "このかたちは \n「${question.question_answer}」だよ",
+                  correctAnswer: "「${question.question_answer}」",
                   questionImage: question.question_image,
                   questionCount: questionCount,
                   correctCount: correctCount,
@@ -372,17 +374,35 @@ class _ShapeEducationScreenState extends State<ShapeEducationScreen> {
                           fontFamily: 'Comic Sans MS',
                         ),
                       ),
+                      
+                    ],
+                  ),
+                ),
+
+
+                Positioned(
+                  top: screenSize.height * 0.12,
+                  left: 0,
+                  right: 0,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 60),
                       SizedBox(
-                        width: screenSize.width * 0.9,
-                        height: screenSize.height * 0.20,
+                        width: screenSize.width * 0.8,
+                        height: screenSize.height * 0.3,
                         child: Center(
                           child: Image.network(
                             question.question_image),
                         )
                       ),
+                      
                     ],
                   ),
                 ),
+
+
+
+                
                 // 選択肢ボタンエリア
                 Positioned(
                   bottom: screenSize.height * 0.18,

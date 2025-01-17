@@ -2,6 +2,7 @@ import 'CalcStartScreen.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
+import 'package:adventer_app/MenuScreen/HomeScreen.dart';
 import '../EducationCorrectScreen.dart'; //正解画面
 import '../EducationIncorrectScreen.dart'; //不正解画面
 import '../EdcationResultScreen.dart';//結果画面
@@ -171,7 +172,7 @@ class _CalcadditionScreenState extends State<CalcadditionScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (_) => const CalcStartScreen()));
+                        builder: (context) => const HomeScreen(initialIndex: 1)));
               },
               child: const Text('やめる'),
             ),
@@ -193,35 +194,35 @@ class _CalcadditionScreenState extends State<CalcadditionScreen> {
     questionCount++;
     if (result == "correct") {
       correctCount++;
+    }
+    });
+    debugPrint('問題数を増やした後: $questionCount');
+    debugPrint('正解数: $correctCount');
 
+    
       if (questionCount >= 10) {
-        // 結果画面へ遷移
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => EdcationResultScreen(
-              correctCount: correctCount
-            ),
-          ),
-        );
-      } else {
-        // 正解画面に遷移
-        Navigator.pushReplacement(
+        // 10問目を間違えた場合
+        if(result == "correct"){
+          Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => EducationCorrectScreen(
               correctAnswer: '${currentQuestion.question_content}＝${correctAnswer}',
               questionCount: questionCount,
               correctCount: correctCount,
-              nextScreenFlag: 'addition',
-            ),
-          ),
-        );
-      }
-    } else {
-      if (questionCount >= 10) {
-        // 10問目を間違えた場合、不正解画面を経由して結果画面へ遷移
-        Navigator.pushReplacement(
+              nextScreenFlag: 'result'// 結果画面へのフラグを設定
+            )),
+        ).then((_){
+           Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                 builder: (context) => 
+                  EdcationResultScreen(correctCount: correctCount),
+                ),
+           );
+        });
+        }else{
+          Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => EducationIncorrectScreen(
@@ -232,9 +233,19 @@ class _CalcadditionScreenState extends State<CalcadditionScreen> {
             ),
           ),
         );
+        }
+      }else{
+        if(result == "correct"){
+          Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EducationCorrectScreen(
+              correctAnswer: correctAnswer,
+              questionCount: questionCount,
+              correctCount: correctCount,
+              nextScreenFlag: 'addition')),
+          );
 
-        debugPrint('correctAnswer: $correctAnswer');
-        debugPrint('currentQuestion.questionContent: ${currentQuestion.question_content}');
         
       } else {
         // 不正解画面に遷移
@@ -245,13 +256,13 @@ class _CalcadditionScreenState extends State<CalcadditionScreen> {
               correctAnswer: '${currentQuestion.question_content}＝${correctAnswer}',
               questionCount: questionCount,
               correctCount: correctCount,
-              nextScreenFlag: 'addition',
-            ),
-          ),
+              nextScreenFlag: 'addition')),
         );
       }
-    }
-  });
+      }
+  debugPrint('correctAnswer: $correctAnswer');
+  debugPrint('currentQuestion.questionContent: ${currentQuestion.question_content}');
+        
 
   debugPrint('correctAnswer: $correctAnswer');
   debugPrint('currentQuestion.questionContent: ${currentQuestion.question_content}');
@@ -271,10 +282,10 @@ class _CalcadditionScreenState extends State<CalcadditionScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+        backgroundColor: Colors.pink.shade200,
         elevation: 0,
         title: const Text(
-          'けいさんもんだい',
+          'たしざんもんだい',
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -302,7 +313,7 @@ class _CalcadditionScreenState extends State<CalcadditionScreen> {
                 _showQuitDialog(context); // ダイアログを表示
               },
               style: TextButton.styleFrom(
-                backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+                backgroundColor: Colors.pink.shade200,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20), // 角丸
                 ),

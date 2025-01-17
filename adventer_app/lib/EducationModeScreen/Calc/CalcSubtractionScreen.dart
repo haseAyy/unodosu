@@ -2,6 +2,7 @@ import 'package:adventer_app/EducationModeScreen/Calc/CalcStartScreen.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
+import 'package:adventer_app/MenuScreen/HomeScreen.dart';
 import '../EducationCorrectScreen.dart'; //正解画面
 import '../EducationIncorrectScreen.dart'; //不正解画面
 import '../EdcationResultScreen.dart';//結果画面
@@ -169,7 +170,7 @@ class _CalcSubtractionScreenState extends State<CalcSubtractionScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (_) => const CalcStartScreen()));
+                       builder: (context) => const HomeScreen(initialIndex: 1)));
               },
               child: const Text('やめる'),
             ),
@@ -185,71 +186,84 @@ class _CalcSubtractionScreenState extends State<CalcSubtractionScreen> {
 
     // 現在の正解を一時保存
     final correctAnswer = currentQuestion.question_answer;
-    debugPrint('画面遷移前の正解: $correctAnswer');
+  debugPrint('画面遷移前の正解: $correctAnswer');
 
-    setState(() {
-      questionCount++;
-      if (result == "correct") {
-        correctCount++;
-
-        if (questionCount >= 10) {
-          // 結果画面へ遷移
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EdcationResultScreen(
-                correctCount: correctCount,
-              ),
-            ),
-          );
-        } else {
-          // 正解画面に遷移
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EducationCorrectScreen(
-                correctAnswer: '${currentQuestion.question_content}＝${correctAnswer}',
-                questionCount: questionCount,
-                correctCount: correctCount,
-                nextScreenFlag: 'subtraction',
-              ),
-            ),
-          );
-        }
-      } else {
-        if (questionCount >= 10) {
-          // 10問目を間違えた場合、不正解画面を経由して結果画面へ遷移
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EducationIncorrectScreen(
-                correctAnswer: '${currentQuestion.question_content}＝${correctAnswer}',
-                questionCount: questionCount,
-                correctCount: correctCount,
-                nextScreenFlag: 'result', // 結果画面へのフラグを設定
-              ),
-            ),
-          );
-        } else {
-          // 不正解画面に遷移
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EducationIncorrectScreen(
-                correctAnswer: '${currentQuestion.question_content}＝${correctAnswer}',
-                questionCount: questionCount,
-                correctCount: correctCount,
-                nextScreenFlag: 'subtraction',
-              ),
-            ),
-          );
-        }
-      }
+  setState(() {
+    questionCount++;
+    if (result == "correct") {
+      correctCount++;
+    }
     });
+    debugPrint('問題数を増やした後: $questionCount');
+    debugPrint('正解数: $correctCount');
 
-    debugPrint('correctAnswer: $correctAnswer');
-    debugPrint('currentQuestion.questionContent: ${currentQuestion.question_content}');
-  }
+    
+      if (questionCount >= 10) {
+        // 10問目を間違えた場合
+        if(result == "correct"){
+          Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EducationCorrectScreen(
+              correctAnswer: '${currentQuestion.question_content}＝${correctAnswer}',
+              questionCount: questionCount,
+              correctCount: correctCount,
+              nextScreenFlag: 'result'// 結果画面へのフラグを設定
+            )),
+        ).then((_){
+           Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                 builder: (context) => 
+                  EdcationResultScreen(correctCount: correctCount),
+                ),
+           );
+        });
+        }else{
+          Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EducationIncorrectScreen(
+              correctAnswer: '${currentQuestion.question_content}＝${correctAnswer}',
+              questionCount: questionCount,
+              correctCount: correctCount,
+              nextScreenFlag: 'result', // 結果画面へのフラグを設定
+            ),
+          ),
+        );
+        }
+      }else{
+        if(result == "correct"){
+          Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EducationCorrectScreen(
+              correctAnswer: correctAnswer,
+              questionCount: questionCount,
+              correctCount: correctCount,
+              nextScreenFlag: 'subtraction')),
+          );
+
+        
+      } else {
+        // 不正解画面に遷移
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EducationIncorrectScreen(
+              correctAnswer: '${currentQuestion.question_content}＝${correctAnswer}',
+              questionCount: questionCount,
+              correctCount: correctCount,
+              nextScreenFlag: 'subtraction')),
+        );
+      }
+      }
+  debugPrint('correctAnswer: $correctAnswer');
+  debugPrint('currentQuestion.questionContent: ${currentQuestion.question_content}');
+        
+
+  debugPrint('correctAnswer: $correctAnswer');
+  debugPrint('currentQuestion.questionContent: ${currentQuestion.question_content}');}
 
   @override
   Widget build(BuildContext context) {
@@ -258,10 +272,10 @@ class _CalcSubtractionScreenState extends State<CalcSubtractionScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+        backgroundColor: Colors.blue.shade300,
         elevation: 0,
         title: const Text(
-          'けいさんもんだい',
+          'ひきざんもんだい',
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -289,7 +303,7 @@ class _CalcSubtractionScreenState extends State<CalcSubtractionScreen> {
                 _showQuitDialog(context); // ダイアログを表示
               },
               style: TextButton.styleFrom(
-                backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+                backgroundColor: Colors.blue.shade300,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20), // 角丸
                 ),
@@ -328,7 +342,6 @@ class _CalcSubtractionScreenState extends State<CalcSubtractionScreen> {
                   width: screenSize.width * 0.6,
                   height: screenSize.height * 0.15,
                   child: CustomPaint(
-                    //painter: ShapePainter(question.questionTheme),
                   ),
                 ),
               ],

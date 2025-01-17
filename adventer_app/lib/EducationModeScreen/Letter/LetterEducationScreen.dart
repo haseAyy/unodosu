@@ -2,6 +2,7 @@ import 'package:adventer_app/EducationModeScreen/Color/ColorEducationScreen.dart
 import '../EducationModeScreen.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:adventer_app/MenuScreen/HomeScreen.dart';
 import '../EducationCorrectScreen.dart'; // 正解画面
 import '../EducationIncorrectScreen.dart'; // 不正解画面
 import '../EdcationResultScreen.dart'; // 結果画面
@@ -132,12 +133,16 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
   void _handleAnswerSubmission(String selectedAnswer) {
     final correctAnswer = currentQuestion.correct_answer;
 
+  debugPrint('問題数を増やす前: $questionCount');
     setState(() {
       questionCount++;
       if (selectedAnswer == correctAnswer) {
         correctCount++;
       }
     });
+    debugPrint('問題数を増やした後: $questionCount');
+    debugPrint('正解数: $correctCount');
+    
     
 
         if (questionCount >= 10) {
@@ -149,7 +154,7 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
               MaterialPageRoute(
                 builder: (context) =>
                   EducationCorrectScreen(
-                  correctAnswer: " \n「${currentQuestion.question_content}」",
+                  correctAnswer: correctAnswer,
                   questionCount: questionCount,
                   correctCount: correctCount,
                   nextScreenFlag: 'result')),
@@ -173,7 +178,7 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                 correctAnswer: correctAnswer,
                 questionCount: questionCount,
                 correctCount: correctCount,
-                nextScreenFlag: 'letter',
+                nextScreenFlag: 'result',
               ),
             ),
           );
@@ -185,7 +190,7 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => EducationCorrectScreen(
-              correctAnswer: '${currentQuestion.question_content}=${correctAnswer}',
+              correctAnswer: correctAnswer,
               questionCount: questionCount,
               correctCount: correctCount,
               nextScreenFlag: 'letter')),
@@ -214,7 +219,7 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+        backgroundColor: Colors.green.shade200,
         elevation: 0,
         title: const Text(
           'ひらがなもんだい',
@@ -255,7 +260,7 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                         onPressed: () => Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const EducationModeScreen(),
+                            builder: (context) => const HomeScreen(initialIndex: 1),
                           ),
                         ),
                         child: const Text('やめる'),
@@ -265,7 +270,7 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
                 );
               },
               style: TextButton.styleFrom(
-                backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+                backgroundColor: Colors.green.shade200,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -283,10 +288,11 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
             ),
           ),
 
+          //問題テキスト
           Positioned(
-            top: screenSize.height * 0.1,
-            left: 20,
-            right: 20,
+            top: screenSize.height * 0.10,
+            left: 0,
+            right: 0,
             child: Column(
               children: [
                 Text(
@@ -311,7 +317,7 @@ class _LetterEducationScreenState extends State<LetterEducationScreen> {
             child: Text(
               currentQuestion.correct_answer,
               style: const TextStyle(
-                fontSize: 64, // 大きく表示
+                fontSize: 80, // 大きく表示
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
                 fontFamily: 'Comic Sans MS',

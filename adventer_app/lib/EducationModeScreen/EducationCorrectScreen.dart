@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'Shape/ShapeEducationScreen.dart';
+import 'package:adventer_app/MenuScreen/HomeScreen.dart';
 import 'Calc/CalcadditionScreen.dart';
 import 'Calc/CalcSubtractionScreen.dart';
 import 'Color/ColorEducationScreen.dart';
@@ -168,40 +169,25 @@ class _EducationCorrectScreenState extends State<EducationCorrectScreen>
           'すごい！',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 22,
+            fontSize: 30,
             fontWeight: FontWeight.bold,
             fontFamily: 'Comic Sans MS',
           ),
         ),
         centerTitle: true,
       ),
+
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          Positioned(
-            top: -50,
-            left: -50,
-            child: Container(
-              width: 150,
-              height: 150,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 255, 182, 193),
-                shape: BoxShape.circle,
-              ),
+          // 背景（ノート風の罫線デザイン）
+          Positioned.fill(
+            child: CustomPaint(
+              painter: SchoolBackgroundPainter(),
             ),
           ),
-          Positioned(
-            bottom: -50,
-            right: -50,
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 173, 216, 230),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
+          
+          
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -215,7 +201,11 @@ class _EducationCorrectScreenState extends State<EducationCorrectScreen>
                     color: Colors.black,
                     fontFamily: 'Comic Sans MS',
                   ),
+                  textAlign: TextAlign.center,
                 ),
+                
+
+                
                 const SizedBox(height: 20),
                 AnimatedBuilder(
                   animation: _controller,
@@ -224,11 +214,14 @@ class _EducationCorrectScreenState extends State<EducationCorrectScreen>
                       opacity: _opacityAnimation.value,
                       child: Transform.scale(
                         scale: _scaleAnimation.value,
-                        child: FadeTransition(
+                        child: 
+                        
+                        
+                        FadeTransition(
                           opacity: _fadeAnimation,
                           child: const Icon(
                             Icons.check_circle_outline,
-                            size: 120,
+                            size: 150,
                             color: Colors.orange,
                           ),
                         ),
@@ -255,12 +248,12 @@ class _EducationCorrectScreenState extends State<EducationCorrectScreen>
                 //解説部分
                 Container(
                   padding: const EdgeInsets.all(10),
-                  margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                  margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                   decoration: BoxDecoration(
                     color: Colors.transparent,
                     border: Border.all(
                       color: const Color.fromARGB(255, 205, 205, 205),
-                      width: 3,
+                      width: 4,
                     ),
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
@@ -284,14 +277,19 @@ class _EducationCorrectScreenState extends State<EducationCorrectScreen>
                         TextSpan(
                           text: widget.correctAnswer,
                           style: const TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.normal,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 0, 0, 0),
+                            fontFamily: 'Comic Sans MS',
                           ),
                         ),
                       ],
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
+
+                const SizedBox(height: 40),
                 RectangularButton(
                   text: 'つぎのもんだい',
                  width: screenSize.width * 0.6,
@@ -314,5 +312,34 @@ class _EducationCorrectScreenState extends State<EducationCorrectScreen>
         ],
       ),
     );
+  }
+}
+class SchoolBackgroundPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint linePaint = Paint()
+      ..color = Colors.grey.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+
+    final double lineSpacing = 40.0;
+
+    // ノート風の横罫線を描画
+    for (double y = 0; y < size.height; y += lineSpacing) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), linePaint);
+    }
+
+    // 左側の赤い縦線を描画
+    final Paint marginPaint = Paint()
+      ..color = Colors.red.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    canvas.drawLine(const Offset(50, 0), Offset(50, size.height), marginPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false; // 再描画は不要
   }
 }

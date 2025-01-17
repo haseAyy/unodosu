@@ -1,4 +1,5 @@
 import 'package:adventer_app/EducationModeScreen/Shape/ShapeEducationScreen.dart';
+import 'package:adventer_app/MenuScreen/HomeScreen.dart';
 import 'Color/ColorEducationScreen.dart';
 import 'Calc/CalcadditionScreen.dart';
 import 'Calc/CalcSubtractionScreen.dart';
@@ -167,10 +168,10 @@ class _EducationIncorrectScreenState extends State<EducationIncorrectScreen>
         backgroundColor: const Color.fromARGB(255, 250, 60, 60), // ピンク色の背景
         elevation: 0,
         title: const Text(
-          'おしい！',
+          'ざんねん！',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 22,
+            fontSize: 30,
             fontWeight: FontWeight.bold,
             fontFamily: 'Comic Sans MS',
           ),
@@ -180,32 +181,13 @@ class _EducationIncorrectScreenState extends State<EducationIncorrectScreen>
       backgroundColor: Colors.white, // 背景を白に統一
       body: Stack(
         children: [
-          // 上部のソフトな装飾
-          Positioned(
-            top: -50,
-            left: -50,
-            child: Container(
-              width: 150,
-              height: 150,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 255, 182, 193), // 薄いピンク
-                shape: BoxShape.circle,
-              ),
+          // 背景（ノート風の罫線デザイン）
+          Positioned.fill(
+            child: CustomPaint(
+              painter: SchoolBackgroundPainter(),
             ),
           ),
-          // 下部のソフトな装飾
-          Positioned(
-            bottom: -50,
-            right: -50,
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 173, 216, 230), // 薄い水色
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
+          
           // 中央のコンテンツ
           Center(
             child: Column(
@@ -213,7 +195,7 @@ class _EducationIncorrectScreenState extends State<EducationIncorrectScreen>
               children: [
                 const SizedBox(height: 20),
                 const Text(
-                  'ざんねん！\nつぎもがんばろう！',
+                  'つぎもがんばろう！',
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
@@ -222,6 +204,8 @@ class _EducationIncorrectScreenState extends State<EducationIncorrectScreen>
                   ),
                   textAlign: TextAlign.center,
                 ),
+
+                
                 FadeTransition(
                   opacity: _opacityAnimation,
                   child: const Icon(
@@ -231,22 +215,14 @@ class _EducationIncorrectScreenState extends State<EducationIncorrectScreen>
                   ),
                 ),
 
-                const SizedBox(height: 0.5),
-                if (widget.questionImage != null)
-                  SizedBox(
-                    width: 120,
-                    height: 120,
-                    child: Image.network(
-                      widget.questionImage!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Text('画像を読み込めませんでした');
-                      },
-                    ),
-                  ),
+                const SizedBox(height: 0.2),
+                
+                
+              
+            
 
 
-                const SizedBox(height: 1),
+                SizedBox(height: 0.2 * screenSize.height),
                 // 解説部分
                 Container(
                   padding: const EdgeInsets.all(10), // 内部の余白大きく
@@ -279,7 +255,7 @@ class _EducationIncorrectScreenState extends State<EducationIncorrectScreen>
                         TextSpan(
                           text: widget.correctAnswer, // 正解の答え
                           style: const TextStyle(
-                            fontSize: 25, // 文字サイズを大きく
+                            fontSize: 24, // 文字サイズを大きく
                             fontWeight: FontWeight.bold,
                             color: Color.fromARGB(255, 0, 0, 0), // 色も変えたい場合
                             fontFamily: 'Comic Sans MS',
@@ -290,7 +266,9 @@ class _EducationIncorrectScreenState extends State<EducationIncorrectScreen>
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(height: 40),
+
+
+                //SizedBox(height: 40),
                 RectangularButton(
                   text: 'つぎのもんだい',
                   width: screenSize.width * 0.6,
@@ -309,8 +287,87 @@ class _EducationIncorrectScreenState extends State<EducationIncorrectScreen>
               ],
             ),
           ),
+
+          //画像
+          //形の時
+          if (widget.nextScreenFlag == 'shape')
+            if (widget.questionImage != null)
+              Positioned(
+                top: screenSize.height * 0.3,
+                left: 0,
+                right: 0,
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: 200,
+                    height: 200,
+                    child: Image.network(
+                      widget.questionImage!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Text('画像を読み込めませんでした');
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            //画像
+          //色の時
+          if (widget.nextScreenFlag == 'color')
+            if (widget.questionImage != null)
+              Positioned(
+                top: screenSize.height * 0.25,
+                left: 0,
+                right: 0,
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: 300,
+                    height: 300,
+                    child: Image.network(
+                      widget.questionImage!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Text('画像を読み込めませんでした');
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );
+  }
+}
+
+class SchoolBackgroundPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint linePaint = Paint()
+      ..color = Colors.grey.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+
+    final double lineSpacing = 40.0;
+
+    // ノート風の横罫線を描画
+    for (double y = 0; y < size.height; y += lineSpacing) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), linePaint);
+    }
+
+    // 左側の赤い縦線を描画
+    final Paint marginPaint = Paint()
+      ..color = Colors.red.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    canvas.drawLine(const Offset(50, 0), Offset(50, size.height), marginPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false; // 再描画は不要
   }
 }
