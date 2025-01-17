@@ -1,6 +1,6 @@
 import 'HelpErrandScreen.dart';
 import 'package:flutter/material.dart';
-import 'HelpErrandScreen.dart';
+import 'HelpErrandScreen2.dart';
 
 // 四角いボタンを定義
 class RectangularButton extends StatelessWidget {

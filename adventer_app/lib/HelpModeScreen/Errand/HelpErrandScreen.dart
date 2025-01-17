@@ -7,7 +7,7 @@ import 'HelpErrandIncrrectScreen.dart';
 import 'HelpErrandResult.dart';
 import 'dart:developer';
 
-// questionのデータモデル
+//  questionのデータモデル
 class Question {
   final String questionId;
   final String questionTypeid;
@@ -43,8 +43,6 @@ class Question {
   }
 }
 
-  
-
 // APIリクエストを送信して、問題を取得するメソッド
 Future<Question?> fetchQuestion(String questiontypeId) async {
   final response = await http.get(
@@ -56,10 +54,8 @@ Future<Question?> fetchQuestion(String questiontypeId) async {
     return Question.fromJson(jsonDecode(response.body));
   } else {
     throw Exception('Failed to load question');
-  
   }
 }
-
 
 Future<String> submitAnswer(String questionId, String selectedAnswer) async {
   final response = await http.post(
@@ -70,7 +66,6 @@ Future<String> submitAnswer(String questionId, String selectedAnswer) async {
       'answer': selectedAnswer,
     }),
   );
-  log('Response body: ${response.body}');
 
   if (response.statusCode == 200) {
     return response.body; // "correct" または "incorrect"
@@ -78,8 +73,6 @@ Future<String> submitAnswer(String questionId, String selectedAnswer) async {
     throw Exception('回答の送信に失敗しました');
   }
 }
-
-
 
 // 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
@@ -134,15 +127,16 @@ class RectangularButton extends StatelessWidget {
   }
 }
 
+
 // おつかい問題出題画面
-class HelpErrandScreen extends StatefulWidget {
-    final int questionCount;
+class HelpErrandScreen2 extends StatefulWidget {
+  final int questionCount;
   final int correctCount;
-  const HelpErrandScreen(  {required this.questionCount, required this.correctCount});
+  const HelpErrandScreen2(  {required this.questionCount, required this.correctCount});
 
   @override
-  _HelpErrandScreenState createState() =>
-      _HelpErrandScreenState(questionCount, correctCount);
+  _HelpErrandScreen2State createState() =>
+      _HelpErrandScreen2State(questionCount, correctCount);
 }
 class HintIcon extends StatelessWidget {
   final VoidCallback onPressed;
@@ -158,13 +152,15 @@ class HintIcon extends StatelessWidget {
   }
 }
 
-class _HelpErrandScreenState extends State<HelpErrandScreen> {
-  late Future<Question?> questionFuture;
+
+
+class _HelpErrandScreen2State extends State<HelpErrandScreen2> {
+    late Future<Question?> questionFuture;
   late int questionCount; // このクラス内で管理する変数
   late int correctCount; // 正解数を追跡する変数
 
   // コンストラクタで初期値を設定
-  _HelpErrandScreenState(this.questionCount, this.correctCount);
+  _HelpErrandScreen2State(this.questionCount, this.correctCount);
 
   @override
   void initState() {
@@ -201,56 +197,42 @@ class _HelpErrandScreenState extends State<HelpErrandScreen> {
   }
   
   // ユーザーが答えを選んだときに呼び出すメソッド
-  void _handleAnswerSubmission(
-      String selectedAnswerId, Question question, BuildContext context) async {
-    try {
-      final result =
-          await submitAnswer(question.questionId, selectedAnswerId); // 修正
+  void _handleAnswerSubmission(String selectedAnswerId, Question question, BuildContext context) async {
+  try {
+    final result = await submitAnswer(question.questionId, selectedAnswerId); // 非同期処理を待機
 
-      setState(() {
-        questionCount++; // 問題数をカウント
-        if (result == "correct") {
-          correctCount++; // 正解数をカウント
-        }
-      });
+    setState(() {
+      questionCount++; // 問題数をカウント
+      if (result == "correct") {
+        correctCount++; // 正解数をカウント
+      }
+    });
 
-      if (questionCount >= 10) {
-        // 10問解いたあとは結果画面に遷移
+    if (questionCount >= 10) {
+      // 10問解いたあとは結果画面に遷移
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HelpErrandResultScreen(correctCount: correctCount)),
+      );
+    } else {
+      if (result == "correct") {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  HelpErrandResultScreen(correctCount: correctCount)),
+          MaterialPageRoute(builder: (context) => HelpErrandCorrectScreen(questionCount: questionCount, correctCount: correctCount)),
         );
       } else {
-        if (result == "correct") {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => HelpErrandCorrectScreen(
-                    
-                    questionCount: questionCount,
-                    correctCount: correctCount)),
-          );
-        } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => HelpErrandIncorrectScreen(
-                 
-                    questionCount: questionCount,
-                    correctCount: correctCount,
-                    correctAnswer: question.questionAnswer)),
-          );
-        }
-        // 次の問題を取得する処理を呼び出す
-       if (questionCount < 5) {
-            // 必要なときのみ setState を呼ぶ
-            setState(() {
-                questionFuture = fetchQuestion("KMS006");
-            });
-          }
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HelpErrandIncorrectScreen(questionCount: questionCount, correctCount: correctCount, correctAnswer: question.questionAnswer)),
+        );
+      }
 
+      // 次の問題を取得する処理を呼び出す
+        if (questionCount < 5) {
+          setState(() {
+            questionFuture = fetchQuestion("KMS006"); // 次の問題を取得
+          });
+        }
       }
     } catch (e) {
       print("エラー: $e");
@@ -259,20 +241,20 @@ class _HelpErrandScreenState extends State<HelpErrandScreen> {
       );
     }
   }
+
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final screenWidth = screenSize.width;
-    final screenHeight = screenSize.height;
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false, // 戻るボタンを非表示にする
-        backgroundColor: const Color.fromARGB(255, 255, 104, 96),
+        automaticallyImplyLeading: false,
+        backgroundColor: const Color.fromARGB(141, 57, 154, 0),
         elevation: 0,
         title: const Text(
           'おつかいもんだい',
-          style: TextStyle(
+           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -281,265 +263,150 @@ class _HelpErrandScreenState extends State<HelpErrandScreen> {
         ),
         centerTitle: true,
       ),
-      backgroundColor: Colors.white, // 背景を白に統一
+      backgroundColor: Colors.white,
       body: FutureBuilder<Question?>(
         future: questionFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text('エラー: ${snapshot.error}'));
           } else if (snapshot.hasData) {
             final question = snapshot.data!;
-
             return Stack(
-        children: [
-          // 背景色（温かみのある色調）
-          Container(color: Colors.teal[50]),
-
-          // 上部デコレーション（円形の装飾）
-          Positioned(
-            top: -screenHeight * 0.05, // 画面サイズに基づく位置調整
-            left: -screenWidth * 0.1,
-            child: Container(
-              width: screenWidth * 0.4, // 画面サイズに基づくサイズ調整
-              height: screenWidth * 0.4,
-              decoration: BoxDecoration(
-                color: Colors.orangeAccent[100],
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          Positioned(
-            top: screenHeight * 0.2, // 画面サイズに基づく位置調整
-            right: -screenWidth * 0.1,
-            child: Container(
-              width: screenWidth * 0.3,
-              height: screenWidth * 0.3,
-              decoration: BoxDecoration(
-                color: Colors.lightGreen[200],
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          // 問題中断ボタン（左下）
-          Positioned(
-            bottom: screenSize.height * 0.05, // 位置調整
-            left: 10,
-            child: TextButton(
-              onPressed: () {
-                _showQuitDialog(context); // ダイアログを表示
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 255, 104, 96),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20), // 角丸
+               children: [
+                // 背景装飾
+                Positioned(
+                  top: -50,
+                  left: -50,
+                  child: Container(
+                    width: 150,
+                    height: 150,
+                    decoration: const BoxDecoration(
+                      color: Color.fromARGB(50, 255, 182, 193),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-              ),
-              child: const Text(
-                'やめる',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white, // テキストカラー（白）
-                  fontFamily: 'Comic Sans MS', // フォント
+                Positioned(
+                  bottom: -50,
+                  right: -50,
+                  child: Container(
+                    width: 200,
+                    height: 200,
+                    decoration: const BoxDecoration(
+                      color: Color.fromARGB(50, 173, 216, 230),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
-          
-          Positioned(
-            top: screenSize.height * 0.45, // 適切な位置に調整
-            right: screenSize.width * 0.05, // 適切な位置に調整
-            child: HintIcon(
-              onPressed: () {
-                // ヒントのポップアップ表示
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
+                // 問題中断ボタン（左下）
+                Positioned(
+                  bottom: 30,
+                  left: 10,
+                  child: TextButton(
+                    onPressed: () {
+                      _showQuitDialog(context); // ダイアログを表示
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(141, 57, 154, 0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20), // 角丸
                       ),
-                      title: const Center(
-                        child: Text(
-                          'ヒント',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontFamily: 'Comic Sans MS',
-                          ),
-                        ),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 25),
+                    ),
+                    child: const Text(
+                      'やめる',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white, // テキストカラー（白）
+                        fontFamily: 'Comic Sans MS', // フォント
                       ),
-                      content:const Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                         SizedBox(height: 10), // 少し余白を追加
-                          Row(
-                            children: [
-                             SizedBox(width: 10),
-                             Text(
-                                '①  →  １えん',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                  fontFamily: 'Comic Sans MS',
-                                ),
-                              ),
-                            ],
-                          ),
-                         SizedBox(height: 10), // 少し余白を追加
-                          Row(
-                            children: [
-                              
-                             SizedBox(width: 10),
-                             Text(
-                                '⑤  →  ５えん',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                  fontFamily: 'Comic Sans MS',
-                                ),
-                              ),
-                            ],
-                          ),
-                         SizedBox(height: 10), // 少し余白を追加
-                          Row(
-                            children: [
-                              
-                             SizedBox(width: 10),
-                             Text(
-                                '⑩  →  １０えん',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                  fontFamily: 'Comic Sans MS',
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      actions: [
-                        Center(
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.pop(context); // ポップアップを閉じる
-                            },
-                            style: TextButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(255, 255, 104, 96),
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 10,
-                                horizontal: 30,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20), // ボタンの角丸
-                              ),
-                            ),
-                            child: const Text(
-                              '閉じる',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                fontFamily: 'Comic Sans MS',
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-          // 問題テキスト
-          Positioned(
-            top: screenSize.height * 0.15,
-            left: 0,
-            right: 0,
-            child: Column(
-              children: [
-                const Text(
-                  'おかねはいくらでしょう？',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    fontFamily: 'Comic Sans MS',
+                    ),
                   ),
                 ),
-                const SizedBox(height: 60),
-                // 問題の丸
-                Container(
-                  width: screenSize.width * 0.4, // 比率調整
-                  height: screenSize.width * 0.4, // 比率調整
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 154, 208, 255),
-                    shape: BoxShape.circle,
-                    
-                  ),
-                  child: Center(
+                // 問題テキストと選択肢
+                Positioned(
+                  top: screenSize.height * 0.15,
+                  left: 0,
+                  right: 0,
+                  child: Column(
+                    children: [
+                      const Text(
+                        'このもじと\nおなじもじをみつけよう！',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontFamily: 'Comic Sans MS',
+                        ),
+                      ),
+                      const SizedBox(height: 60),
+                      Container(
+                        width: 160,
+                        height: 160,
+                        decoration: const BoxDecoration(
+                          color: Color.fromARGB(255, 154, 208, 255),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
                           child: Image.network(
-                            question.questionImage),// question_image（問題内容画像url)を表示
+                            question.questionImage), // question_image（問題内容画像url)を表示
                           //question.question_image,
                           //style: const TextStyle(fontSize: 40),
                           //),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                ),
-              ],
-            ),
-          ),
-          // 選択ボタンエリア
-          Positioned(
-            bottom: screenSize.height * 0.18, // 位置調整
-            left: 0,
-            right: 0,
-           
-             child: Column(
-  children: [
-    for (int i = 0; i < question.options.length; i += 2) ...[
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          if (i < question.options.length)
-            RectangularButton(
-              text: question.options.keys.toList()[i],
-              buttonColor: const Color.fromARGB(255, 250, 240, 230),
-              textColor: Colors.black,
-              width: screenSize.width * 0.4,
-              height: 70,
-              onPressed: () {
-                final selectedAnswerId = question.options.values.toList()[i];
-                _handleAnswerSubmission(selectedAnswerId, question, context);
-              },
-            ),
-          if (i + 1 < question.options.length)
-            RectangularButton(
-              text: question.options.keys.toList()[i + 1],
-              buttonColor: const Color.fromARGB(255, 250, 240, 230),
-              textColor: Colors.black,
-              width: screenSize.width * 0.4,
-              height: 70,
-              onPressed: () {
-                final selectedAnswerId =
-                    question.options.values.toList()[i + 1];
-                _handleAnswerSubmission(selectedAnswerId, question, context);
-              },
-            ),
-        ],
-      ),
-    
-                        if (i + 2 < question.options.length) // 最後の行には間隔を追加しない
-                                const SizedBox(height: 10), // 上下の間隔を設定
-    ],
+                // 選択肢ボタンエリア
+                Positioned(
+                  bottom: screenSize.height * 0.20,
+                  left: 0,
+                  right: 0,
+                  child: Column(
+                    children: [
+                      for (int i = 0; i < question.options.length; i += 2)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            if (i < question.options.length)
+                              RectangularButton(
+                                text: question.options.keys.toList()[i], //選択肢表示
+                                buttonColor:
+                                    const Color.fromARGB(255, 250, 240, 230),
+                                textColor: Colors.black,
+                                width: screenSize.width * 0.4,
+                                height: 70,
+                                onPressed: () {
+                                  final selectedAnswerId = question
+                                      .options.values
+                                      .toList()[i]; //question.idを送信
+                                  _handleAnswerSubmission(selectedAnswerId,
+                                      question, context); // 修正箇所
+                                },
+                              ),
+                            if (i + 1 < question.options.length)
+                              RectangularButton(
+                                text: question.options.keys.toList()[i + 1],
+                                buttonColor:
+                                    const Color.fromARGB(255, 250, 240, 230),
+                                textColor: Colors.black,
+                                width: screenSize.width * 0.4,
+                                height: 70,
+                                onPressed: () {
+                                  final selectedAnswerId =
+                                      question.options.values.toList()[i + 1];
+                                  _handleAnswerSubmission(selectedAnswerId,
+                                      question, context); // 修正箇所
+                                },
+                              ),
+                          ],
+                        ),
                     ],
                   ),
                 ),

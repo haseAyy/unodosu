@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'HelpErrandScreen.dart';
+import 'HelpErrandScreen2.dart';
 
 // おつかい問題スタート画面
 class HelpErrandStartScreen extends StatelessWidget {
@@ -51,7 +52,7 @@ class HelpErrandStartScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => HelpErrandScreen( questionCount: questionCount,correctCount: correctCount),
+                        builder: (context) => HelpErrandScreen(questionCount: questionCount,correctCount: correctCount),
                       ),
                     );
                   },
