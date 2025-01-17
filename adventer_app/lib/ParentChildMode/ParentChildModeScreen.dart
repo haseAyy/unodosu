@@ -1,16 +1,81 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'ImageUploadScreen.dart';
 import 'MissionSettingsScreen.dart';
 
-// 親子モードのミッション設定画面
-class ParentChildModeScreen extends StatelessWidget {
-  final String displayText; // 表示する文字列
-  const ParentChildModeScreen({
-    super.key,
-    required this.displayText, // コンストラクタで受け取る
+// missionのデータモデル
+/*
+class Mission {
+  final String? missionId;
+  final String? missionName;
+  final String? missionKeyword;
+  final Map<String, String> options;
+
+  Mission({
+    required this.missionId,
+    required this.missionName,
+    required this.missionKeyword,
+    required this.options,
   });
 
+  // JSONをMissionオブジェクトに変換
+  factory Mission.fromJson(Map<String, dynamic> json) {
+    return Mission(
+      missionId: json['mission_id'] ?? '',  // nullの場合は空文字に設定
+      missionName: json['mission_name'] ?? 'デフォルトのミッション名',  // nullの場合のデフォルト値
+      missionKeyword: json['mission_keyword'] ?? 'デフォルトのキーワード',  // nullの場合のデフォルト値
+      options: json['options'] != null && json['options'].isNotEmpty
+          ? Map<String, String>.from(json['options'])
+          : {'No options available': ''}, // デフォルト値
+    );
+  }
+}
+*/
+
+// 親子モードのミッション設定画面
+class ParentChildModeScreen extends StatefulWidget {
+  const ParentChildModeScreen({super.key});
+
+  @override
+  State<ParentChildModeScreen> createState() => _ParentChildModeScreenState();
+}
+
+class _ParentChildModeScreenState extends State<ParentChildModeScreen> {
+  List<String> missionList = []; // 取得したミッション情報を格納するリスト
+  String displayText = "";
+
+  @override
+  void initState() {
+    super.initState();
+    fetchMissionData(); // APIデータを取得
+  }
+
+  Future<void> fetchMissionData() async {
+    final url = Uri.parse('http://10.24.109.199:8080/random');
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        setState(() {
+          List<String> missionList = List<String>.from(json.decode(utf8.decode(response.bodyBytes)));
+          displayText = missionList[1];
+        });
+      } else {
+        setState(() {
+          missionList = ["ミッションが見つかりません"]; // データが見つからない場合
+        });
+      }
+    } catch (e) {
+      setState(() {
+        print("エラーが発生しました: $e");
+        missionList = ["エラーが発生しました。"];
+      });
+    }
+  }
+
+  
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -111,11 +176,13 @@ class ParentChildModeScreen extends StatelessWidget {
                     displayText,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: screenWidth * 0.08,
+                      fontSize: screenWidth * 0.04,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'DotGothic16',
                       color: Colors.black87,
                     ),
+                    maxLines: 2,  // 最大2行まで表示
+                    overflow: TextOverflow.ellipsis,  // はみ出た部分は「…」で省略
                   ),
                 ],
               ),

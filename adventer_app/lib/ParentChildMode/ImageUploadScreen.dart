@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'MissionSettingsScreen.dart';
+import '../MeneScreen/HomeScreen.dart';
 
 class ImageUploadScreen extends StatefulWidget {
   const ImageUploadScreen({super.key});
@@ -31,9 +32,14 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
             left: 10,
             child: FloatingActionButton(
               onPressed: () {
-                Navigator.pop(context); // 前の画面に戻る
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomeScreen(initialIndex: 3),
+                  ),
+                );
               },
-              backgroundColor: Colors.grey[100],
+              backgroundColor: Colors.grey[50],
               child: const Icon(Icons.arrow_back),
             ),
           ),

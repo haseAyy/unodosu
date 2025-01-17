@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'ParentChildModeScreen.dart';
+import '../MeneScreen/HomeScreen.dart';
 import 'dart:ui';
 
 // ユーザミッション設定画面(親子モード)
@@ -27,7 +27,12 @@ class MissionSettingsScreen extends StatelessWidget {
             left: 10,
             child: FloatingActionButton(
               onPressed: () {
-                Navigator.pop(context); // 前の画面に戻る
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomeScreen(initialIndex: 3),
+                  ),
+                );
               },
               backgroundColor: Colors.grey[100],
               child: const Icon(Icons.arrow_back),
@@ -43,7 +48,7 @@ class MissionSettingsScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const MissionSettingsScreen()),
+                      builder: (context) => const HomeScreen(initialIndex: 3),),
                 );
               },
             ),

@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // 各モード画面
     const EducationModeScreen(),
     const HelpModeScreen(),
-    const ParentChildModeScreen(displayText: '星空を観察しよう!'),
+    const ParentChildModeScreen(),
   ];
 
   void _onItemTapped(int index) {
