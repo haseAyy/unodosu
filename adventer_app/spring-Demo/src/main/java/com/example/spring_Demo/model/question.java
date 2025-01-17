@@ -2,7 +2,7 @@ package com.example.spring_Demo.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import java.util.List;
+import java.util.Map;
 
 import jakarta.persistence.Transient;
 
@@ -24,8 +24,8 @@ public class question{
    
     // 選択肢を動的に生成するために使用
     @Transient
-    private List<String> options;
-     // optionsフィールドの定義
+    private Map<String,String> options;  // optionsフィールドの定義
+   
 
     /*getterとsetterの定義 */
 
@@ -47,7 +47,7 @@ public class question{
     public String getQuestion_answer(){
         return question_answer;
     }
-    public String getquestion_image(){
+    public String getQuestion_image(){
         return question_image;
     }
 
@@ -73,15 +73,12 @@ public class question{
         this.question_image = question_image;
     }
 
-    public List<String> getOptions() {
+    public Map<String,String> getOptions() {
         return options;
     }
 
-    public void setOptions(List<String> options) {
+    public void setOptions(Map<String,String> options) {
         this.options = options;
     }
-
-    
-
 
 }

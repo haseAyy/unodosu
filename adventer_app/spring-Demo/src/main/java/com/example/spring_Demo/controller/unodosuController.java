@@ -21,14 +21,6 @@ public class unodosuController {
   @Autowired
   private ProblemService problemService;
 
-  // ホームページへのGETリクエストを処理
-  @GetMapping("/")
-  public String homePage(HttpSession session) {
-      // セッションに保存されている過去の問題履歴をリセット
-      session.removeAttribute("solvedQuestions"); 
-      return "home"; // home.htmlを返してビューを表示
-  }
-
   // ランダムなテキスト問題を取得する
   @SuppressWarnings("unchecked")
   @GetMapping(value = "/random-text-question", produces = "application/json;charset=UTF-8")
@@ -98,4 +90,7 @@ public class unodosuController {
         }
         return "redirect:/"; // 5問解いていない場合はホームページにリダイレクト
     }
+
+    
 }
+
