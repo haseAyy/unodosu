@@ -2,6 +2,7 @@ import 'package:adventer_app/EducationModeScreen/Shape/ShapeEducationScreen.dart
 import 'HelpErrandScreen2.dart';
 import 'package:flutter/material.dart';
 import 'HelpErrandScreen.dart';
+import 'HelpErrandResult.dart';
 
 
 import 'package:flutter/material.dart';
@@ -142,8 +143,15 @@ class _EducationIncorrectScreenState extends State<EducationIncorrectScreen>
         centerTitle: true,
       ),
       backgroundColor: Colors.white, // 背景を白に統一
+      
       body: Stack(
         children: [
+          Positioned.fill(
+                  child: Image.asset(
+                    'assets/images/moneyback.png', // ここに画像のパスを指定
+                    fit: BoxFit.cover, // 画像を画面いっぱいに拡大
+                  ),
+                ),
           // 上部のソフトな装飾
           Positioned(
             top: -50,
@@ -151,10 +159,10 @@ class _EducationIncorrectScreenState extends State<EducationIncorrectScreen>
             child: Container(
               width: 150,
               height: 150,
-              decoration: const BoxDecoration(
+              /*decoration: const BoxDecoration(
                 color: Color.fromARGB(50, 255, 182, 193), // 薄いピンク
                 shape: BoxShape.circle,
-              ),
+              ),*/
             ),
           ),
           // 下部のソフトな装飾
@@ -164,10 +172,10 @@ class _EducationIncorrectScreenState extends State<EducationIncorrectScreen>
             child: Container(
               width: 200,
               height: 200,
-              decoration: const BoxDecoration(
+              /*decoration: const BoxDecoration(
                 color: Color.fromARGB(50, 173, 216, 230), // 薄い水色
                 shape: BoxShape.circle,
-              ),
+              ),*/
             ),
           ),
           // 中央のコンテンツ
@@ -262,14 +270,30 @@ class _EducationIncorrectScreenState extends State<EducationIncorrectScreen>
                   buttonColor: const Color.fromARGB(255, 250, 240, 230),
                   textColor: Colors.black,
                   onPressed: () {
-                    Navigator.pushReplacement(
+                     if (widget.questionCount == 10) {
+                      // 結果画面へ遷移するロジック
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HelpErrandResultScreen(
+                            correctCount: widget.correctCount,
+                          ),
+                        ),
+                      );
+                      }else{
+                        Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => _getNextScreen(), // 遷移先の画面
+                        builder: (context) => _getNextScreen(),
                       ),
                     );
+
+                      }
+                    
                   },
+                  
                 ),
+                const SizedBox(height: 10),  // ボタン下に追加の空白を挿入
               ],
             ),
           ),

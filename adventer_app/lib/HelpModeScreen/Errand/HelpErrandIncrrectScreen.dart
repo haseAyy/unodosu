@@ -76,7 +76,7 @@ class HelpErrandIncorrectScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false, // 戻るボタンを非表示
-        backgroundColor: const Color.fromARGB(255, 222, 94, 94),
+        backgroundColor: const Color.fromARGB(255, 250, 60, 60),
         elevation: 0,
         title: const Text(
           'ざんねん',
@@ -162,8 +162,8 @@ class HelpErrandIncorrectScreen extends StatelessWidget {
                   ),
                   child:  Text(
                      correctAnswer != null
-                        ? '解説: このもんだいの答えは「$correctAnswer」だよ。次回はもっとがんばろう！'
-                        : '次回もがんばろう！', //correctAnswerがない場合
+                        ? 'ただしいこたえ: \n'
+                        : 'つぎはがんばろう！', //correctAnswerがない場合
                     
                     style: const TextStyle(
                       fontSize: 15,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'HelpErrandScreen2.dart';
+import 'HelpErrandResult.dart';
 
 // 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
@@ -54,16 +55,17 @@ class RectangularButton extends StatelessWidget {
   }
 }
 
+
 // 正解画面
 class EducationCorrectScreen extends StatefulWidget {
-  final int questionCount;
+   final int questionCount;
   final int correctCount;
   final String correctAnswer;
   final String? questionImage;
   final String nextScreenFlag;
 
   const EducationCorrectScreen({
-    required this.questionCount,
+  required this.questionCount,
     required this.correctCount,
     required this.correctAnswer,
     this.questionImage,
@@ -76,12 +78,12 @@ class EducationCorrectScreen extends StatefulWidget {
 
 class _EducationCorrectScreenState extends State<EducationCorrectScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+    late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _opacityAnimation;
   late Animation<double> _fadeAnimation;
 
-  @override
+   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
@@ -105,7 +107,7 @@ class _EducationCorrectScreenState extends State<EducationCorrectScreen>
     _controller.forward();
   }
 
-  @override
+ @override
   void dispose() {
     _controller.dispose();
     super.dispose();
@@ -122,7 +124,7 @@ class _EducationCorrectScreenState extends State<EducationCorrectScreen>
     }
   
 
-  @override
+   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
 
@@ -135,40 +137,33 @@ class _EducationCorrectScreenState extends State<EducationCorrectScreen>
           'すごい！',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 22,
+            fontSize: 30,
             fontWeight: FontWeight.bold,
             fontFamily: 'Comic Sans MS',
           ),
         ),
         centerTitle: true,
       ),
+
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          Positioned(
-            top: -50,
-            left: -50,
-            child: Container(
-              width: 150,
-              height: 150,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 255, 182, 193),
-                shape: BoxShape.circle,
-              ),
+         // 背景（ノート風の罫線デザイン）
+          /*Positioned.fill(
+            child: CustomPaint(
+              painter: SchoolBackgroundPainter(),
             ),
-          ),
-          Positioned(
-            bottom: -50,
-            right: -50,
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 173, 216, 230),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
+          ),*/
+          
+                // 背景画像を設定
+                Positioned.fill(
+                  child: Image.asset(
+                    'assets/images/moneyback.png', // ここに画像のパスを指定
+                    fit: BoxFit.cover, // 画像を画面いっぱいに拡大
+                  ),
+                ),
+          
+          
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -182,7 +177,11 @@ class _EducationCorrectScreenState extends State<EducationCorrectScreen>
                     color: Colors.black,
                     fontFamily: 'Comic Sans MS',
                   ),
+                  textAlign: TextAlign.center,
                 ),
+                
+
+                
                 const SizedBox(height: 20),
                 AnimatedBuilder(
                   animation: _controller,
@@ -191,11 +190,14 @@ class _EducationCorrectScreenState extends State<EducationCorrectScreen>
                       opacity: _opacityAnimation.value,
                       child: Transform.scale(
                         scale: _scaleAnimation.value,
-                        child: FadeTransition(
+                        child: 
+                        
+                        
+                        FadeTransition(
                           opacity: _fadeAnimation,
                           child: const Icon(
                             Icons.check_circle_outline,
-                            size: 120,
+                            size: 150,
                             color: Colors.orange,
                           ),
                         ),
@@ -222,12 +224,12 @@ class _EducationCorrectScreenState extends State<EducationCorrectScreen>
                 //解説部分
                 Container(
                   padding: const EdgeInsets.all(10),
-                  margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                  margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                   decoration: BoxDecoration(
                     color: Colors.transparent,
                     border: Border.all(
                       color: const Color.fromARGB(255, 205, 205, 205),
-                      width: 3,
+                      width: 4,
                     ),
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
@@ -251,14 +253,19 @@ class _EducationCorrectScreenState extends State<EducationCorrectScreen>
                         TextSpan(
                           text: widget.correctAnswer,
                           style: const TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.normal,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 0, 0, 0),
+                            fontFamily: 'Comic Sans MS',
                           ),
                         ),
                       ],
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
+
+                const SizedBox(height: 40),
                 RectangularButton(
                   text: 'つぎのもんだい',
                  width: screenSize.width * 0.6,
@@ -266,13 +273,28 @@ class _EducationCorrectScreenState extends State<EducationCorrectScreen>
                   buttonColor: const Color.fromARGB(255, 250, 240, 230),
                   textColor: Colors.black,
                   onPressed: () {
-                    Navigator.pushReplacement(
+                    if (widget.questionCount == 10) {
+                      // 結果画面へ遷移するロジック
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HelpErrandResultScreen(
+                            correctCount: widget.correctCount,
+                          ),
+                        ),
+                      );
+                      }else{
+                        Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                         builder: (context) => _getNextScreen(),
                       ),
                     );
+
+                      }
+                    
                   },
+                  
                 ),
                 const SizedBox(height: 10),  // ボタン下に追加の空白を挿入
               ],
@@ -283,3 +305,33 @@ class _EducationCorrectScreenState extends State<EducationCorrectScreen>
     );
   }
 }
+/*
+class SchoolBackgroundPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint linePaint = Paint()
+      ..color = Colors.grey.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+
+    final double lineSpacing = 40.0;
+
+    // ノート風の横罫線を描画
+    for (double y = 0; y < size.height; y += lineSpacing) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), linePaint);
+    }
+
+    // 左側の赤い縦線を描画
+    final Paint marginPaint = Paint()
+      ..color = Colors.red.shade300
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    canvas.drawLine(const Offset(50, 0), Offset(50, size.height), marginPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false; // 再描画は不要
+  }
+} */

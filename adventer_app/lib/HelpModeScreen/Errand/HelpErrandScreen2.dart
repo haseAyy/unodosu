@@ -156,21 +156,37 @@ class HintIcon extends StatelessWidget {
 
 class _HelpErrandScreenState extends State<HelpErrandScreen> {
   late Future<Question?> questionFuture;
-  late int questionCount; // このクラス内で管理する変数
-  late int correctCount; // 正解数を追跡する変数
+  late int questionCount;
+  late int correctCount;
+  
+  // 解いた問題IDを保存するリスト
+  List<String> solvedQuestions = []; 
 
-  // コンストラクタで初期値を設定
   _HelpErrandScreenState(this.questionCount, this.correctCount);
 
-  //gpt
   //List<String> solvedQuestions = []; // 解いた問題を保存するリスト
 
-  @override
+@override
   void initState() {
     super.initState();
-    questionFuture = fetchQuestion("KMS006"); // questiontypeIdを指定
+    _fetchUniqueQuestion();
   }
 
+  // 一意の問題を取得する関数
+  void _fetchUniqueQuestion() {
+    setState(() {
+      questionFuture = _getUniqueQuestion("KMS006");
+    });
+  }
+ Future<Question?> _getUniqueQuestion(String questiontypeId) async {
+    while (true) {
+      Question? question = await fetchQuestion(questiontypeId);
+      if (question != null && !solvedQuestions.contains(question.question_id)) {
+        solvedQuestions.add(question.question_id); // 解いた問題を保存
+        return question;
+      }
+    }
+  }
 /*
 // 答えによって色変えるよんカスタム関数の追加
   Color _getColorFromAnswer(String answer) {
@@ -234,15 +250,7 @@ class _HelpErrandScreenState extends State<HelpErrandScreen> {
       });
       debugPrint('問題数を増やした後: $questionCount');
       debugPrint('正解数: $correctCount');
-      if (questionCount >= 10) {
-        // 10問解いたあとは結果画面に遷移
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  HelpErrandResultScreen(correctCount: correctCount)),
-        );
-      } else {
+      
         if (result == "correct") {
           Navigator.pushReplacement(
             context,
@@ -259,7 +267,7 @@ class _HelpErrandScreenState extends State<HelpErrandScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => EducationIncorrectScreen(
-                    correctAnswer: "このおかねは \n 「${question.question_answer}」えん",
+                    correctAnswer: "このおかねは \n 「${question.question_answer}」",
                     questionImage: question.question_image,
                     questionCount: questionCount,
                     correctCount: correctCount,
@@ -267,11 +275,9 @@ class _HelpErrandScreenState extends State<HelpErrandScreen> {
           );
         }
         // 次の問題を取得する処理を呼び出す
-        if (questionCount < 5) {
-          setState(() {
-            questionFuture = fetchQuestion("KMS006"); // 次の問題を取得
-          });
-        }
+        
+      if (questionCount < 5) {
+        _fetchUniqueQuestion(); // 次の一意な問題を取得
       }
     } catch (e) {
       print("エラー: $e");
@@ -288,7 +294,7 @@ class _HelpErrandScreenState extends State<HelpErrandScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+        backgroundColor: const Color.fromARGB(255, 0, 80, 15),
         elevation: 0,
         title: const Text(
           'おつかいもんだい',
@@ -319,6 +325,14 @@ class _HelpErrandScreenState extends State<HelpErrandScreen> {
               painter: SchoolBackgroundPainter(),
                  ),
                 ),*/
+               
+                // 背景画像を設定
+                Positioned.fill(
+                  child: Image.asset(
+                    'assets/images/moneyback.png', // ここに画像のパスを指定
+                    fit: BoxFit.cover, // 画像を画面いっぱいに拡大
+                  ),
+                ),
                 // 問題中断ボタン（左下）
                 Positioned(
                   bottom: 30,
@@ -328,7 +342,7 @@ class _HelpErrandScreenState extends State<HelpErrandScreen> {
                       _showQuitDialog(context); // ダイアログを表示
                     },
                     style: TextButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(141, 57, 154, 0),
+                      backgroundColor: const Color.fromARGB(255, 0, 80, 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20), // 角丸
                       ),
@@ -350,7 +364,28 @@ class _HelpErrandScreenState extends State<HelpErrandScreen> {
  Positioned(
             top: screenSize.height * 0.45, // 適切な位置に調整
             right: screenSize.width * 0.05, // 適切な位置に調整
-            child: HintIcon(
+             child: Transform.scale(
+              scale: 1.5,  // サイズを1.5倍に拡大
+               child: Stack(
+      alignment: Alignment.center,
+      children: [
+        // 白い円の背景
+        Container(
+          width: 30,  // 背景円のサイズを調整
+          height: 30,
+          decoration: BoxDecoration(
+            color: Colors.white,  // 白色の背景
+            shape: BoxShape.circle,  // 円形
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.5), // 黒い影を追加（線の代わりに）
+                spreadRadius: 1,  // 影の広がり
+                blurRadius: 1,  // ぼかし
+              ),
+            ],
+          ),
+        ),
+            HintIcon(
               onPressed: () {
                 // ヒントのポップアップ表示
                 showDialog(
@@ -371,58 +406,25 @@ class _HelpErrandScreenState extends State<HelpErrandScreen> {
                           ),
                         ),
                       ),
-                      content:const Column(
+                      content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                         SizedBox(height: 10), // 少し余白を追加
-                          Row(
-                            children: [
-                             SizedBox(width: 10),
-                             Text(
-                                '①  →  １えん',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                  fontFamily: 'Comic Sans MS',
-                                ),
-                              ),
-                            ],
-                          ),
-                         SizedBox(height: 10), // 少し余白を追加
-                          Row(
-                            children: [
-                              
-                             SizedBox(width: 10),
-                             Text(
-                                '⑤  →  ５えん',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                  fontFamily: 'Comic Sans MS',
-                                ),
-                              ),
-                            ],
-                          ),
-                         SizedBox(height: 10), // 少し余白を追加
-                          Row(
-                            children: [
-                              
-                             SizedBox(width: 10),
-                             Text(
-                                '⑩  →  １０えん',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                  fontFamily: 'Comic Sans MS',
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                          SizedBox(height: 10), // 余白
+                                      Image.asset(
+                                        'assets/images/moneyhint.png',  // 画像のパスを指定
+                                        width: 300,  // 画像の幅を指定
+                                        height:300, // 画像の高さを指定
+                                        fit: BoxFit.contain,  // 画像の表示方法を調整
+                                      ),
+                                    ],
+                                  ),
+                          
+                          
+                                                    
+                         
+                        
+                        
+                      
                       actions: [
                         Center(
                           child: TextButton(
@@ -447,49 +449,55 @@ class _HelpErrandScreenState extends State<HelpErrandScreen> {
                                 color: Colors.white,
                                 fontFamily: 'Comic Sans MS',
                               ),
-                            ),
-                          ),
                         ),
-                      ],
-                    );
-                  },
+                      ),
+                    ),
+                  ],
                 );
               },
-            ),
-          ),
+            );
+          },
+        ),
+      ],
+    ),
+  ),
+),
 
 
                 // 問題テキストと選択肢
                 Positioned(
-                  top: screenSize.height * 0.10,
+                  top: screenSize.height * 0.15,
                   left: 0,
                   right: 0,
                   child: Column(
                     children: [
-                      const SizedBox(height: 60),
-                      Text(
-                        question.question_content,
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          fontFamily: 'Comic Sans MS',
-                        ),
-                      ),
-                      
+                      Transform.translate(
+  offset: Offset(0, -20),  // Y軸方向に-20ピクセル移動（上へ）
+  child: Text(
+    question.question_content,
+    style: TextStyle(
+      fontSize: 28,
+      fontWeight: FontWeight.bold,
+      color: Colors.black,
+      fontFamily: 'Comic Sans MS',
+    ),
+  ),
+),
+
+                      //画像のサイズとか位置とか
                 SizedBox(
-                  
-                        width: screenSize.width * 7.0,
-                        height: screenSize.height * 0.35,
-                        child: Center(
+                        width: screenSize.width * 0.65,
+                        height: screenSize.height * 0.30,
+                        child: Transform.translate(
+                          offset: Offset(0, 0),  // X=0（横の位置）、Y=-10（上に移動）
                           child: Image.network(
                             question.question_image,
-                             width: screenSize.width * 0.5, // 実際の画像の幅を指定
-                             height: screenSize.height * 0.2, // 実際の画像の高さを指定
-                                fit: BoxFit.contain, // アスペクト比を保持しつつ表示
-                            ),
+                            width: screenSize.width * 0.5,
+                            height: screenSize.height * 0.2,
+                            fit: BoxFit.contain,
+                          ),
                         ),
-                   
+
                        // )
                       
                       ),
