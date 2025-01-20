@@ -4,6 +4,7 @@ import 'Bed/HelpBedScreen.dart'; // ベッドの画面
 import 'Bath/HelpBathScreen.dart'; // おふろの画面
 import 'package:http/http.dart' as http; // httpパッケージをインポート
 import 'dart:convert'; // jsonDecodeを使うためにインポート
+import 'HelpCleaningResultScreen.dart';
 
 // 四角いボタンを定義
 class RectangularButton extends StatelessWidget {
@@ -74,7 +75,9 @@ class HelpCleaningIncorrectScreen extends StatefulWidget {
       required this.correctCount,
       this.correctAnswer,
       required this.selectedAnswerContent, // 選択した答え
-      required this.questionId})
+      required this.questionId //取得した問題ID
+
+      })
       : super(key: key);
 
   @override
@@ -83,16 +86,32 @@ class HelpCleaningIncorrectScreen extends StatefulWidget {
 }
 
 class _HelpCleaningIncorrectScreenState
-    extends State<HelpCleaningIncorrectScreen> {
-  String? imageUrl; // 画像URLを保存する変数
+    extends State<HelpCleaningIncorrectScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _opacityAnimation;
+  late Animation<double> _scaleAnimation; // 拡大縮小のアニメーションを追加
+  String? imageUrl;
 
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+    _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
+    );
+    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    _controller.forward();
+
     _fetchGif();
   }
 
-  // 選択した答えに基づいて画像URLを取得
   Future<void> _fetchGif() async {
     final response = await http.get(
       Uri.parse(
@@ -101,11 +120,30 @@ class _HelpCleaningIncorrectScreenState
 
     if (response.statusCode == 200) {
       setState(() {
-        imageUrl = response.body; // 画像URLを設定
-        print("GIF URL: $imageUrl"); // デバッグ用にURLを表示 // JSON形式で返ってきた画像URLを設定
+        imageUrl = response.body;
       });
     } else {
       throw Exception('Failed to load Gif');
+    }
+  }
+
+  //次の画面へ遷移するメソッド
+  Widget _getNextScreen() {
+    if (widget.message == "ベッド") {
+      return HelpBedScreen(
+        questionCount: widget.questionCount,
+        correctCount: widget.correctCount,
+      );
+    } else if (widget.message == "おふろ") {
+      return HelpBathScreen(
+        questionCount: widget.questionCount,
+        correctCount: widget.correctCount,
+      );
+    } else {
+      return HelpBedScreen(
+        questionCount: widget.questionCount,
+        correctCount: widget.correctCount,
+      );
     }
   }
 
@@ -115,7 +153,7 @@ class _HelpCleaningIncorrectScreenState
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false, // 戻るボタンを非表示
+        automaticallyImplyLeading: false,
         backgroundColor: const Color.fromARGB(255, 222, 94, 94),
         elevation: 0,
         title: const Text(
@@ -129,10 +167,9 @@ class _HelpCleaningIncorrectScreenState
         ),
         centerTitle: true,
       ),
-      backgroundColor: Colors.white, // 背景を白に統一
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // 上部のソフトな装飾
           Positioned(
             top: -0.1 * screenSize.height,
             left: -0.1 * screenSize.width,
@@ -140,12 +177,11 @@ class _HelpCleaningIncorrectScreenState
               width: 0.3 * screenSize.width,
               height: 0.3 * screenSize.width,
               decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 255, 182, 193), // 薄いピンク
+                color: Color.fromARGB(50, 255, 182, 193),
                 shape: BoxShape.circle,
               ),
             ),
           ),
-          // 下部のソフトな装飾
           Positioned(
             bottom: -0.1 * screenSize.height,
             right: -0.1 * screenSize.width,
@@ -153,39 +189,61 @@ class _HelpCleaningIncorrectScreenState
               width: 0.4 * screenSize.width,
               height: 0.4 * screenSize.width,
               decoration: const BoxDecoration(
-                color: Color.fromARGB(50, 173, 216, 230), // 薄い水色
+                color: Color.fromARGB(50, 173, 216, 230),
                 shape: BoxShape.circle,
               ),
             ),
           ),
-          // 中央のコンテンツ
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // アイコンのサイズを画面の高さに基づいて調整
-                Icon(
-                  Icons.cancel_outlined,
-                  size: 0.2 * screenSize.height, // 画面高さに基づいてアイコンのサイズを決定
-                  color: Colors.red,
+                SizedBox(height: 0.008 * screenSize.height),
+                // AnimatedBuilderを使ったアニメーション付きのアイコン
+                AnimatedBuilder(
+                  animation: _controller,
+                  builder: (context, child) {
+                    return Opacity(
+                      opacity: _opacityAnimation.value,
+                      child: Transform.scale(
+                        scale: _scaleAnimation.value,
+                        child: Icon(
+                          Icons.cancel_outlined,
+                          size: 0.15 * screenSize.height,
+                          color: Colors.red,
+                        ),
+                      ),
+                    );
+                  },
                 ),
-                SizedBox(height: 0.05 * screenSize.height), // 高さに基づいて余白を調整
-                // GIFの画像を表示（URLが取得できていれば）
-                // GIFを表示
-                Expanded(
+                SizedBox(height: 0.01 * screenSize.height),
+                Text(
+                  'ざんねん！\nつぎもがんばろう！',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontFamily: 'Comic Sans MS',
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 0.03 * screenSize.height),
+
+                // GIFの画像表示部分
+                Container(
+                  height: 0.3 * screenSize.height,
                   child: imageUrl != null
                       ? Image.network(
-                          imageUrl!, // 取得したGIF URLを使用
-                          width: 0.5 * screenSize.width,
-                          height: 0.3 * screenSize.height,
+                          imageUrl!,
+                          width: 0.9 * screenSize.width,
+                          height: 0.9 * screenSize.height,
                           fit: BoxFit.cover,
                           loadingBuilder: (context, child, loadingProgress) {
                             if (loadingProgress == null) {
-                              return child; // 完全に読み込まれたら表示
+                              return child;
                             }
                             return Center(
-                              child:
-                                  CircularProgressIndicator(), // 読み込み中にインジケーターを表示
+                              child: CircularProgressIndicator(),
                             );
                           },
                           errorBuilder: (context, error, stackTrace) {
@@ -194,7 +252,7 @@ class _HelpCleaningIncorrectScreenState
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(Icons.error,
-                                      color: Colors.red, size: 50), // エラーアイコン
+                                      color: Colors.red, size: 50),
                                   Text("画像を読み込めませんでした",
                                       style: TextStyle(
                                           color: Colors.red, fontSize: 18)),
@@ -206,19 +264,19 @@ class _HelpCleaningIncorrectScreenState
                             );
                           },
                         )
-                      : const SizedBox.shrink(), // 画像URLがない場合、空のウィジェットを表示
+                      : const SizedBox.shrink(),
                 ),
-                SizedBox(height: 0.08 * screenSize.height), // 高さに基づいて余白を調整
+                SizedBox(height: 0.025 * screenSize.height),
                 // 解説部分
                 Container(
                   padding: const EdgeInsets.all(16),
-                  margin: EdgeInsets.symmetric(
-                      horizontal: 0.1 * screenSize.width), // ここを修正
+                  margin:
+                      EdgeInsets.symmetric(horizontal: 0.1 * screenSize.width),
                   decoration: BoxDecoration(
-                    color: Colors.transparent, // 背景色を透明に設定
+                    color: Colors.transparent,
                     border: Border.all(
-                      color: const Color.fromARGB(255, 205, 205, 205), // 枠の色
-                      width: 2, // 枠の太さ
+                      color: const Color.fromARGB(255, 205, 205, 205),
+                      width: 2,
                     ),
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
@@ -232,8 +290,8 @@ class _HelpCleaningIncorrectScreenState
                   ),
                   child: Text(
                     widget.correctAnswer != null
-                        ? '解説: このもんだいの答えは「${widget.correctAnswer}」だよ。次回はもっとがんばろう！'
-                        : '次回もがんばろう！', //correctAnswerがない場合
+                        ? 'こたえは「${widget.correctAnswer}」だよ！！'
+                        : '次回もがんばろう！',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -243,51 +301,35 @@ class _HelpCleaningIncorrectScreenState
                     textAlign: TextAlign.center,
                   ),
                 ),
-                SizedBox(height: 0.08 * screenSize.height), // 高さに基づいて余白を調整
+                SizedBox(height: 0.02 * screenSize.height),
+                // 次の問題ボタン
                 RectangularButton(
-                    text: 'つぎのもんだい',
-                    width: 0.6 * screenSize.width, // 幅を画面幅に基づいて調整
-                    height: 0.1 * screenSize.height, // 高さを画面高さに基づいて調整
-                    buttonColor: const Color.fromARGB(255, 250, 240, 230),
-                    textColor: Colors.black,
-                    onPressed: () {
-                      // 遷移前にデバッグ出力
-                      print("遷移先画面: ${widget.message}");
-                      print(
-                          "遷移前: questionCount: ${widget.questionCount}, correctCount: ${widget.correctCount}");
-                      // メッセージに基づいて遷移先を変更
-                      if (widget.message == "ベッド") {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HelpBedScreen(
-                              questionCount: widget.questionCount,
-                              correctCount: widget.correctCount,
-                            ),
+                  text: widget.questionCount == 10 ? 'けっかがめんへ' : 'つぎのもんだい',
+                  width: 0.6 * screenSize.width,
+                  height: 0.1 * screenSize.height,
+                  buttonColor: const Color.fromARGB(255, 250, 240, 230),
+                  textColor: Colors.black,
+                  onPressed: () {
+                    if (widget.questionCount >= 10) {
+                      // 結果画面へ遷移するロジック
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HelpCleaningResultScreen(
+                            correctCount: widget.correctCount,
                           ),
-                        );
-                      } else if (widget.message == "おふろ") {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HelpBathScreen(
-                              questionCount: widget.questionCount,
-                              correctCount: widget.correctCount,
-                            ),
-                          ),
-                        );
-                      } else if (widget.message == "つくえ") {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HelpBedScreen(
-                              questionCount: widget.questionCount,
-                              correctCount: widget.correctCount,
-                            ),
-                          ),
-                        );
-                      }
-                    }),
+                        ),
+                      );
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => _getNextScreen()),
+                      );
+                    }
+                  },
+                ),
+                SizedBox(height: 0.04 * screenSize.height),
               ],
             ),
           ),
