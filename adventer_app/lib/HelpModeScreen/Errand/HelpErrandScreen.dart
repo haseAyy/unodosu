@@ -397,7 +397,7 @@ class HintIcon extends StatelessWidget {
             ),
           ],
         ),
-        child: Center(
+        child: const Center(
           child: Icon(
             Icons.lightbulb_outline,
             size: 32,

@@ -241,7 +241,7 @@ class SchoolBackgroundPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
 
-    final double lineSpacing = 40.0;
+    const double lineSpacing = 40.0;
 
     // ノート風の横罫線を描画
     for (double y = 0; y < size.height; y += lineSpacing) {

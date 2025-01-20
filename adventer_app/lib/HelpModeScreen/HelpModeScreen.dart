@@ -204,11 +204,11 @@ class StitchPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0; // 縫い目の太さ
 
-    final double dashWidth = 10.0;
-    final double dashSpace = 6.0;
+    const double dashWidth = 10.0;
+    const double dashSpace = 6.0;
 
     // ボタンの内側に収まるように調整
-    final double padding = 5.0; // 内側の余白を設定
+    const double padding = 5.0; // 内側の余白を設定
 
     final Path path = Path()
       ..addRRect(RRect.fromRectAndRadius(
@@ -217,7 +217,7 @@ class StitchPainter extends CustomPainter {
           buttonWidth - padding * 2, // 内側に合わせて幅を調整
           buttonHeight - padding * 2, // 内側に合わせて高さを調整
         ),
-        Radius.circular(20), // 角丸の半径を調整
+        const Radius.circular(20), // 角丸の半径を調整
       ));
 
     // 破線を描画

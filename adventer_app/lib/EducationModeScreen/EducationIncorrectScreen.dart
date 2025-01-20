@@ -129,7 +129,7 @@ class EducationIncorrectScreen extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 0.08 * screenSize.height), // 高さに基づいて余白を調整
+                SizedBox(height: 0.01 * screenSize.height), // 高さに基づいて余白を調整
                 // 解説部分
                 Container(
                   padding: const EdgeInsets.all(16),

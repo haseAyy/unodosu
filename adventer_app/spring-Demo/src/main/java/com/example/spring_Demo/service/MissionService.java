@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class MissionService {
@@ -15,6 +15,7 @@ public class MissionService {
     @Autowired
     private MissionRepository missionRepository;
 
+    // ランダムなミッションを取得するメソッド
     public List<String> findRandomMission() {
         // ランダムなミッションを取得
         Optional<Mission> mission = missionRepository.findRandomMission();
@@ -22,17 +23,17 @@ public class MissionService {
         if (mission.isPresent()) {
             Mission missionData = mission.get();
 
+            // ミッション情報をMissionResponseに変換してリストに追加
             List<String> missionList = new ArrayList<>();
-            missionList.add(missionData.getMissionId()); 
+            missionList.add(missionData.getMissionId());
             missionList.add(missionData.getMissionName());
             missionList.add(missionData.getMissionKeyword());
-            // Listを返却
             return missionList;
         }
-        return null; // ミッションが存在しない場合
+        return new ArrayList<>(); // ミッションが存在しない場合、空のリストを返す
     }
 
-    // ミッション取得に使うレスポンス用のクラス
+    // ミッション情報を保持するレスポンスクラス
     public static class MissionResponse {
         private String missionId;
         private String missionName;

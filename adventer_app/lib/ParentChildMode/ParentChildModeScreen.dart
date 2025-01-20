@@ -4,35 +4,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'ImageUploadScreen.dart';
 import 'MissionSettingsScreen.dart';
-
-// missionのデータモデル
-/*
-class Mission {
-  final String? missionId;
-  final String? missionName;
-  final String? missionKeyword;
-  final Map<String, String> options;
-
-  Mission({
-    required this.missionId,
-    required this.missionName,
-    required this.missionKeyword,
-    required this.options,
-  });
-
-  // JSONをMissionオブジェクトに変換
-  factory Mission.fromJson(Map<String, dynamic> json) {
-    return Mission(
-      missionId: json['mission_id'] ?? '',  // nullの場合は空文字に設定
-      missionName: json['mission_name'] ?? 'デフォルトのミッション名',  // nullの場合のデフォルト値
-      missionKeyword: json['mission_keyword'] ?? 'デフォルトのキーワード',  // nullの場合のデフォルト値
-      options: json['options'] != null && json['options'].isNotEmpty
-          ? Map<String, String>.from(json['options'])
-          : {'No options available': ''}, // デフォルト値
-    );
-  }
-}
-*/
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // 親子モードのミッション設定画面
 class ParentChildModeScreen extends StatefulWidget {
@@ -43,39 +16,63 @@ class ParentChildModeScreen extends StatefulWidget {
 }
 
 class _ParentChildModeScreenState extends State<ParentChildModeScreen> {
-  List<String> missionList = []; // 取得したミッション情報を格納するリスト
+  // 'displayText' をここで定義
   String displayText = "";
 
   @override
   void initState() {
     super.initState();
-    fetchMissionData(); // APIデータを取得
+    fetchMissionData(); // APIデータを取得またはキャッシュデータを読み込み
   }
 
   Future<void> fetchMissionData() async {
+    // SharedPreferencesから保存されたミッションデータとタイムスタンプを取得
+    final prefs = await SharedPreferences.getInstance();
+    String? cachedMission = prefs.getString('mission');
+    String? cachedTimestamp = prefs.getString('timestamp');
+
+    // 現在の日時
+    DateTime now = DateTime.now();
+
+    // キャッシュデータがあり、かつ1日以内の場合はキャッシュを使用
+    if (cachedMission != null && cachedTimestamp != null) {
+      DateTime savedTime = DateFormat('yyyy-MM-dd HH:mm:ss').parse(cachedTimestamp);
+      if (now.difference(savedTime).inHours < 24) {
+        setState(() {
+          print("保存されてる");
+          displayText = cachedMission;
+        });
+        return;
+      }
+    }
+
+    // APIからデータを取得
     final url = Uri.parse('http://10.24.109.199:8080/random');
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body);
+        final jsonResponse = json.decode(utf8.decode(response.bodyBytes));
         setState(() {
-          List<String> missionList = List<String>.from(json.decode(utf8.decode(response.bodyBytes)));
+          List<String> missionList = List<String>.from(jsonResponse);
           displayText = missionList[1];
         });
+
+        // 新しいデータを保存
+        prefs.setString('mission', displayText);
+        prefs.setString('timestamp', DateFormat('yyyy-MM-dd HH:mm:ss').format(now));
       } else {
         setState(() {
-          missionList = ["ミッションが見つかりません"]; // データが見つからない場合
+          displayText = "ミッションが見つかりません";
         });
       }
     } catch (e) {
       setState(() {
+        displayText = "エラーが発生しました。";
         print("エラーが発生しました: $e");
-        missionList = ["エラーが発生しました。"];
       });
     }
   }
 
-  
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -115,31 +112,31 @@ class _ParentChildModeScreenState extends State<ParentChildModeScreen> {
           // ミッション設定ボタン
           Align(
             alignment: const Alignment(0.0, 0.8),
-            child: CategoryButton(
-              categoryName: 'ミッション設定',
-              backgroundColor: const Color.fromARGB(255, 166, 232, 237),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const MissionSettingsScreen()),
-                );
-              },
-            ),
-          ),
-          // アップロードボタン
-          Align(
-            alignment: const Alignment(0.0, 0.5),
-            child: CategoryButton(
-              categoryName: 'アップロード',
-              backgroundColor: Colors.orange.shade200,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ImageUploadScreen()),
-                );
-              },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CategoryButton(
+                  categoryName: 'アップロード',
+                  backgroundColor: Colors.orange.shade200,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ImageUploadScreen()),
+                    );
+                  },
+                ),
+                SizedBox(height: screenHeight * 0.05), // デバイスに応じた余白
+                CategoryButton(
+                  categoryName: 'ミッション設定',
+                  backgroundColor: const Color.fromARGB(255, 166, 232, 237),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const MissionSettingsScreen()),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
           // クエスト受付場風の木製看板
@@ -193,7 +190,6 @@ class _ParentChildModeScreenState extends State<ParentChildModeScreen> {
     );
   }
 }
-
 
 class CategoryButton extends StatelessWidget {
   final String categoryName;
@@ -273,11 +269,11 @@ class StitchPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0; // 縫い目の太さ
 
-    final double dashWidth = 10.0;
-    final double dashSpace = 6.0;
+    const double dashWidth = 10.0;
+    const double dashSpace = 6.0;
 
     // ボタンの内側に収まるように調整
-    final double padding = 5.0; // 内側の余白を設定
+    const double padding = 5.0; // 内側の余白を設定
 
     final Path path = Path()
       ..addRRect(RRect.fromRectAndRadius(
@@ -286,7 +282,7 @@ class StitchPainter extends CustomPainter {
           buttonWidth - padding * 2, // 内側に合わせて幅を調整
           buttonHeight - padding * 2, // 内側に合わせて高さを調整
         ),
-        Radius.circular(20), // 角丸の半径を調整
+        const Radius.circular(20), // 角丸の半径を調整
       ));
 
     // 破線を描画

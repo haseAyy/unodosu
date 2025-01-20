@@ -5,17 +5,19 @@ import com.example.spring_Demo.service.MissionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Controller;
-
 
 @Controller
 public class MissionController {
 
+    private static final DateTimeFormatter dtf3 = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+
+    private LocalDateTime lastFetchedTime = null; // 最後にミッションを取得した時刻
+    
     @Autowired
     private MissionService missionService;
 
@@ -28,13 +30,24 @@ public class MissionController {
     // ミッションのランダム取得
     @GetMapping("/random")
     public ResponseEntity<Object> getRandomMission() {
+        
+        LocalDateTime nowDate = LocalDateTime.now();
+        String formatNowDate = dtf3.format(nowDate);
+        long now = Long.parseLong(formatNowDate);
 
-        List<String> missionList = missionService.findRandomMission();
+        // lastFetchedTimeがnullもしくは前回の取得時刻が現在時刻よりも古い場合に新しいミッションを取得
+        if (lastFetchedTime == null || now > Long.parseLong(dtf3.format(lastFetchedTime))) {
+            List<String> missionList = missionService.findRandomMission();
+            lastFetchedTime = nowDate; // ミッション取得後、最後に取得した時刻を更新
 
-        if (missionList != null) {
-            return ResponseEntity.ok(missionList); // 200 OKとともにデータを返す
+            if (!missionList.isEmpty()) {
+                return ResponseEntity.ok(missionList); // 200 OKとともにデータを返す
+            } else {
+                return ResponseEntity.notFound().build(); // データが見つからなかった場合
+            }
         } else {
-            return ResponseEntity.notFound().build(); // データが見つからなかった場合
+            // すでにミッションが取得されている場合、キャッシュした結果を返す
+            return ResponseEntity.ok("ミッションはすでに取得されています");
         }
     }
 }

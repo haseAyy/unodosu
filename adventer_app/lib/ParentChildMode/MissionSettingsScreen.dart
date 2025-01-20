@@ -3,19 +3,32 @@ import '../MeneScreen/HomeScreen.dart';
 import 'dart:ui';
 
 // ユーザミッション設定画面(親子モード)
-class MissionSettingsScreen extends StatelessWidget {
+class MissionSettingsScreen extends StatefulWidget  {
   const MissionSettingsScreen({super.key});
+@override
+  State<MissionSettingsScreen> createState() => _MissionSettingsScreenState();
+}
+
+class _MissionSettingsScreenState extends State<MissionSettingsScreen> {
+  final TextEditingController _missionNameController = TextEditingController();
+  final TextEditingController _missionKeywordController = TextEditingController();
+
+  String? missionNameError; // ミッション名のエラーメッセージ
+  String? missionKeywordError; // キーワードのエラーメッセージ
+
+  String? missionName;
+  String? missionKeyword;
+  String? missionId;
 
   @override
   Widget build(BuildContext context) {
-    String dropdownValue = 'かんさつしよう！'; // 初期値をリストに存在する値に設定
-    final screenSize = MediaQuery.of(context).size; // MediaQueryキャッシュ
+    final screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
-      resizeToAvoidBottomInset: false, // キーボード表示時にリサイズを防ぐ
-      body: Stack(  // Stackウィジェットを使って重ねる
+      resizeToAvoidBottomInset: false,
+      body: Stack(
         children: [
-          // 背景（茶色基調にアクセントカラーを追加）
+          // 背景
           Positioned.fill(
             child: Container(
               color: const Color.fromARGB(174, 250, 231, 213),
@@ -38,82 +51,85 @@ class MissionSettingsScreen extends StatelessWidget {
               child: const Icon(Icons.arrow_back),
             ),
           ),
-          // ミッション設定適応ボタン
+          // ミッション設定ボタン
           Align(
-            alignment: const Alignment(0.0, 0.5), // 横方向中央、縦方向は0.5（中央）
+            alignment: const Alignment(0.0, 0.5),
             child: CategoryButton(
               categoryName: '設定完了',
               backgroundColor: const Color.fromARGB(255, 255, 176, 169),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const HomeScreen(initialIndex: 3),),
-                );
+                setState(() {
+                  // 入力内容をチェック
+                  missionNameError = _missionNameController.text.isEmpty ? '入力してください' : null;
+                  missionKeywordError = _missionKeywordController.text.isEmpty ? '入力してください' : null;
+
+                  if (missionNameError == null && missionKeywordError == null) {
+                    // 入力が有効な場合、ローカルデータを更新
+                    missionName = _missionNameController.text;
+                    missionKeyword = _missionKeywordController.text;
+                    missionId = null; // missionIdをnullに設定
+
+                    // ここで適切な処理を実行（例：データの保存や画面遷移）
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HomeScreen(initialIndex: 3),
+                      ),
+                    );
+                  }
+                });
               },
             ),
           ),
           // ラベル
           Positioned(
-            top: screenSize.height * 0.25, // 上部から30%の位置
+            top: screenSize.height * 0.25,
             left: 0,
             right: 0,
-            child: const Column(
-              children: [
-                Text(
-                  'ミッション内容', // ラベルのテキスト
-                  style: TextStyle(
-                    fontSize: 30, // フォントサイズ
-                    fontWeight: FontWeight.bold, // 太字
-                    color: Colors.black, // ラベルの色
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // テキストボックス
-          Positioned(
-            top: screenSize.height * 0.35, // 上部から35%の位置
-            left: 20,
-            right: 20,
-            child: Container(
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'ミッションのキーワードを入力してください',
-                  filled: true, // ボーダー内に背景色を適用
-                  fillColor: Colors.lightBlue[50], // 背景色を指定
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+            child: const Text(
+              'ミッション内容',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
             ),
           ),
-          // プルダウン
+          // テキストボックス(ミッション名用)
           Positioned(
-            top: screenSize.height * 0.5,
+            top: screenSize.height * 0.35,
             left: 20,
             right: 20,
-            child: DropdownButtonFormField<String>(
-              value: dropdownValue, // 初期値をリスト内の値に変更
+            child: TextField(
+              controller: _missionNameController,
               decoration: InputDecoration(
-                labelText: 'カテゴリーを選択してください',
-                filled: true, // ボーダー内に背景色を適用
-                fillColor: Colors.lightBlue[50], // 背景色を指定
+                labelText: 'ミッション内容を入力してください',
+                errorText: missionNameError, // エラーメッセージを表示
+                filled: true,
+                fillColor: Colors.lightBlue[50],
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              items: <String>['かんさつしよう！', 'たべてみよう！', 'ちょうせんしよう！']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                dropdownValue = newValue!; // 新しい値に更新
-              },
+            ),
+          ),
+          // テキストボックス(キーワード用)
+          Positioned(
+            top: screenSize.height * 0.45,
+            left: 20,
+            right: 20,
+            child: TextField(
+              controller: _missionKeywordController,
+              decoration: InputDecoration(
+                labelText: 'ミッションのキーワードを入力してください',
+                errorText: missionKeywordError, // エラーメッセージを表示
+                filled: true,
+                fillColor: Colors.lightBlue[50],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
             ),
           ),
         ],
@@ -200,11 +216,11 @@ class StitchPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0; // 縫い目の太さ
 
-    final double dashWidth = 10.0;
-    final double dashSpace = 6.0;
+    const double dashWidth = 10.0;
+    const double dashSpace = 6.0;
 
     // ボタンの内側に収まるように調整
-    final double padding = 5.0; // 内側の余白を設定
+    const double padding = 5.0; // 内側の余白を設定
 
     final Path path = Path()
       ..addRRect(RRect.fromRectAndRadius(
@@ -213,7 +229,7 @@ class StitchPainter extends CustomPainter {
           buttonWidth - padding * 2, // 内側に合わせて幅を調整
           buttonHeight - padding * 2, // 内側に合わせて高さを調整
         ),
-        Radius.circular(20), // 角丸の半径を調整
+        const Radius.circular(20), // 角丸の半径を調整
       ));
 
     // 破線を描画

@@ -123,8 +123,8 @@ class HelpTableScreen extends StatelessWidget {
             child: Container(
               width: screenWidth * 0.4, // 画面サイズに基づくサイズ調整
               height: screenWidth * 0.4,
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 179, 113, 104),
+              decoration: const BoxDecoration(
+                color: Color.fromARGB(255, 179, 113, 104),
                 shape: BoxShape.circle,
               ),
             ),
