@@ -5,10 +5,7 @@ import java.util.List;
 
 public interface Unodosufactory {
 
-    //教育モード
-    //question getRandomTextQuestion(String question_theme, List<String> solvedQuestions);
-
-    //お手伝いモード
+    //お手伝いモード（お片付け編)
     question getRandomTextQuestionHelp(String question_theme, List<String> solvedQuestions);
 }
 

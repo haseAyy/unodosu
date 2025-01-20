@@ -5,6 +5,7 @@ import '../HelpCleaningIncorrectScreen.dart'; // 不正解画面
 import '../HelpCleaningResultScreen.dart'; // 結果画面
 import 'dart:convert'; // JSONデータを扱うため
 import 'package:http/http.dart' as http;
+import 'dart:developer';
 
 // questionのデータモデル
 class Question {
@@ -48,11 +49,16 @@ Future<Question?> fetchQuestion(String questionTheme) async {
   );
 
 //確認
-  print('Response status: ${response.statusCode}');
-  print('Response body: ${response.body}');
+  log('Response status: ${response.statusCode}');
+  log('なかみ: ${response.body}');
 
   if (response.statusCode == 200) {
-    return Question.fromJson(jsonDecode(response.body));
+    final question = Question.fromJson(jsonDecode(response.body));
+    // return questionQuestion.fromJson(jsonDecode(response.body))       // ここで選択肢の数と内容をログに出力
+    log('選択肢数: ${question.options.length}');
+    log('選択肢内容: ${question.options}');
+
+    return question;
   } else {
     //throw Exception('Failed to load question');
   }
@@ -70,16 +76,17 @@ Future<String> submitAnswer(
     }),
   );
 
-  print('Response body: ${response.body}'); // レスポンスボディを確認
+  log('Response body: ${response.body}'); // レスポンスボディを確認
 
   if (response.statusCode == 200) {
     // レスポンスが単なる文字列であれば、そのまま扱う
+    // ここで選択肢の数と内容をログに出力
     if (response.body == 'incorrect') {
       return 'incorrect'; // 不正解
     } else if (response.body == 'correct') {
       return 'correct'; // 正解
     } else {
-      print('Unexpected response body: ${response.body}');
+      log('Unexpected response body: ${response.body}');
       return 'Unexpected response';
     }
   } else {
@@ -212,47 +219,41 @@ class _HelpBedScreenState extends State<HelpBedScreen> {
         }
       });
 
-      if (questionCount >= 10) {
-        // 10問解いたあとは結果画面に遷移
+      if (result == "correct") {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  HelpCleaningResultScreen(correctCount: correctCount)),
-        );
-      } else {
-        if (result == "correct") {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => HelpCleaningCorrectScreen(
+              builder: (context) => HelpCleaningCorrectScreen(
                     message: 'ベッド',
                     questionCount: questionCount,
-                    correctCount: correctCount)),
-          );
-        } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => HelpCleaningIncorrectScreen(
-                      message: 'ベッド',
-                      questionCount: questionCount,
-                      correctCount: correctCount,
-                      correctAnswer: question.questionAnswer,
-                      selectedAnswerContent: selectedAnswerContent,
-                      questionId: question.questionId, // questionIdを渡す
-                    )),
-          );
-        }
-        // 次の問題を取得する処理を呼び出す
-        if (questionCount < 5) {
-          setState(() {
-            questionFuture = fetchQuestion("KMS003"); // 次の問題を取得
-          });
-        }
+                    correctCount: correctCount,
+                    correctAnswer: question.questionAnswer,
+                    selectedAnswerContent: selectedAnswerContent,
+                    questionId: question.questionId, // questionIdを渡す
+                  )),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => HelpCleaningIncorrectScreen(
+                    message: 'ベッド',
+                    questionCount: questionCount,
+                    correctCount: correctCount,
+                    correctAnswer: question.questionAnswer,
+                    selectedAnswerContent: selectedAnswerContent,
+                    questionId: question.questionId, // questionIdを渡す
+                  )),
+        );
+      }
+      // 次の問題を取得する処理を呼び出す
+      if (questionCount < 5) {
+        setState(() {
+          questionFuture = fetchQuestion("KMS003"); // 次の問題を取得
+        });
       }
     } catch (e) {
-      print("エラー: $e");
+      log("エラー: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('エラーが発生しました')),
       );
@@ -350,7 +351,7 @@ class _HelpBedScreenState extends State<HelpBedScreen> {
                   ),
                   // 問題テキスト
                   Positioned(
-                    top: screenSize.height * 0.15,
+                    top: screenSize.height * 0.1,
                     left: 0,
                     right: 0,
                     child: Column(
@@ -365,26 +366,23 @@ class _HelpBedScreenState extends State<HelpBedScreen> {
                             fontFamily: 'Comic Sans MS',
                           ),
                         ),
-                        const SizedBox(height: 60),
+                        const SizedBox(height: 50),
                         // 問題の丸
                         Container(
-                          width: screenSize.width * 0.8, // 比率調整
-                          height: screenSize.width * 0.4, // 比率調整
+                          width: screenSize.width * 0.9, // 比率調整
+                          height: screenSize.width * 0.57, // 比率調整
                           decoration: const BoxDecoration(
                               //color: Color.fromARGB(255, 154, 208, 255),
                               //shape: BoxShape.circle,
                               ),
-                          child: Center(
-                            child: Align(
-                              //alignment: const Alignment(0.0, 0.0), // 画像の中央配置
-                              child: Container(
-                                width:
-                                    screenSize.width * 2.0, // 画像の幅（画面サイズに基づく比率）
-                                height: screenSize.width * 0.4, // 画像の高さ（同上）
-                                child: Image.network(
-                                  question.questionImage, //画像表示
-                                  fit: BoxFit.cover, // 画像のフィット方法を指定
-                                ),
+                          child: ClipRect(
+                            //alignment: const Alignment(0.0, 0.0), // 画像の中央配置
+                            child: Container(
+                              //width:screenSize.width * 2.0, // 画像の幅（画面サイズに基づく比率）
+                              //height: screenSize.width * 0.5, // 画像の高さ（同上）
+                              child: Image.network(
+                                question.questionImage, //画像表示
+                                fit: BoxFit.cover, // 画像のフィット方法を指定
                               ),
                             ),
                           ),
@@ -394,16 +392,19 @@ class _HelpBedScreenState extends State<HelpBedScreen> {
                   ),
                   // 選択肢ボタンエリア
                   Positioned(
-                    bottom: screenSize.height * 0.15, // 位置調整
+                    bottom: screenSize.height * 0.14, // 位置調整
                     left: 0,
                     right: 0,
                     child: Column(
+                      mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween, // 真ん中の隙間を狭める
                       children: [
-                        SizedBox(height: 100), // 上の選択肢との間隔
+                        SizedBox(height: 20), // 上の選択肢との間隔
                         for (int i = 0; i < question.options.length; i += 2)
                           Row(
                             //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment:
+                                MainAxisAlignment.center, // ここは中央に配置
                             children: [
                               if (i < question.options.length)
                                 RectangularButton(
@@ -428,7 +429,9 @@ class _HelpBedScreenState extends State<HelpBedScreen> {
                                         context); //選択したIdを送信して回答判定メソッドへ
                                   },
                                 ),
-                              SizedBox(height: 80), // 上の選択肢との間隔
+                              SizedBox(width: 15), // 少し隙間を開ける
+                              SizedBox(height: 80),
+                              //SizedBox(width: 0.1), // 上の選択肢との間隔
                               if (i + 1 < question.options.length)
                                 //SizedBox(height: 20),
                                 RectangularButton(

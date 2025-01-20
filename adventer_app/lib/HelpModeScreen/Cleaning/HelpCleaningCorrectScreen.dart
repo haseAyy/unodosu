@@ -197,7 +197,7 @@ class _HelpCleaningCorrectScreenState extends State<HelpCleaningCorrectScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 0.008 * screenSize.height),
+                SizedBox(height: 0.00008 * screenSize.height),
                 // AnimatedBuilderを使ったアニメーション付きのアイコン
                 AnimatedBuilder(
                   animation: _controller,
@@ -230,12 +230,13 @@ class _HelpCleaningCorrectScreenState extends State<HelpCleaningCorrectScreen>
 
                 // GIFの画像表示部分
                 Container(
-                  height: 0.25 * screenSize.height,
+                  width: screenSize.width * 0.9, // 比率調整
+                  height: screenSize.width * 0.58, // 比率調整
                   child: imageUrl != null
                       ? Image.network(
                           imageUrl!,
-                          width: 0.9 * screenSize.width,
-                          height: 0.9 * screenSize.height,
+                          //width: 0.9 * screenSize.width,
+                          //height: 0.9 * screenSize.height,
                           fit: BoxFit.cover,
                           loadingBuilder: (context, child, loadingProgress) {
                             if (loadingProgress == null) {
